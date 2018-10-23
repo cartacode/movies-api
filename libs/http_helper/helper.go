@@ -7,6 +7,16 @@ import (
 
 // JSONErrorResponse --
 // NotFound
+// swagger:response apiOk
+func ReturnAPIOK(w http.ResponseWriter, json []byte) error {
+	w.Header().Set("Content-Type", "application/json;")
+	w.WriteHeader(http.StatusOK)
+	w.Write(json)
+	return nil
+}
+
+// JSONErrorResponse --
+// NotFound
 // swagger:response genericJsonError
 type JSONErrorResponse struct {
 	Error string `json:"error"`
@@ -18,14 +28,6 @@ type JSONErrorResponse struct {
 type JSONSuccessResponse struct {
 	Message    string `json:"message"`
 	Identifier string `json:"identifier"`
-}
-
-// ReturnAPIOK --
-func ReturnAPIOK(w http.ResponseWriter, json []byte) error {
-	w.Header().Set("Content-Type", "application/json;")
-	w.WriteHeader(http.StatusOK)
-	w.Write(json)
-	return nil
 }
 
 // ReturnAPIError --

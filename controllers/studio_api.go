@@ -23,7 +23,10 @@ import (
 )
 
 // JSONPaginationResponseStudio --
+// HTTP status code 200 and repository model in data
+// swagger:response studioResp
 type JSONPaginationResponseStudio struct {
+	// in: body
 	Results       []models.Studio `json:"results"`
 	TotalResults  int             `json:"total"`
 	RecordsOnPage int             `json:"recordsonpage"`

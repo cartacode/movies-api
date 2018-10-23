@@ -23,7 +23,10 @@ import (
 )
 
 // JSONPaginationResponseVolume --
+// HTTP status code 200 and repository model in data
+// swagger:response volumeResp
 type JSONPaginationResponseVolume struct {
+	// in: body
 	Results       []models.Volume `json:"results"`
 	TotalResults  int             `json:"total"`
 	RecordsOnPage int             `json:"recordsonpage"`

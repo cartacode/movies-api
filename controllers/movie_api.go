@@ -227,3 +227,25 @@ func MoviePost(w http.ResponseWriter, r *http.Request) {
 	}
 	httphelper.ReturnAPIOK(w, js)
 }
+
+// MoviesSearchGet -- Takes Movie ID for a finder
+func MoviesSearchGet(w http.ResponseWriter, r *http.Request) {
+
+	params := mux.Vars(r)
+	slug := params["slug"]
+	movie := &models.Movie{}
+	err := connection.Collection("movie").FindOne(bson.M{"slug": slug}, movie)
+
+	if err != nil {
+		httphelper.ReturnAPIError(w, err)
+		return
+	}
+
+	js, err := json.Marshal(movie)
+
+	if err != nil {
+		httphelper.ReturnAPIError(w, err)
+		return
+	}
+	httphelper.ReturnAPIOK(w, js)
+}

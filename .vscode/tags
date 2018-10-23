@@ -1,0 +1,64 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+BeautifulSoup	../scripts/data/scrape_performers.py	/^from bs4 import BeautifulSoup$/;"	kind:namespace	line:5
+BeautifulSoup	../scripts/scrape_performers.py	/^from bs4 import BeautifulSoup$/;"	kind:namespace	line:5
+HOST	../scripts/data/hydrate.py	/^HOST = "https:\/\/api-stage.vuli.tv"$/;"	kind:variable	line:11
+RequestException	../scripts/data/scrape_performers.py	/^from requests.exceptions import RequestException$/;"	kind:namespace	line:7
+RequestException	../scripts/scrape_performers.py	/^from requests.exceptions import RequestException$/;"	kind:namespace	line:7
+category	../scripts/data/hydrate.py	/^def category(data):$/;"	kind:function	line:24
+closing	../scripts/data/scrape_performers.py	/^from contextlib import closing$/;"	kind:namespace	line:6
+closing	../scripts/scrape_performers.py	/^from contextlib import closing$/;"	kind:namespace	line:6
+datetime	../scripts/data/scrape_performers.py	/^from datetime import datetime$/;"	kind:namespace	line:8
+datetime	../scripts/scrape_performers.py	/^from datetime import datetime$/;"	kind:namespace	line:8
+directors	../scripts/data/hydrate.py	/^def directors(data):$/;"	kind:function	line:33
+findObjectID	../scripts/data/hydrate.py	/^def findObjectID(uri, slug):$/;"	kind:function	line:75
+get	../scripts/data/scrape_performers.py	/^from requests import get, post$/;"	kind:namespace	line:4
+get	../scripts/scrape_performers.py	/^from requests import get, post$/;"	kind:namespace	line:4
+getOrMakePerformer	../scripts/data/hydrate.py	/^def getOrMakePerformer(performer):$/;"	kind:function	line:88
+hydrate.py	../scripts/data/hydrate.py	1;"	kind:file	line:1
+is_good_response	../scripts/data/scrape_performers.py	/^def is_good_response(resp):$/;"	kind:function	line:67
+is_good_response	../scripts/scrape_performers.py	/^def is_good_response(resp):$/;"	kind:function	line:67
+json	../scripts/data/hydrate.py	/^import json$/;"	kind:namespace	line:5
+json	../scripts/data/scrape_performers.py	/^import json$/;"	kind:namespace	line:2
+json	../scripts/scrape_performers.py	/^import json$/;"	kind:namespace	line:2
+length	../scripts/data/hydrate.py	/^def length(timedelta):$/;"	kind:function	line:66
+loadToCache	../scripts/data/hydrate.py	/^def loadToCache(path, filename):$/;"	kind:function	line:42
+log_error	../scripts/data/scrape_performers.py	/^def log_error(e):$/;"	kind:function	line:77
+log_error	../scripts/scrape_performers.py	/^def log_error(e):$/;"	kind:function	line:77
+main	../scripts/data/hydrate.py	/^def main():$/;"	kind:function	line:164
+main	../scripts/data/scrape_performers.py	/^def main():$/;"	kind:function	line:87
+main	../scripts/scrape_performers.py	/^def main():$/;"	kind:function	line:87
+movie	../scripts/data/hydrate.py	/^def movie(path=None):$/;"	kind:function	line:103
+myconverter	../scripts/data/scrape_performers.py	/^def myconverter(o):$/;"	kind:function	line:23
+myconverter	../scripts/scrape_performers.py	/^def myconverter(o):$/;"	kind:function	line:23
+openDataFile	../scripts/data/hydrate.py	/^def openDataFile(path):$/;"	kind:function	line:15
+openDataFile	../scripts/data/scrape_performers.py	/^def openDataFile(path):$/;"	kind:function	line:14
+openDataFile	../scripts/scrape_performers.py	/^def openDataFile(path):$/;"	kind:function	line:14
+os	../scripts/data/hydrate.py	/^import os$/;"	kind:namespace	line:7
+post	../scripts/data/scrape_performers.py	/^from requests import get, post$/;"	kind:namespace	line:4
+post	../scripts/scrape_performers.py	/^from requests import get, post$/;"	kind:namespace	line:4
+pp	../scripts/data/hydrate.py	/^pp = pprint.pprint$/;"	kind:variable	line:9
+pp	../scripts/data/scrape_performers.py	/^pp = pprint.pprint$/;"	kind:variable	line:11
+pp	../scripts/scrape_performers.py	/^pp = pprint.pprint$/;"	kind:variable	line:11
+pprint	../scripts/data/hydrate.py	/^import pprint$/;"	kind:namespace	line:8
+pprint	../scripts/data/scrape_performers.py	/^import pprint$/;"	kind:namespace	line:10
+pprint	../scripts/scrape_performers.py	/^import pprint$/;"	kind:namespace	line:10
+re	../scripts/data/scrape_performers.py	/^import re$/;"	kind:namespace	line:9
+re	../scripts/scrape_performers.py	/^import re$/;"	kind:namespace	line:9
+requests	../scripts/data/hydrate.py	/^import requests$/;"	kind:namespace	line:4
+scrape_performers.py	../scripts/data/scrape_performers.py	1;"	kind:file	line:1
+scrape_performers.py	../scripts/scrape_performers.py	1;"	kind:file	line:1
+simple_get	../scripts/data/scrape_performers.py	/^def simple_get(url):$/;"	kind:function	line:49
+simple_get	../scripts/scrape_performers.py	/^def simple_get(url):$/;"	kind:function	line:49
+slugify	../scripts/data/hydrate.py	/^from slugify import slugify$/;"	kind:namespace	line:6
+slugify	../scripts/data/scrape_performers.py	/^from slugify import slugify$/;"	kind:namespace	line:3
+slugify	../scripts/scrape_performers.py	/^from slugify import slugify$/;"	kind:namespace	line:3
+string	../scripts/data/scrape_performers.py	/^import string$/;"	kind:namespace	line:1
+string	../scripts/scrape_performers.py	/^import string$/;"	kind:namespace	line:1
+time	../scripts/data/hydrate.py	/^import time$/;"	kind:namespace	line:2
+unique	../scripts/data/scrape_performers.py	/^def unique(list1):$/;"	kind:function	line:28
+unique	../scripts/scrape_performers.py	/^def unique(list1):$/;"	kind:function	line:28

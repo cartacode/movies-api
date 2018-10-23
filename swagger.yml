@@ -1,3 +1,10 @@
+host: api-stage.vuli.tv
+consumes:
+  - application/json
+produces:
+  - application/json
+schemes:
+  - https
 definitions:
   Category:
     description: A category can be associated with a scene, movie, volume, and series
@@ -614,18 +621,26 @@ definitions:
         $ref: '#/definitions/Studio'
     type: object
     x-go-package: github.com/VuliTv/api/models
-info: {}
+info:
+  description: "the purpose of this application is to provide an application\nthat is using plain go code to define an API\n\nThis should demonstrate all the possible comment annotations\nthat are available to turn go code into a fully compliant swagger 2.0 spec"
+  title: 'Petstore API.'
 paths:
-  /category/:
+  /category:
     get:
       description: Return all categories, paginated
       operationId: categoryList
       parameters:
-      - description: MongoDB ObjectId
-        in: path
-        name: category
-        required: true
-        type: string
+      - description: The number of pages to skip before starting to collect the result
+          set
+        in: query
+        name: page
+        schema:
+          type: integer
+      - description: The numbers of items to return per page
+        in: query
+        name: perpage
+        schema:
+          type: integer
       responses:
         "200":
           $ref: '#/responses/categoryResp'
@@ -670,22 +685,23 @@ paths:
       summary: Post a new category
       tags:
       - category
-  /category/{id}:
+  /category/{ObjectId}:
     delete:
       description: Delete a given category
       operationId: categoryDeleteId
       parameters:
       - description: MongoDB ObjectId
         in: path
-        name: category
+        name: ObjectId
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/ObjectId'
       responses:
         "200":
-          $ref: '#/responses/categoryResp'
+          $ref: '#/responses/ok'
         "404":
           $ref: '#/responses/genericJsonError'
-      summary: Delete a category the given id.
+      summary: Delete a category the given ObjectId.
       tags:
       - category
     get:
@@ -694,25 +710,26 @@ paths:
       parameters:
       - description: MongoDB ObjectId
         in: path
-        name: category
+        name: ObjectId
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/ObjectId'
       responses:
         "200":
           $ref: '#/responses/categoryResp'
         "404":
           $ref: '#/responses/genericJsonError'
-      summary: Get a category the given id.
+      summary: Get a category the given ObjectId.
       tags:
       - category
-  /category/slug/{id}:
+  /category/slug/{slug}:
     get:
       description: Search for a category by slug
-      operationId: categorySlugGetId
+      operationId: categorySlugGetByNAme
       parameters:
       - description: slug
         in: path
-        name: category
+        name: slug
         required: true
         type: string
       responses:
@@ -723,16 +740,22 @@ paths:
       summary: Get a category the given the slug.
       tags:
       - category
-  /customer/:
+  /customer:
     get:
       description: Return all categories, paginated
       operationId: customerList
       parameters:
-      - description: MongoDB ObjectId
-        in: path
-        name: customer
-        required: true
-        type: string
+      - description: The number of pages to skip before starting to collect the result
+          set
+        in: query
+        name: page
+        schema:
+          type: integer
+      - description: The numbers of items to return per page
+        in: query
+        name: perpage
+        schema:
+          type: integer
       responses:
         "200":
           $ref: '#/responses/customerResp'
@@ -763,7 +786,7 @@ paths:
       description: Return all categories, paginated
       operationId: customerPost
       parameters:
-      - description: New CategoryDocument
+      - description: New CustomerDocument
         in: body
         name: customer
         required: true
@@ -777,22 +800,23 @@ paths:
       summary: Post a new customer
       tags:
       - customer
-  /customer/{id}:
+  /customer/{ObjectId}:
     delete:
       description: Delete a given customer
       operationId: customerDeleteId
       parameters:
       - description: MongoDB ObjectId
         in: path
-        name: customer
+        name: ObjectId
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/ObjectId'
       responses:
         "200":
-          $ref: '#/responses/customerResp'
+          $ref: '#/responses/ok'
         "404":
           $ref: '#/responses/genericJsonError'
-      summary: Delete a customer the given id.
+      summary: Delete a customer the given ObjectId.
       tags:
       - customer
     get:
@@ -801,18 +825,208 @@ paths:
       parameters:
       - description: MongoDB ObjectId
         in: path
-        name: customer
+        name: ObjectId
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/ObjectId'
       responses:
         "200":
           $ref: '#/responses/customerResp'
         "404":
           $ref: '#/responses/genericJsonError'
-      summary: Get a customer the given id.
+      summary: Get a customer the given ObjectId.
       tags:
       - customer
-  /movie/:
+  /customer/wishlist/movie/{ObjectId}:
+    delete:
+      description: Delete ObjectId to add item to wishlist
+      operationId: customerWishSceneAdd
+      parameters:
+      - description: MongoDB Scene Document ID
+        in: path
+        name: ObjectId
+        required: true
+        schema:
+          $ref: '#/definitions/ObjectId'
+      responses:
+        "200":
+          $ref: '#/responses/customerResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Post a new customer wishlist for a movie
+      tags:
+      - customer
+    post:
+      description: POST ObjectId to add item to wishlist
+      operationId: customerWishSceneAdd
+      parameters:
+      - description: MongoDB Scene Document ID
+        in: path
+        name: ObjectId
+        required: true
+        schema:
+          $ref: '#/definitions/ObjectId'
+      responses:
+        "200":
+          $ref: '#/responses/customerResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Post a new customer wishlist for a movie
+      tags:
+      - customer
+  /customer/wishlist/scene/{ObjectId}:
+    delete:
+      description: Delete ObjectId to add item to wishlist
+      operationId: customerWishSceneAdd
+      parameters:
+      - description: MongoDB Scene Document ID
+        in: path
+        name: ObjectId
+        required: true
+        schema:
+          $ref: '#/definitions/ObjectId'
+      responses:
+        "200":
+          $ref: '#/responses/customerResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Post a new customer wishlist for a scene
+      tags:
+      - customer
+    post:
+      description: POST sceneId to add item to wishlist
+      operationId: customerWishSceneAdd
+      parameters:
+      - description: MongoDB Scene Document ID
+        in: path
+        name: ObjectId
+        required: true
+        schema:
+          $ref: '#/definitions/ObjectId'
+      responses:
+        "200":
+          $ref: '#/responses/customerResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Post a new customer wishlist for a scene
+      tags:
+      - customer
+  /customer/wishlist/series/{ObjectId}:
+    delete:
+      description: Delete ObjectId to add item to wishlist
+      operationId: customerWishSceneAdd
+      parameters:
+      - description: MongoDB Scene Document ID
+        in: path
+        name: ObjectId
+        required: true
+        schema:
+          $ref: '#/definitions/ObjectId'
+      responses:
+        "200":
+          $ref: '#/responses/customerResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Post a new customer wishlist for a series
+      tags:
+      - customer
+    post:
+      description: POST ObjectId to add item to wishlist
+      operationId: customerWishSceneAdd
+      parameters:
+      - description: MongoDB Scene Document ID
+        in: path
+        name: ObjectId
+        required: true
+        schema:
+          $ref: '#/definitions/ObjectId'
+      responses:
+        "200":
+          $ref: '#/responses/customerResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Post a new customer wishlist for a series
+      tags:
+      - customer
+  /customer/wishlist/volume/{ObjectId}:
+    delete:
+      description: Delete ObjectId to add item to wishlist
+      operationId: customerWishSceneAdd
+      parameters:
+      - description: MongoDB Scene Document ID
+        in: path
+        name: ObjectId
+        required: true
+        schema:
+          $ref: '#/definitions/ObjectId'
+      responses:
+        "200":
+          $ref: '#/responses/customerResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Post a new customer wishlist for a volume
+      tags:
+      - customer
+    post:
+      description: POST ObjectId to add item to wishlist
+      operationId: customerWishSceneAdd
+      parameters:
+      - description: MongoDB Scene Document ID
+        in: path
+        name: ObjectId
+        required: true
+        schema:
+          $ref: '#/definitions/ObjectId'
+      responses:
+        "200":
+          $ref: '#/responses/customerResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Post a new customer wishlist for a volume
+      tags:
+      - customer
+  /movie:
+    get:
+      description: Return all movies, paginated
+      operationId: movieList
+      parameters:
+      - description: The number of pages to skip before starting to collect the result
+          set
+        in: query
+        name: page
+        schema:
+          type: integer
+      - description: The numbers of items to return per page
+        in: query
+        name: perpage
+        schema:
+          type: integer
+      responses:
+        "200":
+          $ref: '#/responses/movieResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: List all of the movies in a pagination response.
+      tags:
+      - movie
+    patch:
+      description: Update a current movie
+      operationId: moviePatch
+      parameters:
+      - description: New CategoryDocument
+        in: body
+        name: movie
+        required: true
+        schema:
+          $ref: '#/definitions/Category'
+      responses:
+        "200":
+          $ref: '#/responses/movieResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Update a movie
+      tags:
+      - movie
     post:
       description: Return all categories, paginated
       operationId: moviePost
@@ -831,14 +1045,51 @@ paths:
       summary: Post a new movie
       tags:
       - movie
-  /movie/slug/{id}:
+  /movie/{ObjectId}:
+    delete:
+      description: Delete a given movie
+      operationId: movieDeleteId
+      parameters:
+      - description: MongoDB ObjectId
+        in: path
+        name: ObjectId
+        required: true
+        schema:
+          $ref: '#/definitions/ObjectId'
+      responses:
+        "200":
+          $ref: '#/responses/ok'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Delete a movie the given ObjectId.
+      tags:
+      - movie
+    get:
+      description: Get a given movie
+      operationId: movieGetId
+      parameters:
+      - description: MongoDB ObjectId
+        in: path
+        name: ObjectId
+        required: true
+        schema:
+          $ref: '#/definitions/ObjectId'
+      responses:
+        "200":
+          $ref: '#/responses/movieResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Get a movie the given ObjectId.
+      tags:
+      - movie
+  /movie/slug/{slug}:
     get:
       description: Search for a movie by slug
       operationId: movieSlugGetId
       parameters:
       - description: slug
         in: path
-        name: movie
+        name: slug
         required: true
         type: string
       responses:
@@ -849,6 +1100,552 @@ paths:
       summary: Get a movie the given the slug.
       tags:
       - movie
+  /performer:
+    get:
+      description: Return all categories, paginated
+      operationId: performerList
+      parameters:
+      - description: The number of pages to skip before starting to collect the result
+          set
+        in: query
+        name: page
+        schema:
+          type: integer
+      - description: The numbers of items to return per page
+        in: query
+        name: perpage
+        schema:
+          type: integer
+      responses:
+        "200":
+          $ref: '#/responses/performerResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: List all of the categories in a pagination response.
+      tags:
+      - performer
+    patch:
+      description: Update a current performer
+      operationId: performerPatch
+      parameters:
+      - description: New CategoryDocument
+        in: body
+        name: performer
+        required: true
+        schema:
+          $ref: '#/definitions/Category'
+      responses:
+        "200":
+          $ref: '#/responses/performerResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Update a performer
+      tags:
+      - performer
+    post:
+      description: Return all categories, paginated
+      operationId: performerPost
+      parameters:
+      - description: New PerformerDocument
+        in: body
+        name: performer
+        required: true
+        schema:
+          $ref: '#/definitions/Performer'
+      responses:
+        "200":
+          $ref: '#/responses/performerResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Post a new performer
+      tags:
+      - performer
+  /performer/{ObjectId}:
+    delete:
+      description: Delete a given performer
+      operationId: performerDeleteId
+      parameters:
+      - description: MongoDB ObjectId
+        in: path
+        name: ObjectId
+        required: true
+        schema:
+          $ref: '#/definitions/ObjectId'
+      responses:
+        "200":
+          $ref: '#/responses/ok'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Delete a performer the given ObjectId.
+      tags:
+      - performer
+    get:
+      description: Get a given performer
+      operationId: performerGetId
+      parameters:
+      - description: MongoDB ObjectId
+        in: path
+        name: ObjectId
+        required: true
+        schema:
+          $ref: '#/definitions/ObjectId'
+      responses:
+        "200":
+          $ref: '#/responses/performerResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Get a performer the given ObjectId.
+      tags:
+      - performer
+  /performer/slug/{slug}:
+    get:
+      description: Search for a performer by slug
+      operationId: performerSlugGetId
+      parameters:
+      - description: slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/performerResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Get a performer the given the slug.
+      tags:
+      - performer
+  /scene:
+    patch:
+      description: Update a current scene
+      operationId: scenePatch
+      parameters:
+      - description: New CategoryDocument
+        in: body
+        name: scene
+        required: true
+        schema:
+          $ref: '#/definitions/Category'
+      responses:
+        "200":
+          $ref: '#/responses/sceneResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Update a scene
+      tags:
+      - scene
+    post:
+      description: Return all categories, paginated
+      operationId: scenePost
+      parameters:
+      - description: New SceneDocument
+        in: body
+        name: scene
+        required: true
+        schema:
+          $ref: '#/definitions/Scene'
+      responses:
+        "200":
+          $ref: '#/responses/sceneResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Post a new scene
+      tags:
+      - scene
+  /scene/{ObjectId}:
+    delete:
+      description: Delete a given scene
+      operationId: sceneDeleteId
+      parameters:
+      - description: MongoDB ObjectId
+        in: path
+        name: ObjectId
+        required: true
+        schema:
+          $ref: '#/definitions/ObjectId'
+      responses:
+        "200":
+          $ref: '#/responses/ok'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Delete a scene the given ObjectId.
+      tags:
+      - scene
+    get:
+      description: Get a given scene
+      operationId: sceneGetId
+      parameters:
+      - description: MongoDB ObjectId
+        in: path
+        name: ObjectId
+        required: true
+        schema:
+          $ref: '#/definitions/ObjectId'
+      responses:
+        "200":
+          $ref: '#/responses/sceneResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Get a scene the given ObjectId.
+      tags:
+      - scene
+  /search/movie:
+    get:
+      description: Return all movies found, paginated
+      operationId: movieSearchList
+      parameters:
+      - description: The number of pages to skip before starting to collect the result
+          set
+        in: query
+        name: page
+        schema:
+          type: integer
+      - description: The numbers of items to return per page
+        in: query
+        name: perpage
+        schema:
+          type: integer
+      responses:
+        "200":
+          $ref: '#/responses/movieResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: List all found movies in a pagination response.
+      tags:
+      - search
+  /search/scene:
+    get:
+      description: Return all scenes found, paginated
+      operationId: sceneSearchList
+      parameters:
+      - description: The number of pages to skip before starting to collect the result
+          set
+        in: query
+        name: page
+        schema:
+          type: integer
+      - description: The numbers of items to return per page
+        in: query
+        name: perpage
+        schema:
+          type: integer
+      responses:
+        "200":
+          $ref: '#/responses/sceneResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: List all found scenes in a pagination response.
+      tags:
+      - search
+  /series:
+    get:
+      description: Return all categories, paginated
+      operationId: seriesList
+      parameters:
+      - description: The number of pages to skip before starting to collect the result
+          set
+        in: query
+        name: page
+        schema:
+          type: integer
+      - description: The numbers of items to return per page
+        in: query
+        name: perpage
+        schema:
+          type: integer
+      responses:
+        "200":
+          $ref: '#/responses/seriesResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: List all of the categories in a pagination response.
+      tags:
+      - series
+    patch:
+      description: Update a current series
+      operationId: seriesPatch
+      parameters:
+      - description: New CategoryDocument
+        in: body
+        name: series
+        required: true
+        schema:
+          $ref: '#/definitions/Category'
+      responses:
+        "200":
+          $ref: '#/responses/seriesResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Update a series
+      tags:
+      - series
+    post:
+      description: Return all categories, paginated
+      operationId: seriesPost
+      parameters:
+      - description: New SeriesDocument
+        in: body
+        name: series
+        required: true
+        schema:
+          $ref: '#/definitions/Series'
+      responses:
+        "200":
+          $ref: '#/responses/seriesResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Post a new series
+      tags:
+      - series
+  /series/{ObjectId}:
+    delete:
+      description: Delete a given series
+      operationId: seriesDeleteId
+      parameters:
+      - description: MongoDB ObjectId
+        in: path
+        name: ObjectId
+        required: true
+        schema:
+          $ref: '#/definitions/ObjectId'
+      responses:
+        "200":
+          $ref: '#/responses/ok'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Delete a series the given ObjectId.
+      tags:
+      - series
+    get:
+      description: Get a given series
+      operationId: seriesGetId
+      parameters:
+      - description: MongoDB ObjectId
+        in: path
+        name: ObjectId
+        required: true
+        schema:
+          $ref: '#/definitions/ObjectId'
+      responses:
+        "200":
+          $ref: '#/responses/seriesResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Get a series the given ObjectId.
+      tags:
+      - series
+  /studio:
+    get:
+      description: Return all categories, paginated
+      operationId: studioList
+      parameters:
+      - description: The number of pages to skip before starting to collect the result
+          set
+        in: query
+        name: page
+        schema:
+          type: integer
+      - description: The numbers of items to return per page
+        in: query
+        name: perpage
+        schema:
+          type: integer
+      responses:
+        "200":
+          $ref: '#/responses/studioResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: List all of the categories in a pagination response.
+      tags:
+      - studio
+    patch:
+      description: Update a current studio
+      operationId: studioPatch
+      parameters:
+      - description: New CategoryDocument
+        in: body
+        name: studio
+        required: true
+        schema:
+          $ref: '#/definitions/Category'
+      responses:
+        "200":
+          $ref: '#/responses/studioResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Update a studio
+      tags:
+      - studio
+    post:
+      description: Return all categories, paginated
+      operationId: studioPost
+      parameters:
+      - description: New StudioDocument
+        in: body
+        name: studio
+        required: true
+        schema:
+          $ref: '#/definitions/Studio'
+      responses:
+        "200":
+          $ref: '#/responses/studioResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Post a new studio
+      tags:
+      - studio
+  /studio/{ObjectId}:
+    delete:
+      description: Delete a given studio
+      operationId: studioDeleteId
+      parameters:
+      - description: MongoDB ObjectId
+        in: path
+        name: ObjectId
+        required: true
+        schema:
+          $ref: '#/definitions/ObjectId'
+      responses:
+        "200":
+          $ref: '#/responses/ok'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Delete a studio the given ObjectId.
+      tags:
+      - studio
+    get:
+      description: Get a given studio
+      operationId: studioGetId
+      parameters:
+      - description: MongoDB ObjectId
+        in: path
+        name: ObjectId
+        required: true
+        schema:
+          $ref: '#/definitions/ObjectId'
+      responses:
+        "200":
+          $ref: '#/responses/studioResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Get a studio the given ObjectId.
+      tags:
+      - studio
+  /studio/slug/{slug}:
+    get:
+      description: Search for a studio by slug
+      operationId: studioSlugGetId
+      parameters:
+      - description: slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/studioResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Get a studio the given the slug.
+      tags:
+      - studio
+  /volume:
+    get:
+      description: Return all categories, paginated
+      operationId: volumeList
+      parameters:
+      - description: The number of pages to skip before starting to collect the result
+          set
+        in: query
+        name: page
+        schema:
+          type: integer
+      - description: The numbers of items to return per page
+        in: query
+        name: perpage
+        schema:
+          type: integer
+      responses:
+        "200":
+          $ref: '#/responses/volumeResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: List all of the categories in a pagination response.
+      tags:
+      - volume
+    patch:
+      description: Update a current volume
+      operationId: volumePatch
+      parameters:
+      - description: New CategoryDocument
+        in: body
+        name: volume
+        required: true
+        schema:
+          $ref: '#/definitions/Category'
+      responses:
+        "200":
+          $ref: '#/responses/volumeResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Update a volume
+      tags:
+      - volume
+    post:
+      description: Return all categories, paginated
+      operationId: volumePost
+      parameters:
+      - description: New VolumeDocument
+        in: body
+        name: volume
+        required: true
+        schema:
+          $ref: '#/definitions/Volume'
+      responses:
+        "200":
+          $ref: '#/responses/volumeResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Post a new volume
+      tags:
+      - volume
+  /volume/{ObjectId}:
+    delete:
+      description: Delete a given volume
+      operationId: volumeDeleteId
+      parameters:
+      - description: MongoDB ObjectId
+        in: path
+        name: ObjectId
+        required: true
+        schema:
+          $ref: '#/definitions/ObjectId'
+      responses:
+        "200":
+          $ref: '#/responses/ok'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Delete a volume the given ObjectId.
+      tags:
+      - volume
+    get:
+      description: Get a given volume
+      operationId: volumeGetId
+      parameters:
+      - description: MongoDB ObjectId
+        in: path
+        name: ObjectId
+        required: true
+        schema:
+          $ref: '#/definitions/ObjectId'
+      responses:
+        "200":
+          $ref: '#/responses/volumeResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Get a volume the given ObjectId.
+      tags:
+      - volume
 responses:
   categoryResp:
     description: |-
@@ -929,4 +1726,109 @@ responses:
         type: string
       message:
         type: string
+  performerResp:
+    description: |-
+      JSONPaginationResponsePerformer --
+      HTTP status code 200 and repository model in data
+    headers:
+      page:
+        format: int64
+        type: integer
+      recordsonpage:
+        format: int64
+        type: integer
+      total:
+        format: int64
+        type: integer
+      totalpages:
+        format: int64
+        type: integer
+    schema:
+      items:
+        $ref: '#/definitions/Performer'
+      type: array
+  sceneResp:
+    description: |-
+      JSONPaginationResponseScene --
+      HTTP status code 200 and repository model in data
+    headers:
+      page:
+        format: int64
+        type: integer
+      recordsonpage:
+        format: int64
+        type: integer
+      total:
+        format: int64
+        type: integer
+      totalpages:
+        format: int64
+        type: integer
+    schema:
+      items:
+        $ref: '#/definitions/Scene'
+      type: array
+  seriesResp:
+    description: |-
+      JSONPaginationResponseSeries --
+      HTTP status code 200 and repository model in data
+    headers:
+      page:
+        format: int64
+        type: integer
+      recordsonpage:
+        format: int64
+        type: integer
+      total:
+        format: int64
+        type: integer
+      totalpages:
+        format: int64
+        type: integer
+    schema:
+      items:
+        $ref: '#/definitions/Series'
+      type: array
+  studioResp:
+    description: |-
+      JSONPaginationResponseStudio --
+      HTTP status code 200 and repository model in data
+    headers:
+      page:
+        format: int64
+        type: integer
+      recordsonpage:
+        format: int64
+        type: integer
+      total:
+        format: int64
+        type: integer
+      totalpages:
+        format: int64
+        type: integer
+    schema:
+      items:
+        $ref: '#/definitions/Studio'
+      type: array
+  volumeResp:
+    description: |-
+      JSONPaginationResponseVolume --
+      HTTP status code 200 and repository model in data
+    headers:
+      page:
+        format: int64
+        type: integer
+      recordsonpage:
+        format: int64
+        type: integer
+      total:
+        format: int64
+        type: integer
+      totalpages:
+        format: int64
+        type: integer
+    schema:
+      items:
+        $ref: '#/definitions/Volume'
+      type: array
 swagger: "2.0"
