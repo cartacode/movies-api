@@ -19,3 +19,17 @@ http://127.0.0.1:3001
 
 
 ### Generating Docs
+You first need to install swagger
+
+```
+download_url=$(curl -s https://api.github.com/repos/go-swagger/go-swagger/releases/latest | \
+  jq -r '.assets[] | select(.name | contains("'"$(uname | tr '[:upper:]' '[:lower:]')"'_amd64")) | .browser_download_url')
+curl -o /usr/local/bin/swagger -L'#' "$download_url"
+chmod +x /usr/local/bin/swagger
+```
+
+Generate the json file and serve it up on your browser
+
+```
+swagger generate spec -i swagger.yml -o ./swagger.json --scan-models && swagger serve -F=swagger swagger.json
+```

@@ -129,7 +129,7 @@ var routes = Routes{
 		controllers.CategorySlugGet,
 	},
 
-	// swagger:operation PATCH /category/ category categoryPatch
+	// swagger:operation PATCH /category category categoryPatch
 	// ---
 	// summary: Update a category
 	// description: Update a current category
@@ -152,7 +152,7 @@ var routes = Routes{
 		controllers.CategoryCategoryIDPatch,
 	},
 
-	// swagger:operation GET /category/ category categoryList
+	// swagger:operation GET /category category categoryList
 	// ---
 	// summary: List all of the categories in a pagination response.
 	// description: Return all categories, paginated
@@ -252,7 +252,7 @@ var routes = Routes{
 		controllers.CustomerCustomerIDGet,
 	},
 
-	// swagger:operation PATCH /customer/ customer customerPatch
+	// swagger:operation PATCH /customer customer customerPatch
 	// ---
 	// summary: Update a customer
 	// description: Update a current customer
@@ -275,7 +275,7 @@ var routes = Routes{
 		controllers.CustomerCustomerIDPatch,
 	},
 
-	// swagger:operation GET /customer/ customer customerList
+	// swagger:operation GET /customer customer customerList
 	// ---
 	// summary: List all of the categories in a pagination response.
 	// description: Return all categories, paginated
@@ -512,7 +512,7 @@ var routes = Routes{
 	 * Movie Controllers
 	 */
 
-	// swagger:operation GET /movie/ movie movieList
+	// swagger:operation GET /movie movie movieList
 	// ---
 	// summary: List all of the movies in a pagination response.
 	// description: Return all movies, paginated
@@ -607,7 +607,7 @@ var routes = Routes{
 		controllers.MovieSlugGet,
 	},
 
-	// swagger:operation PATCH /movie/ movie moviePatch
+	// swagger:operation PATCH /movie movie moviePatch
 	// ---
 	// summary: Update a movie
 	// description: Update a current movie
@@ -653,7 +653,7 @@ var routes = Routes{
 		controllers.MoviePost,
 	},
 
-	// swagger:operation GET /performer/ performer performerList
+	// swagger:operation GET /performer performer performerList
 	// ---
 	// summary: List all of the categories in a pagination response.
 	// description: Return all categories, paginated
@@ -748,7 +748,7 @@ var routes = Routes{
 		controllers.PerformerSlugGet,
 	},
 
-	// swagger:operation PATCH /performer/ performer performerPatch
+	// swagger:operation PATCH /performer performer performerPatch
 	// ---
 	// summary: Update a performer
 	// description: Update a current performer
@@ -794,7 +794,7 @@ var routes = Routes{
 		controllers.PerformerPost,
 	},
 
-	// swagger:operation GET /studio/ studio studioList
+	// swagger:operation GET /studio studio studioList
 	// ---
 	// summary: List all of the categories in a pagination response.
 	// description: Return all categories, paginated
@@ -890,7 +890,7 @@ var routes = Routes{
 		controllers.SceneSceneIDGet,
 	},
 
-	// swagger:operation PATCH /scene/ scene scenePatch
+	// swagger:operation PATCH /scene scene scenePatch
 	// ---
 	// summary: Update a scene
 	// description: Update a current scene
@@ -913,7 +913,7 @@ var routes = Routes{
 		controllers.SceneSceneIDPatch,
 	},
 
-	// swagger:operation GET /series/ series seriesList
+	// swagger:operation GET /series series seriesList
 	// ---
 	// summary: List all of the categories in a pagination response.
 	// description: Return all categories, paginated
@@ -1009,7 +1009,7 @@ var routes = Routes{
 		controllers.SeriesSeriesIDGet,
 	},
 
-	// swagger:operation PATCH /series/ series seriesPatch
+	// swagger:operation PATCH /series series seriesPatch
 	// ---
 	// summary: Update a series
 	// description: Update a current series
@@ -1032,7 +1032,7 @@ var routes = Routes{
 		controllers.SeriesSeriesIDPatch,
 	},
 
-	// swagger:operation GET /studio/ studio studioList
+	// swagger:operation GET /studio studio studioList
 	// ---
 	// summary: List all of the categories in a pagination response.
 	// description: Return all categories, paginated
@@ -1150,7 +1150,7 @@ var routes = Routes{
 		controllers.StudioSlugGet,
 	},
 
-	// swagger:operation PATCH /studio/ studio studioPatch
+	// swagger:operation PATCH /studio studio studioPatch
 	// ---
 	// summary: Update a studio
 	// description: Update a current studio
@@ -1173,7 +1173,7 @@ var routes = Routes{
 		controllers.StudioStudioIDPatch,
 	},
 
-	// swagger:operation GET /volume/ volume volumeList
+	// swagger:operation GET /volume volume volumeList
 	// ---
 	// summary: List all of the categories in a pagination response.
 	// description: Return all categories, paginated
@@ -1269,7 +1269,7 @@ var routes = Routes{
 		controllers.VolumeVolumeIDGet,
 	},
 
-	// swagger:operation PATCH /volume/ volume volumePatch
+	// swagger:operation PATCH /volume volume volumePatch
 	// ---
 	// summary: Update a volume
 	// description: Update a current volume
