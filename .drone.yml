@@ -1,0 +1,16 @@
+pipeline:
+  publish:
+    image: plugins/ecr
+    repo: 527162640954.dkr.ecr.us-east-1.amazonaws.com/vuli-api
+    registry: 527162640954.dkr.ecr.us-east-1.amazonaws.com
+    tags: ${DRONE_BUILD_NUMBER}
+  deploy:
+    image: joshdvir/drone-ecs-deploy
+    cluster: stage-vuli
+    service: stage-api
+    image_name: 527162640954.dkr.ecr.us-east-1.amazonaws.com/vuli-api:${DRONE_BUILD_NUMBER}
+    aws_region: us-east-1 # defaults to us-east-1
+    timeout: "500" # defaults to 300 / 5 min
+    max: "200" # defaults to 200
+    min: "100" # defaults to 100
+branches: master
