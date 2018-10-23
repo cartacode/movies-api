@@ -16,7 +16,11 @@ import (
 	"github.com/go-bongo/bongo"
 )
 
-// Scene --
+// Scene Document
+//
+// A scene can be associated with a volume, and series
+//
+// swagger:model
 type Scene struct {
 	bongo.DocumentBase `bson:",inline"`
 

@@ -1,0 +1,932 @@
+definitions:
+  Category:
+    description: A category can be associated with a scene, movie, volume, and series
+    properties:
+      _created:
+        format: date-time
+        type: string
+        x-go-name: Created
+      _id:
+        $ref: '#/definitions/ObjectId'
+      _modified:
+        format: date-time
+        type: string
+        x-go-name: Modified
+      description:
+        description: Description of this category if it has one. Not required
+        type: string
+        x-go-name: Description
+      slug:
+        description: Unique Slug for this category. lowercase and character stripped
+        type: string
+        x-go-name: Slug
+      title:
+        description: Unique Title for this category
+        type: string
+        x-go-name: Title
+    required:
+    - slug
+    - title
+    title: Category Document
+    type: object
+    x-go-package: github.com/VuliTv/api/models
+  Customer:
+    description: A customer on the site and all of their preferences and profile
+    properties:
+      active:
+        description: True/False. Is the user active
+        type: boolean
+        x-go-name: Active
+      credit:
+        $ref: '#/definitions/CustomerCredit'
+      email:
+        description: Unique email for this customer, read only, cognito controlled
+        readOnly: true
+        type: string
+        x-go-name: Email
+      purchased:
+        $ref: '#/definitions/CustomerPurchased'
+      wishlist:
+        $ref: '#/definitions/CustomerWishlist'
+    title: Customer Document
+    type: object
+    x-go-package: github.com/VuliTv/api/models
+  CustomerCredit:
+    description: CustomerCredit --
+    properties:
+      info_stored:
+        description: Has the user stored credit information
+        type: boolean
+        x-go-name: InfoStored
+      key:
+        description: Key for 3 leg transactions to provider bank
+        type: string
+        x-go-name: Key
+    type: object
+    x-go-package: github.com/VuliTv/api/models
+  CustomerPurchased:
+    description: CustomerPurchased --
+    properties:
+      movies:
+        description: List of Mongo ObjectID for the movies wish list. Embeddable
+        items:
+          type: string
+        type: array
+        x-go-name: Movies
+      scenes:
+        description: List of Mongo ObjectID for the scenes wish list. Embeddable
+        items:
+          type: string
+        type: array
+        x-go-name: Scenes
+      volumes:
+        description: List of Mongo ObjectID for the volumes wish list. Embeddable
+        items:
+          type: string
+        type: array
+        x-go-name: Volumes
+    type: object
+    x-go-package: github.com/VuliTv/api/models
+  CustomerWishlist:
+    description: CustomerWishlist --
+    properties:
+      movies:
+        description: List of Mongo ObjectID for the movies wish list. Embeddable
+        items:
+          type: string
+        type: array
+        x-go-name: Movies
+      scenes:
+        description: List of Mongo ObjectID for the scenes wish list. Embeddable
+        items:
+          type: string
+        type: array
+        x-go-name: Scenes
+      volumes:
+        description: List of Mongo ObjectID for the volumes wish list. Embeddable
+        items:
+          type: string
+        type: array
+        x-go-name: Volumes
+    type: object
+    x-go-package: github.com/VuliTv/api/models
+  Movie:
+    description: A Movie we can show. Contains all information and streaming data
+    properties:
+      _created:
+        format: date-time
+        type: string
+        x-go-name: Created
+      _id:
+        $ref: '#/definitions/ObjectId'
+      _modified:
+        format: date-time
+        type: string
+        x-go-name: Modified
+      category:
+        description: List of Categories
+        items:
+          type: string
+        type: array
+        x-go-name: Category
+      description:
+        description: Description of this movie if it has one. Not required
+        type: string
+        x-go-name: Description
+      downvotes:
+        description: Calculated by user input. Only decreases.
+        format: int32
+        type: integer
+        x-go-name: Downvotes
+      information:
+        $ref: '#/definitions/MovieInformation'
+      is_published:
+        description: True/False. Is it available on the site or not
+        type: boolean
+        x-go-name: IsPublished
+      length:
+        description: Total movie length in seconds
+        format: int32
+        type: integer
+        x-go-name: Length
+      playlist:
+        description: Ordered list of movie location(s)
+        items:
+          type: string
+        type: array
+        x-go-name: Playlist
+      price:
+        description: Read only value. Only Admin can update. Sets the price for a
+          movie
+        format: float
+        type: number
+        x-go-name: Price
+      rank:
+        description: Calculated externally and maintained here
+        format: int32
+        type: integer
+        x-go-name: Rank
+      reviewed:
+        description: True/False. Has someone reviewed this movie
+        type: boolean
+        x-go-name: Reviewed
+      slug:
+        description: Unique Slug for this movie. Made of <title><studio> lowercase
+          and character stripped
+        type: string
+        x-go-name: Slug
+      tags:
+        description: Free list of tag strings
+        items:
+          type: string
+        type: array
+        x-go-name: Tags
+      title:
+        description: Unique Title for this movie
+        type: string
+        x-go-name: Title
+      upvotes:
+        description: Calculated by user input. Only increases.
+        format: int32
+        type: integer
+        x-go-name: Upvotes
+      views:
+        description: Calculated by user view. Only increases.
+        format: int32
+        type: integer
+        x-go-name: Views
+    title: Movie Document
+    type: object
+    x-go-package: github.com/VuliTv/api/models
+  MovieInformation:
+    description: MovieInformation --
+    properties:
+      director:
+        items:
+          type: string
+        type: array
+        x-go-name: Director
+      performers:
+        description: List of Mongo ObjectID for the Performers in this movie. Embeddable
+        items:
+          type: string
+        type: array
+        x-go-name: Performers
+      studio:
+        type: string
+        x-go-name: Studio
+    type: object
+    x-go-package: github.com/VuliTv/api/models
+  ObjectId:
+    description: http://www.mongodb.org/display/DOCS/Object+IDs
+    title: |-
+      ObjectId is a unique ID identifying a BSON value. It must be exactly 12 bytes
+      long. MongoDB objects by default have such a property set in their "_id"
+      property.
+    type: string
+    x-go-package: github.com/VuliTv/api/vendor/gopkg.in/mgo.v2/bson
+  Performer:
+    description: A document containing all information about a performer
+    properties:
+      _created:
+        format: date-time
+        type: string
+        x-go-name: Created
+      _id:
+        $ref: '#/definitions/ObjectId'
+      _modified:
+        format: date-time
+        type: string
+        x-go-name: Modified
+      bio:
+        type: string
+        x-go-name: Bio
+      birthdate:
+        format: date-time
+        type: string
+        x-go-name: Birthdate
+      birthplace:
+        type: string
+        x-go-name: Birthplace
+      gender:
+        type: string
+        x-go-name: Gender
+      name:
+        type: string
+        x-go-name: Name
+      size:
+        $ref: '#/definitions/PerformerSize'
+      slug:
+        type: string
+        x-go-name: Slug
+      social:
+        $ref: '#/definitions/PerformerSocial'
+      traits:
+        $ref: '#/definitions/PerformerTraits'
+    title: Performer Document
+    type: object
+    x-go-package: github.com/VuliTv/api/models
+  PerformerSize:
+    description: PerformerSize --
+    properties:
+      bust:
+        type: string
+        x-go-name: Bust
+      height:
+        format: int32
+        type: integer
+        x-go-name: Height
+      waist:
+        format: int32
+        type: integer
+        x-go-name: Waist
+      weight:
+        format: int32
+        type: integer
+        x-go-name: Weight
+    type: object
+    x-go-package: github.com/VuliTv/api/models
+  PerformerSocial:
+    description: PerformerSocial --
+    properties:
+      instagram:
+        type: string
+        x-go-name: Instagram
+      snapchat:
+        type: string
+        x-go-name: Snapchat
+      twitter:
+        type: string
+        x-go-name: Twitter
+      youtube:
+        type: string
+        x-go-name: Youtube
+    type: object
+    x-go-package: github.com/VuliTv/api/models
+  PerformerTraits:
+    description: PerformerTraits --
+    properties:
+      ethnicity:
+        type: string
+        x-go-name: Ethnicity
+      haircolor:
+        type: string
+        x-go-name: HairColor
+      piercings:
+        type: boolean
+        x-go-name: Piercings
+      sign:
+        type: boolean
+        x-go-name: StarSign
+      tattoos:
+        type: boolean
+        x-go-name: Tattoos
+    type: object
+    x-go-package: github.com/VuliTv/api/models
+  Scene:
+    description: A scene can be associated with a volume, and series
+    properties:
+      _created:
+        format: date-time
+        type: string
+        x-go-name: Created
+      _id:
+        $ref: '#/definitions/ObjectId'
+      _modified:
+        format: date-time
+        type: string
+        x-go-name: Modified
+      category:
+        items:
+          type: string
+        type: array
+        x-go-name: Category
+      description:
+        description: Description of this scene if it has one. Not required
+        type: string
+        x-go-name: Description
+      downvotes:
+        description: Calculated by user input. Only decreases.
+        format: int32
+        type: integer
+        x-go-name: Downvotes
+      information:
+        $ref: '#/definitions/VolumeInformation'
+      is_published:
+        description: True/False. Is it available on the site or not
+        type: boolean
+        x-go-name: IsPublished
+      length:
+        description: Total scene length in seconds
+        format: int32
+        type: integer
+        x-go-name: Length
+      price:
+        description: Read only value. Only Admin can update. Sets the price for a
+          scene
+        format: float
+        type: number
+        x-go-name: Price
+      rank:
+        description: Calculated externally and maintained here
+        format: int32
+        type: integer
+        x-go-name: Rank
+      reviewed:
+        description: True/False. Has someone reviewed this scene
+        type: boolean
+        x-go-name: Reviewed
+      slug:
+        description: Unique Slug for this scene. Made of <title><studio> lowercase
+          and character stripped
+        type: string
+        x-go-name: Slug
+      tags:
+        description: Free list of tag strings
+        items:
+          type: string
+        type: array
+        x-go-name: Tags
+      title:
+        description: Unique Title for this scene
+        type: string
+        x-go-name: Title
+      upvotes:
+        description: Calculated by user input. Only increases.
+        format: int32
+        type: integer
+        x-go-name: Upvotes
+      views:
+        description: Calculated by user view. Only increases.
+        format: int32
+        type: integer
+        x-go-name: Views
+      volume:
+        $ref: '#/definitions/Volume'
+    title: Scene Document
+    type: object
+    x-go-package: github.com/VuliTv/api/models
+  Series:
+    description: A series can be associated with N volumes
+    properties:
+      _created:
+        format: date-time
+        type: string
+        x-go-name: Created
+      _id:
+        $ref: '#/definitions/ObjectId'
+      _modified:
+        format: date-time
+        type: string
+        x-go-name: Modified
+      category:
+        items:
+          type: string
+        type: array
+        x-go-name: Category
+      description:
+        description: Description of this scene if it has one. Not required
+        type: string
+        x-go-name: Description
+      downvotes:
+        description: Calculated by user input. Only decreases.
+        format: int32
+        type: integer
+        x-go-name: Downvotes
+      information:
+        $ref: '#/definitions/VolumeInformation'
+      is_published:
+        description: True/False. Is it available on the site or not
+        type: boolean
+        x-go-name: IsPublished
+      length:
+        description: Cummulative volume lengths in seconds
+        format: int32
+        type: integer
+        x-go-name: Length
+      price:
+        description: Read only value. Only Admin can update. Sets the price for a
+          the volume which supersedes the scene price
+        format: float
+        type: number
+        x-go-name: Price
+      rank:
+        description: Calculated externally and maintained here
+        format: int32
+        type: integer
+        x-go-name: Rank
+      reviewed:
+        description: True/False. Has someone reviewed this scene
+        type: boolean
+        x-go-name: Reviewed
+      slug:
+        description: Unique Slug for this series. Made of <title><studio>-series lowercase
+          and character stripped
+        type: string
+        x-go-name: Slug
+      tags:
+        description: Free list of tag strings
+        items:
+          type: string
+        type: array
+        x-go-name: Tags
+      title:
+        description: Unique Title for this entire series(show)
+        type: string
+        x-go-name: Title
+      upvotes:
+        description: Calculated by user input. Only increases.
+        format: int32
+        type: integer
+        x-go-name: Upvotes
+      views:
+        description: Calculated by user view. Only increases.
+        format: int32
+        type: integer
+        x-go-name: Views
+    title: Series Document
+    type: object
+    x-go-package: github.com/VuliTv/api/models
+  Studio:
+    description: A studio can be associated with a Series, Volume, or Movie
+    properties:
+      _created:
+        format: date-time
+        type: string
+        x-go-name: Created
+      _id:
+        $ref: '#/definitions/ObjectId'
+      _modified:
+        format: date-time
+        type: string
+        x-go-name: Modified
+      description:
+        description: Public description of the studio
+        type: string
+        x-go-name: Description
+      name:
+        description: Name of the studio
+        type: string
+        x-go-name: Name
+      slug:
+        description: Unique Slug for this studio. Made of <title><studio> lowercase
+          and character stripped
+        type: string
+        x-go-name: Slug
+    title: Studio Document
+    type: object
+    x-go-package: github.com/VuliTv/api/models
+  Volume:
+    description: A volume can be associated with a Series
+    properties:
+      _created:
+        format: date-time
+        type: string
+        x-go-name: Created
+      _id:
+        $ref: '#/definitions/ObjectId'
+      _modified:
+        format: date-time
+        type: string
+        x-go-name: Modified
+      category:
+        items:
+          type: string
+        type: array
+        x-go-name: Category
+      description:
+        description: Description of this scene if it has one. Not required
+        type: string
+        x-go-name: Description
+      downvotes:
+        description: Calculated by user input. Only decreases.
+        format: int32
+        type: integer
+        x-go-name: Downvotes
+      information:
+        $ref: '#/definitions/VolumeInformation'
+      is_published:
+        description: True/False. Is it available on the site or not
+        type: boolean
+        x-go-name: IsPublished
+      length:
+        description: Cummulative scene lengths in seconds
+        format: int32
+        type: integer
+        x-go-name: Length
+      price:
+        description: Read only value. Only Admin can update. Sets the price for a
+          the volume which supersedes the scene price
+        format: float
+        type: number
+        x-go-name: Price
+      rank:
+        description: Calculated externally and maintained here
+        format: int32
+        type: integer
+        x-go-name: Rank
+      reviewed:
+        description: True/False. Has someone reviewed this scene
+        type: boolean
+        x-go-name: Reviewed
+      series:
+        $ref: '#/definitions/Series'
+      slug:
+        description: Unique Slug for this scene. Made of <title><studio> lowercase
+          and character stripped
+        type: string
+        x-go-name: Slug
+      tags:
+        description: Free list of tag strings
+        items:
+          type: string
+        type: array
+        x-go-name: Tags
+      title:
+        description: Unique Title for this scene
+        type: string
+        x-go-name: Title
+      upvotes:
+        description: Calculated by user input. Only increases.
+        format: int32
+        type: integer
+        x-go-name: Upvotes
+      views:
+        description: Calculated by user view. Only increases.
+        format: int32
+        type: integer
+        x-go-name: Views
+    title: Volume Document
+    type: object
+    x-go-package: github.com/VuliTv/api/models
+  VolumeInformation:
+    description: VolumeInformation --
+    properties:
+      director:
+        $ref: '#/definitions/Performer'
+      performers:
+        description: List of Mongo ObjectID for the Performers in this scene. Embeddable
+        items:
+          type: string
+        type: array
+        x-go-name: Performers
+      studio:
+        $ref: '#/definitions/Studio'
+    type: object
+    x-go-package: github.com/VuliTv/api/models
+info: {}
+paths:
+  /category/:
+    get:
+      description: Return all categories, paginated
+      operationId: categoryList
+      parameters:
+      - description: MongoDB ObjectId
+        in: path
+        name: category
+        required: true
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/categoryResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: List all of the categories in a pagination response.
+      tags:
+      - category
+    patch:
+      description: Update a current category
+      operationId: categoryPatch
+      parameters:
+      - description: New CategoryDocument
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/Category'
+      responses:
+        "200":
+          $ref: '#/responses/categoryResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Update a category
+      tags:
+      - category
+    post:
+      description: Return all categories, paginated
+      operationId: categoryPost
+      parameters:
+      - description: New CategoryDocument
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/Category'
+      responses:
+        "200":
+          $ref: '#/responses/categoryResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Post a new category
+      tags:
+      - category
+  /category/{id}:
+    delete:
+      description: Delete a given category
+      operationId: categoryDeleteId
+      parameters:
+      - description: MongoDB ObjectId
+        in: path
+        name: category
+        required: true
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/categoryResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Delete a category the given id.
+      tags:
+      - category
+    get:
+      description: Get a given category
+      operationId: categoryGetId
+      parameters:
+      - description: MongoDB ObjectId
+        in: path
+        name: category
+        required: true
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/categoryResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Get a category the given id.
+      tags:
+      - category
+  /category/slug/{id}:
+    get:
+      description: Search for a category by slug
+      operationId: categorySlugGetId
+      parameters:
+      - description: slug
+        in: path
+        name: category
+        required: true
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/categoryResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Get a category the given the slug.
+      tags:
+      - category
+  /customer/:
+    get:
+      description: Return all categories, paginated
+      operationId: customerList
+      parameters:
+      - description: MongoDB ObjectId
+        in: path
+        name: customer
+        required: true
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/customerResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: List all of the categories in a pagination response.
+      tags:
+      - customer
+    patch:
+      description: Update a current customer
+      operationId: customerPatch
+      parameters:
+      - description: New CustomerDocument
+        in: body
+        name: customer
+        required: true
+        schema:
+          $ref: '#/definitions/Customer'
+      responses:
+        "200":
+          $ref: '#/responses/customerResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Update a customer
+      tags:
+      - customer
+    post:
+      description: Return all categories, paginated
+      operationId: customerPost
+      parameters:
+      - description: New CategoryDocument
+        in: body
+        name: customer
+        required: true
+        schema:
+          $ref: '#/definitions/Customer'
+      responses:
+        "200":
+          $ref: '#/responses/customerResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Post a new customer
+      tags:
+      - customer
+  /customer/{id}:
+    delete:
+      description: Delete a given customer
+      operationId: customerDeleteId
+      parameters:
+      - description: MongoDB ObjectId
+        in: path
+        name: customer
+        required: true
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/customerResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Delete a customer the given id.
+      tags:
+      - customer
+    get:
+      description: Get a given customer
+      operationId: customerGetId
+      parameters:
+      - description: MongoDB ObjectId
+        in: path
+        name: customer
+        required: true
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/customerResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Get a customer the given id.
+      tags:
+      - customer
+  /movie/:
+    post:
+      description: Return all categories, paginated
+      operationId: moviePost
+      parameters:
+      - description: New MovieDocument
+        in: body
+        name: movie
+        required: true
+        schema:
+          $ref: '#/definitions/Movie'
+      responses:
+        "200":
+          $ref: '#/responses/movieResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Post a new movie
+      tags:
+      - movie
+  /movie/slug/{id}:
+    get:
+      description: Search for a movie by slug
+      operationId: movieSlugGetId
+      parameters:
+      - description: slug
+        in: path
+        name: movie
+        required: true
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/movieResp'
+        "404":
+          $ref: '#/responses/genericJsonError'
+      summary: Get a movie the given the slug.
+      tags:
+      - movie
+responses:
+  categoryResp:
+    description: |-
+      JSONPaginationResponseCategory --
+      HTTP status code 200 and repository model in data
+    headers:
+      page:
+        format: int64
+        type: integer
+      recordsonpage:
+        format: int64
+        type: integer
+      total:
+        format: int64
+        type: integer
+      totalpages:
+        format: int64
+        type: integer
+    schema:
+      items:
+        $ref: '#/definitions/Category'
+      type: array
+  customerResp:
+    description: |-
+      JSONPaginationResponseCustomer --
+      HTTP status code 200 and repository model in data
+    headers:
+      page:
+        format: int64
+        type: integer
+      recordsonpage:
+        format: int64
+        type: integer
+      total:
+        format: int64
+        type: integer
+      totalpages:
+        format: int64
+        type: integer
+    schema:
+      items:
+        $ref: '#/definitions/Customer'
+      type: array
+  genericJsonError:
+    description: |-
+      JSONErrorResponse --
+      NotFound
+    headers:
+      error:
+        type: string
+  movieResp:
+    description: |-
+      JSONPaginationResponseMovie --
+      HTTP status code 200 and repository model in data
+    headers:
+      page:
+        format: int64
+        type: integer
+      recordsonpage:
+        format: int64
+        type: integer
+      total:
+        format: int64
+        type: integer
+      totalpages:
+        format: int64
+        type: integer
+    schema:
+      items:
+        $ref: '#/definitions/Movie'
+      type: array
+  ok:
+    description: |-
+      JSONSuccessResponse --
+      Success response
+    headers:
+      identifier:
+        type: string
+      message:
+        type: string
+swagger: "2.0"

@@ -1,12 +1,13 @@
 package dbh
 
 import (
+	"github.com/VuliTv/api/libs/envhelp"
 	"github.com/go-bongo/bongo"
 )
 
 var config = &bongo.Config{
-	ConnectionString: "mongodb",
-	Database:         "vuliapi",
+	ConnectionString: envhelp.GetEnv("MONGO_HOST", "mongodb"),
+	Database:         envhelp.GetEnv("MONGO_DB", "vuliapi"),
 }
 
 // NewConnection --

@@ -1,11 +1,20 @@
-/*
- * Vuli API
- *
- * Vuli Movie Delivery API
- *
- * API version: 3
-
- */
+// Vuli Platform API
+//
+// This is the core service for vuli content and member managment
+//
+//     Schemes: https
+//     Host: api-stage.vuli.tv
+//     Version: 0.0.1
+//     License: Proprietary
+//     Contact: Richard<richard@vuli.tv>
+//
+//     Consumes:
+//     - application/json
+//
+//     Produces:
+//     - application/json
+//
+// swagger:meta
 
 package main
 

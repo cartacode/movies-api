@@ -11,7 +11,21 @@ package controllers
 
 import (
 	"net/http"
+
+	"github.com/VuliTv/api/models"
 )
+
+// JSONPaginationResponseCustomer --
+// HTTP status code 200 and repository model in data
+// swagger:response customerResp
+type JSONPaginationResponseCustomer struct {
+	// in: body
+	Results       []models.Customer `json:"results"`
+	TotalResults  int               `json:"total"`
+	RecordsOnPage int               `json:"recordsonpage"`
+	Page          int               `json:"page"`
+	TotalPages    int               `json:"totalpages"`
+}
 
 // CustomerCustomerIDDelete --
 func CustomerCustomerIDDelete(w http.ResponseWriter, r *http.Request) {

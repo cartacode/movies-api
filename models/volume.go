@@ -16,7 +16,11 @@ import (
 	"github.com/go-bongo/bongo"
 )
 
-// Volume --
+// Volume Document
+//
+// A volume can be associated with a Series
+//
+// swagger:model
 type Volume struct {
 	bongo.DocumentBase `bson:",inline"`
 	Category           []string `json:"category,omitempty"`

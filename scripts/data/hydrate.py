@@ -8,8 +8,8 @@ import os
 import pprint
 pp = pprint.pprint
 
-# HOST = "https://api-stage.vuli.tv"
-HOST = "http://127.0.0.1:3000"
+HOST = "https://api-stage.vuli.tv"
+# HOST = "http://127.0.0.1:3000"
 
 
 def openDataFile(path):
@@ -164,8 +164,8 @@ def movie(path=None):
 def main():
 
     # categories
-    # category(openDataFile("data/categories.json"))
-    # directors(openDataFile("data/performers/directors.json"))
+    category(openDataFile("data/categories.json"))
+    directors(openDataFile("data/performers/directors.json"))
     loadToCache("/Users/rhoop/Downloads/Evil Angel/Movie", "movie")
     movie()
     exit(0)

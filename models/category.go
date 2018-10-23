@@ -16,17 +16,26 @@ import (
 	"github.com/go-bongo/bongo"
 )
 
-// Category --
+// Category Document
+//
+// A category can be associated with a scene, movie, volume, and series
+//
+// swagger:model category categoryDocument
 type Category struct {
 	bongo.DocumentBase `bson:",inline"`
 
 	// Unique Slug for this category. lowercase and character stripped
+	//
+	// required: true
 	Slug string `json:"slug"`
 
 	// Description of this category if it has one. Not required
+	// required: false
 	Description string `json:"description,omitempty"`
 
 	// Unique Title for this category
+	//
+	// required: true
 	Title string `json:"title"`
 }
 

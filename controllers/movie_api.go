@@ -23,7 +23,10 @@ import (
 )
 
 // JSONPaginationResponseMovie --
+// HTTP status code 200 and repository model in data
+// swagger:response movieResp
 type JSONPaginationResponseMovie struct {
+	// in: body
 	Results       []models.Movie `json:"results"`
 	TotalResults  int            `json:"total"`
 	RecordsOnPage int            `json:"recordsonpage"`

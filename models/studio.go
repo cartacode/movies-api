@@ -16,7 +16,11 @@ import (
 	"github.com/go-bongo/bongo"
 )
 
-// Studio --
+// Studio Document
+//
+// A studio can be associated with a Series, Volume, or Movie
+//
+// swagger:model
 type Studio struct {
 	bongo.DocumentBase `bson:",inline"`
 	// Public description of the studio

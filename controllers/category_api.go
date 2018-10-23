@@ -23,7 +23,10 @@ import (
 )
 
 // JSONPaginationResponseCategory --
+// HTTP status code 200 and repository model in data
+// swagger:response categoryResp
 type JSONPaginationResponseCategory struct {
+	// in: body
 	Results       []models.Category `json:"results"`
 	TotalResults  int               `json:"total"`
 	RecordsOnPage int               `json:"recordsonpage"`

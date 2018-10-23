@@ -16,10 +16,15 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-// Movie --
+// Movie Document
+//
+// A Movie we can show. Contains all information and streaming data
+//
+// swagger:model
 type Movie struct {
 	bongo.DocumentBase `bson:",inline"`
 
+	// List of Categories
 	Category []string `json:"category,omitempty"`
 
 	Information *MovieInformation `json:"information,omitempty"`

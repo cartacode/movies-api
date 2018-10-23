@@ -60,6 +60,21 @@ var routes = Routes{
 		Index,
 	},
 
+	// swagger:operation DELETE /category/{id} category categoryDeleteId
+	// ---
+	// summary: Delete a category the given id.
+	// description: Delete a given category
+	// parameters:
+	// - name: category
+	//   in: path
+	//   description: MongoDB ObjectId
+	//   type: string
+	//   required: true
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/categoryResp"
+	//   "404":
+	//     "$ref": "#/responses/genericJsonError"
 	Route{
 		"CategoryCategoryIdDelete",
 		strings.ToUpper("Delete"),
@@ -67,6 +82,21 @@ var routes = Routes{
 		controllers.CategoryCategoryIDDelete,
 	},
 
+	// swagger:operation GET /category/{id} category categoryGetId
+	// ---
+	// summary: Get a category the given id.
+	// description: Get a given category
+	// parameters:
+	// - name: category
+	//   in: path
+	//   description: MongoDB ObjectId
+	//   type: string
+	//   required: true
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/categoryResp"
+	//   "404":
+	//     "$ref": "#/responses/genericJsonError"
 	Route{
 		"CategoryCategoryIDGet",
 		strings.ToUpper("Get"),
@@ -74,6 +104,21 @@ var routes = Routes{
 		controllers.CategoryCategoryIDGet,
 	},
 
+	// swagger:operation GET /category/slug/{id} category categorySlugGetId
+	// ---
+	// summary: Get a category the given the slug.
+	// description: Search for a category by slug
+	// parameters:
+	// - name: category
+	//   in: path
+	//   description: slug
+	//   type: string
+	//   required: true
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/categoryResp"
+	//   "404":
+	//     "$ref": "#/responses/genericJsonError"
 	Route{
 		"CategorySlugGet",
 		strings.ToUpper("Get"),
@@ -81,6 +126,22 @@ var routes = Routes{
 		controllers.CategorySlugGet,
 	},
 
+	// swagger:operation PATCH /category/ category categoryPatch
+	// ---
+	// summary: Update a category
+	// description: Update a current category
+	// parameters:
+	// - name: category
+	//   in: body
+	//   description: New CategoryDocument
+	//   required: true
+	//   schema:
+	//     "$ref": "#/definitions/Category"
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/categoryResp"
+	//   "404":
+	//     "$ref": "#/responses/genericJsonError"
 	Route{
 		"CategoryCategoryIDPatch",
 		strings.ToUpper("Patch"),
@@ -88,6 +149,21 @@ var routes = Routes{
 		controllers.CategoryCategoryIDPatch,
 	},
 
+	// swagger:operation GET /category/ category categoryList
+	// ---
+	// summary: List all of the categories in a pagination response.
+	// description: Return all categories, paginated
+	// parameters:
+	// - name: category
+	//   in: path
+	//   description: MongoDB ObjectId
+	//   type: string
+	//   required: true
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/categoryResp"
+	//   "404":
+	//     "$ref": "#/responses/genericJsonError"
 	Route{
 		"CategoryGet",
 		strings.ToUpper("Get"),
@@ -95,6 +171,22 @@ var routes = Routes{
 		controllers.CategoryGet,
 	},
 
+	// swagger:operation POST /category/ category categoryPost
+	// ---
+	// summary: Post a new category
+	// description: Return all categories, paginated
+	// parameters:
+	// - name: category
+	//   in: body
+	//   description: New CategoryDocument
+	//   required: true
+	//   schema:
+	//     "$ref": "#/definitions/Category"
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/categoryResp"
+	//   "404":
+	//     "$ref": "#/responses/genericJsonError"
 	Route{
 		"CategoryPost",
 		strings.ToUpper("Post"),
@@ -102,6 +194,21 @@ var routes = Routes{
 		controllers.CategoryPost,
 	},
 
+	// swagger:operation DELETE /customer/{id} customer customerDeleteId
+	// ---
+	// summary: Delete a customer the given id.
+	// description: Delete a given customer
+	// parameters:
+	// - name: customer
+	//   in: path
+	//   description: MongoDB ObjectId
+	//   type: string
+	//   required: true
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/customerResp"
+	//   "404":
+	//     "$ref": "#/responses/genericJsonError"
 	Route{
 		"CustomerCustomerIDDelete",
 		strings.ToUpper("Delete"),
@@ -109,6 +216,21 @@ var routes = Routes{
 		controllers.CustomerCustomerIDDelete,
 	},
 
+	// swagger:operation GET /customer/{id} customer customerGetId
+	// ---
+	// summary: Get a customer the given id.
+	// description: Get a given customer
+	// parameters:
+	// - name: customer
+	//   in: path
+	//   description: MongoDB ObjectId
+	//   type: string
+	//   required: true
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/customerResp"
+	//   "404":
+	//     "$ref": "#/responses/genericJsonError"
 	Route{
 		"CustomerCustomerIDGet",
 		strings.ToUpper("Get"),
@@ -116,6 +238,22 @@ var routes = Routes{
 		controllers.CustomerCustomerIDGet,
 	},
 
+	// swagger:operation PATCH /customer/ customer customerPatch
+	// ---
+	// summary: Update a customer
+	// description: Update a current customer
+	// parameters:
+	// - name: customer
+	//   in: body
+	//   description: New CustomerDocument
+	//   required: true
+	//   schema:
+	//     "$ref": "#/definitions/Customer"
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/customerResp"
+	//   "404":
+	//     "$ref": "#/responses/genericJsonError"
 	Route{
 		"CustomerCustomerIDPatch",
 		strings.ToUpper("Patch"),
@@ -123,6 +261,21 @@ var routes = Routes{
 		controllers.CustomerCustomerIDPatch,
 	},
 
+	// swagger:operation GET /customer/ customer customerList
+	// ---
+	// summary: List all of the categories in a pagination response.
+	// description: Return all categories, paginated
+	// parameters:
+	// - name: customer
+	//   in: path
+	//   description: MongoDB ObjectId
+	//   type: string
+	//   required: true
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/customerResp"
+	//   "404":
+	//     "$ref": "#/responses/genericJsonError"
 	Route{
 		"CustomerGet",
 		strings.ToUpper("Get"),
@@ -130,6 +283,22 @@ var routes = Routes{
 		controllers.CustomerGet,
 	},
 
+	// swagger:operation POST /customer/ customer customerPost
+	// ---
+	// summary: Post a new customer
+	// description: Return all categories, paginated
+	// parameters:
+	// - name: customer
+	//   in: body
+	//   description: New CategoryDocument
+	//   required: true
+	//   schema:
+	//     "$ref": "#/definitions/Customer"
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/customerResp"
+	//   "404":
+	//     "$ref": "#/responses/genericJsonError"
 	Route{
 		"CustomerPost",
 		strings.ToUpper("Post"),
@@ -158,6 +327,21 @@ var routes = Routes{
 		controllers.MovieMovieIDGet,
 	},
 
+	// swagger:operation GET /movie/slug/{id} movie movieSlugGetId
+	// ---
+	// summary: Get a movie the given the slug.
+	// description: Search for a movie by slug
+	// parameters:
+	// - name: movie
+	//   in: path
+	//   description: slug
+	//   type: string
+	//   required: true
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/movieResp"
+	//   "404":
+	//     "$ref": "#/responses/genericJsonError"
 	Route{
 		"MovieSlugGet",
 		strings.ToUpper("Get"),
@@ -172,6 +356,22 @@ var routes = Routes{
 		controllers.MovieMovieIDPatch,
 	},
 
+	// swagger:operation POST /movie/ movie moviePost
+	// ---
+	// summary: Post a new movie
+	// description: Return all categories, paginated
+	// parameters:
+	// - name: movie
+	//   in: body
+	//   description: New MovieDocument
+	//   required: true
+	//   schema:
+	//     "$ref": "#/definitions/Movie"
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/movieResp"
+	//   "404":
+	//     "$ref": "#/responses/genericJsonError"
 	Route{
 		"MoviePost",
 		strings.ToUpper("Post"),

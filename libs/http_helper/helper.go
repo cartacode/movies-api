@@ -6,11 +6,15 @@ import (
 )
 
 // JSONErrorResponse --
+// NotFound
+// swagger:response genericJsonError
 type JSONErrorResponse struct {
 	Error string `json:"error"`
 }
 
 // JSONSuccessResponse --
+// Success response
+// swagger:response ok
 type JSONSuccessResponse struct {
 	Message    string `json:"message"`
 	Identifier string `json:"identifier"`

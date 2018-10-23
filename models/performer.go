@@ -17,7 +17,11 @@ import (
 	"github.com/go-bongo/bongo"
 )
 
-// Performer --
+// Performer Document
+//
+// A document containing all information about a performer
+//
+// swagger:model
 type Performer struct {
 	bongo.DocumentBase `bson:",inline"`
 
