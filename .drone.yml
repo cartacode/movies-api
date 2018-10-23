@@ -15,13 +15,8 @@ pipeline:
     min: "100" # defaults to 100
   slack:
     image: plugins/slack
+    username: drone
     webhook: https://hooks.slack.com/services/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
-    template: >
-      {{#success build.status}}
-        build {{build.number}} succeeded. Good job.
-      {{else}}
-        build {{build.number}} failed. Fix me please.
-      {{/success}}
     when:
       status: [ success, failure ]
 branches: master
