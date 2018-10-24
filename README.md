@@ -3,9 +3,9 @@
 Vuli Movie Delivery API
 
 ## Overview
-- API version: 3
-- Build date: 2018-09-25T01:11:57.183Z
-For more information, please visit [http://spry.is](http://spry.is)
+- API version: 1
+- Build date: N/A
+For more information, please visit [Drone Build Page](https://drone.vuli.io/VuliTv/go-movie-api)
 
 
 ### Running the server
@@ -31,5 +31,6 @@ chmod +x /usr/local/bin/swagger
 Generate the json file and serve it up on your browser
 
 ```
-swagger generate spec -i swagger.yml -o ./swagger.json --scan-models && swagger serve -F=swagger swagger.json
+swagger generate spec -i swagger.yml -o ./swagger.json --scan-models
+swagger serve -F=swagger swagger.json
 ```

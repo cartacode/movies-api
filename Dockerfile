@@ -1,4 +1,4 @@
-FROM golang:alpine
+FROM golang:1.10-alpine
 
 RUN apk add git curl
 RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
