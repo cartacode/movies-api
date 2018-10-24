@@ -31,7 +31,7 @@ var searchRoutes = Routes{
 		"MoviesSearchGet",
 		strings.ToUpper("Get"),
 		"/search/movie",
-		controllers.MoviesSearchGet,
+		controllers.MovieSearchGet,
 	},
 
 	// swagger:operation GET /search/scene search sceneSearchList
@@ -55,9 +55,9 @@ var searchRoutes = Routes{
 	//   "404":
 	//     "$ref": "#/responses/genericJsonError"
 	Route{
-		"MoviesSearchGet",
+		"SceneSearchGet",
 		strings.ToUpper("Get"),
 		"/search/scene",
-		controllers.MoviesSearchGet,
+		controllers.SceneSearchGet,
 	},
 }
