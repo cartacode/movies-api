@@ -7,7 +7,7 @@ pipeline:
     image: docker.io/spryhq/golang-dep
     pull: true
     commands:
-      - /go/bin/dep ensure
+      - dep ensure
       - go test ./... -cover
     environment:
       - CGO=0
