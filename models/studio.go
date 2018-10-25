@@ -24,13 +24,13 @@ import (
 type Studio struct {
 	bongo.DocumentBase `bson:",inline"`
 	// Public description of the studio
-	Description string `json:"description,omitempty"`
+	Description string `json:"description"`
 
 	// Name of the studio
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 
 	// Unique Slug for this studio. Made of <title><studio> lowercase and character stripped
-	Slug string `json:"slug,omitempty"`
+	Slug string `json:"slug"`
 }
 
 // Validate --

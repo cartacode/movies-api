@@ -11,11 +11,11 @@ package models
 
 // PerformerSize --
 type PerformerSize struct {
-	Weight int32 `json:"weight,omitempty"`
+	Weight int32 `json:"weight"`
 
-	Waist int32 `json:"waist,omitempty"`
+	Waist int32 `json:"waist"`
 
-	Bust string `json:"bust,omitempty"`
+	Bust string `json:"bust"`
 
-	Height int32 `json:"height,omitempty"`
+	Height int32 `json:"height"`
 }

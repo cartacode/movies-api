@@ -11,11 +11,11 @@ package models
 
 // PerformerSocial --
 type PerformerSocial struct {
-	Twitter string `json:"twitter,omitempty"`
+	Twitter string `json:"twitter"`
 
-	Youtube string `json:"youtube,omitempty"`
+	Youtube string `json:"youtube"`
 
-	Instagram string `json:"instagram,omitempty"`
+	Instagram string `json:"instagram"`
 
-	Snapchat string `json:"snapchat,omitempty"`
+	Snapchat string `json:"snapchat"`
 }

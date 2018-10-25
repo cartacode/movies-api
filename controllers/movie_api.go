@@ -15,7 +15,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/VuliTv/api/libs/http_helper"
+	"github.com/VuliTv/api/libs/requests"
 	"github.com/VuliTv/api/models"
 	"github.com/go-bongo/bongo"
 	"github.com/gorilla/mux"
@@ -43,34 +43,34 @@ func MovieMovieIDDelete(w http.ResponseWriter, r *http.Request) {
 	log.Info(movieID)
 	// Check valid bson id
 	if !bson.IsObjectIdHex(movieID) {
-		httphelper.ReturnAPIError(w, fmt.Errorf("Not a valid bson Id"))
+		requests.ReturnAPIError(w, fmt.Errorf("Not a valid bson Id"))
 		return
 	}
 
 	// Find doc
 	err := connection.Collection("movie").FindById(bson.ObjectIdHex(movieID), movie)
 	if err != nil {
-		httphelper.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, err)
 		return
 	}
 	// Delete the document
 	err = connection.Collection("movie").DeleteDocument(movie)
 	log.Info(err)
 	if err != nil {
-		httphelper.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, err)
 		return
 	}
 
 	// Send the response
-	response := httphelper.JSONSuccessResponse{Message: "success", Identifier: movie.Id.String()}
+	response := requests.JSONSuccessResponse{Message: "success", Identifier: movie.Id.String()}
 
 	js, err := json.Marshal(response)
 
 	if err != nil {
-		httphelper.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, err)
 		return
 	}
-	httphelper.ReturnAPIOK(w, js)
+	requests.ReturnAPIOK(w, js)
 }
 
 // MovieMovieIDGet -- Takes Movie ID for a finder
@@ -81,14 +81,14 @@ func MovieMovieIDGet(w http.ResponseWriter, r *http.Request) {
 
 	// Check valid bson id
 	if !bson.IsObjectIdHex(movieID) {
-		httphelper.ReturnAPIError(w, fmt.Errorf("Not a valid bson Id"))
+		requests.ReturnAPIError(w, fmt.Errorf("Not a valid bson Id"))
 		return
 	}
 
 	// Find doc
 	err := connection.Collection("movie").FindById(bson.ObjectIdHex(movieID), movie)
 	if err != nil {
-		httphelper.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, err)
 		return
 	}
 
@@ -96,10 +96,10 @@ func MovieMovieIDGet(w http.ResponseWriter, r *http.Request) {
 	js, err := json.Marshal(movie)
 
 	if err != nil {
-		httphelper.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, err)
 		return
 	}
-	httphelper.ReturnAPIOK(w, js)
+	requests.ReturnAPIOK(w, js)
 
 }
 
@@ -112,17 +112,17 @@ func MovieSlugGet(w http.ResponseWriter, r *http.Request) {
 	err := connection.Collection("movie").FindOne(bson.M{"slug": slug}, movie)
 
 	if err != nil {
-		httphelper.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, err)
 		return
 	}
 
 	js, err := json.Marshal(movie)
 
 	if err != nil {
-		httphelper.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, err)
 		return
 	}
-	httphelper.ReturnAPIOK(w, js)
+	requests.ReturnAPIOK(w, js)
 }
 
 // MovieMovieIDPatch --
@@ -166,7 +166,7 @@ func MovieGet(w http.ResponseWriter, r *http.Request) {
 	pagination, err := results.Paginate(perpage, page)
 
 	if err != nil {
-		httphelper.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, err)
 		return
 	}
 	// Get which page we are on to skip
@@ -190,11 +190,11 @@ func MovieGet(w http.ResponseWriter, r *http.Request) {
 	// Turn it into a json and serve it up
 	rs, err := json.Marshal(response)
 	if err != nil {
-		httphelper.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, err)
 		return
 	}
 
-	httphelper.ReturnAPIOK(w, rs)
+	requests.ReturnAPIOK(w, rs)
 
 }
 
@@ -203,27 +203,27 @@ func MoviePost(w http.ResponseWriter, r *http.Request) {
 	// text := slug.Make("Hellö Wörld хелло ворлд")
 	movie := &models.Movie{}
 	if r.Body == nil {
-		httphelper.ReturnAPIError(w, fmt.Errorf("Please send a request body"))
+		requests.ReturnAPIError(w, fmt.Errorf("Please send a request body"))
 		return
 	}
 
 	err := json.NewDecoder(r.Body).Decode(&movie)
 	if err != nil {
 		log.Error(err)
-		httphelper.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, err)
 		return
 	}
 	err = connection.Collection("movie").Save(movie)
 	if vErr, ok := err.(*bongo.ValidationError); ok {
-		httphelper.ReturnAPIError(w, vErr.Errors[0])
+		requests.ReturnAPIError(w, vErr.Errors[0])
 		return
 	}
 
 	// Return the saved document
 	js, err := json.Marshal(movie)
 	if err != nil {
-		httphelper.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, err)
 		return
 	}
-	httphelper.ReturnAPIOK(w, js)
+	requests.ReturnAPIOK(w, js)
 }

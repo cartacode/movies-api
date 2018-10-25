@@ -1,8 +1,6 @@
 package dbh
 
 import (
-	"strconv"
-
 	"github.com/VuliTv/api/libs/envhelp"
 	"github.com/go-bongo/bongo"
 )
@@ -27,33 +25,4 @@ func NewConnection(caller string) (*bongo.Connection, error) {
 	}
 
 	return connection, err
-}
-
-// QuerySanatizer --
-func QuerySanatizer(params map[string][]string) map[string]interface{} {
-
-	query := make(map[string]interface{})
-
-	for rawParam := range params {
-
-		// default value for switch
-		var value interface{}
-		var err interface{}
-
-		// fmt.Println(reflect.TypeOf(params[rawParam][0]))
-		switch rawParam {
-		case "reviewed":
-			value, err = strconv.ParseBool(params[rawParam][0])
-			log.Debugw("converted bool type", rawParam, value)
-		default:
-			value = params[rawParam][0]
-		}
-
-		if err != nil {
-			log.Fatal(err)
-		}
-		query[rawParam] = value
-	}
-
-	return query
 }

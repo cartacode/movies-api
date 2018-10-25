@@ -25,23 +25,23 @@ import (
 type Performer struct {
 	bongo.DocumentBase `bson:",inline"`
 
-	Bio string `json:"bio,omitempty"`
+	Bio string `json:"bio"`
 
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 
-	Birthdate time.Time `json:"birthdate,omitempty"`
+	Birthdate time.Time `json:"birthdate"`
 
-	Birthplace string `json:"birthplace,omitempty"`
+	Birthplace string `json:"birthplace"`
 
-	Social *PerformerSocial `json:"social,omitempty"`
+	Social *PerformerSocial `json:"social"`
 
-	Slug string `json:"slug,omitempty"`
+	Slug string `json:"slug"`
 
-	Gender string `json:"gender,omitempty"`
+	Gender string `json:"gender"`
 
-	Size *PerformerSize `json:"size,omitempty"`
+	Size *PerformerSize `json:"size"`
 
-	Traits *PerformerTraits `json:"traits,omitempty"`
+	Traits *PerformerTraits `json:"traits"`
 }
 
 // Validate --

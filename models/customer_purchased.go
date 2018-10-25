@@ -13,11 +13,11 @@ package models
 type CustomerPurchased struct {
 
 	// List of Mongo ObjectID for the movies wish list. Embeddable
-	Movies []string `json:"movies,omitempty"`
+	Movies []string `json:"movies"`
 
 	// List of Mongo ObjectID for the scenes wish list. Embeddable
-	Scenes []string `json:"scenes,omitempty"`
+	Scenes []string `json:"scenes"`
 
 	// List of Mongo ObjectID for the volumes wish list. Embeddable
-	Volumes []string `json:"volumes,omitempty"`
+	Volumes []string `json:"volumes"`
 }

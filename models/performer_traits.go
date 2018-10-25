@@ -11,9 +11,9 @@ package models
 
 // PerformerTraits --
 type PerformerTraits struct {
-	Ethnicity string `json:"ethnicity,omitempty"`
-	HairColor string `json:"haircolor,omitempty"`
-	Piercings bool   `json:"piercings,omitempty"`
-	Tattoos   bool   `json:"tattoos,omitempty"`
-	StarSign  bool   `json:"sign,omitempty"`
+	Ethnicity string `json:"ethnicity"`
+	HairColor string `json:"haircolor"`
+	Piercings bool   `json:"piercings"`
+	Tattoos   bool   `json:"tattoos"`
+	StarSign  bool   `json:"sign"`
 }

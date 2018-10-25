@@ -21,14 +21,14 @@ type Customer struct {
 	Email string `json:"email"`
 
 	// Credit Information
-	Credit *CustomerCredit `json:"credit,omitempty"`
+	Credit *CustomerCredit `json:"credit"`
 
 	// Purchased Items
-	Purchased *CustomerPurchased `json:"purchased,omitempty"`
+	Purchased *CustomerPurchased `json:"purchased"`
 
 	// True/False. Is the user active
-	Active bool `json:"active,omitempty"`
+	Active bool `json:"active"`
 
 	// User wishlist
-	Wishlist *CustomerWishlist `json:"wishlist,omitempty"`
+	Wishlist *CustomerWishlist `json:"wishlist"`
 }

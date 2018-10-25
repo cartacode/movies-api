@@ -16,5 +16,5 @@ type CustomerCredit struct {
 	InfoStored bool `json:"info_stored"`
 
 	// Key for 3 leg transactions to provider bank
-	Key string `json:"key,omitempty"`
+	Key string `json:"key"`
 }

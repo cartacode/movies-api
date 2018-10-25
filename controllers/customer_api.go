@@ -10,9 +10,12 @@
 package controllers
 
 import (
+	"encoding/json"
 	"net/http"
 
+	"github.com/VuliTv/api/libs/requests"
 	"github.com/VuliTv/api/models"
+	"gopkg.in/mgo.v2/bson"
 )
 
 // JSONPaginationResponseCustomer --
@@ -47,6 +50,48 @@ func CustomerCustomerIDPatch(w http.ResponseWriter, r *http.Request) {
 
 // CustomerGet --
 func CustomerGet(w http.ResponseWriter, r *http.Request) {
+
+	// Get all seriess
+	results := connection.Collection("series").Find(bson.M{})
+
+	// Make a list of series to add together
+	series := &models.Series{}
+
+	retval := []models.Series{}
+
+	// Get pagination information
+	pagination, err := results.Paginate(requests.GetPaginationInfo(r))
+
+	if err != nil {
+		requests.ReturnAPIError(w, err)
+		return
+	}
+	// Get which page we are on to skip
+	results.Query.Skip(page * perpage)
+
+	// Add the found results
+	for results.Next(series) {
+		retval = append(retval, *series)
+
+	}
+
+	// Make our pagination response
+	response := JSONPaginationResponseSeries{
+		Results:       retval,
+		TotalResults:  pagination.TotalRecords,
+		RecordsOnPage: pagination.RecordsOnPage,
+		Page:          pagination.Current,
+		TotalPages:    pagination.TotalPages,
+	}
+
+	// Turn it into a json and serve it up
+	rs, err := json.Marshal(response)
+	if err != nil {
+		requests.ReturnAPIError(w, err)
+		return
+	}
+
+	requests.ReturnAPIOK(w, rs)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }

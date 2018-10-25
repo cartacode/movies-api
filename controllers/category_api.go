@@ -15,7 +15,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/VuliTv/api/libs/http_helper"
+	"github.com/VuliTv/api/libs/requests"
 	"github.com/VuliTv/api/models"
 	"github.com/go-bongo/bongo"
 	"github.com/gorilla/mux"
@@ -43,34 +43,34 @@ func CategoryCategoryIDDelete(w http.ResponseWriter, r *http.Request) {
 	log.Info(categoryID)
 	// Check valid bson id
 	if !bson.IsObjectIdHex(categoryID) {
-		httphelper.ReturnAPIError(w, fmt.Errorf("Not a valid bson Id"))
+		requests.ReturnAPIError(w, fmt.Errorf("Not a valid bson Id"))
 		return
 	}
 
 	// Find doc
 	err := connection.Collection("category").FindById(bson.ObjectIdHex(categoryID), category)
 	if err != nil {
-		httphelper.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, err)
 		return
 	}
 	// Delete the document
 	err = connection.Collection("category").DeleteDocument(category)
 	log.Info(err)
 	if err != nil {
-		httphelper.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, err)
 		return
 	}
 
 	// Send the response
-	response := httphelper.JSONSuccessResponse{Message: "success", Identifier: category.Id.String()}
+	response := requests.JSONSuccessResponse{Message: "success", Identifier: category.Id.String()}
 
 	js, err := json.Marshal(response)
 
 	if err != nil {
-		httphelper.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, err)
 		return
 	}
-	httphelper.ReturnAPIOK(w, js)
+	requests.ReturnAPIOK(w, js)
 }
 
 // CategoryCategoryIDGet -- Takes Category ID for a finder
@@ -81,14 +81,14 @@ func CategoryCategoryIDGet(w http.ResponseWriter, r *http.Request) {
 
 	// Check valid bson id
 	if !bson.IsObjectIdHex(categoryID) {
-		httphelper.ReturnAPIError(w, fmt.Errorf("Not a valid bson Id"))
+		requests.ReturnAPIError(w, fmt.Errorf("Not a valid bson Id"))
 		return
 	}
 
 	// Find doc
 	err := connection.Collection("category").FindById(bson.ObjectIdHex(categoryID), category)
 	if err != nil {
-		httphelper.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, err)
 		return
 	}
 
@@ -96,10 +96,10 @@ func CategoryCategoryIDGet(w http.ResponseWriter, r *http.Request) {
 	js, err := json.Marshal(category)
 
 	if err != nil {
-		httphelper.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, err)
 		return
 	}
-	httphelper.ReturnAPIOK(w, js)
+	requests.ReturnAPIOK(w, js)
 
 }
 
@@ -112,17 +112,17 @@ func CategorySlugGet(w http.ResponseWriter, r *http.Request) {
 	err := connection.Collection("category").FindOne(bson.M{"slug": slug}, category)
 
 	if err != nil {
-		httphelper.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, err)
 		return
 	}
 
 	js, err := json.Marshal(category)
 
 	if err != nil {
-		httphelper.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, err)
 		return
 	}
-	httphelper.ReturnAPIOK(w, js)
+	requests.ReturnAPIOK(w, js)
 }
 
 // CategoryCategoryIDPatch --
@@ -160,7 +160,7 @@ func CategoryGet(w http.ResponseWriter, r *http.Request) {
 	pagination, err := results.Paginate(perpage, page)
 
 	if err != nil {
-		httphelper.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, err)
 		return
 	}
 	// Get which page we are on to skip
@@ -184,11 +184,11 @@ func CategoryGet(w http.ResponseWriter, r *http.Request) {
 	// Turn it into a json and serve it up
 	rs, err := json.Marshal(response)
 	if err != nil {
-		httphelper.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, err)
 		return
 	}
 
-	httphelper.ReturnAPIOK(w, rs)
+	requests.ReturnAPIOK(w, rs)
 
 }
 
@@ -197,27 +197,27 @@ func CategoryPost(w http.ResponseWriter, r *http.Request) {
 	// text := slug.Make("Hellö Wörld хелло ворлд")
 	category := &models.Category{}
 	if r.Body == nil {
-		httphelper.ReturnAPIError(w, fmt.Errorf("Please send a request body"))
+		requests.ReturnAPIError(w, fmt.Errorf("Please send a request body"))
 		return
 	}
 
 	err := json.NewDecoder(r.Body).Decode(&category)
 	if err != nil {
 		log.Error(err)
-		httphelper.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, err)
 		return
 	}
 	err = connection.Collection("category").Save(category)
 	if vErr, ok := err.(*bongo.ValidationError); ok {
-		httphelper.ReturnAPIError(w, vErr.Errors[0])
+		requests.ReturnAPIError(w, vErr.Errors[0])
 		return
 	}
 
 	// Return the saved document
 	js, err := json.Marshal(category)
 	if err != nil {
-		httphelper.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, err)
 		return
 	}
-	httphelper.ReturnAPIOK(w, js)
+	requests.ReturnAPIOK(w, js)
 }

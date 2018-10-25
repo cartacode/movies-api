@@ -60,4 +60,31 @@ var searchRoutes = Routes{
 		"/search/scene",
 		controllers.SceneSearchGet,
 	},
+
+	// swagger:operation GET /search/volume search volumeSearchList
+	// ---
+	// summary: List all found volumes in a pagination response.
+	// description: Return all volumes found, paginated
+	// parameters:
+	// - in: query
+	//   name: page
+	//   schema:
+	//     type: integer
+	//   description: The number of pages to skip before starting to collect the result set
+	// - in: query
+	//   name: perpage
+	//   schema:
+	//     type: integer
+	//   description: The numbers of items to return per page
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/volumeResp"
+	//   "404":
+	//     "$ref": "#/responses/genericJsonError"
+	Route{
+		"SearchGet",
+		strings.ToUpper("Get"),
+		"/search/collection/{collection}",
+		controllers.SearchGet,
+	},
 }

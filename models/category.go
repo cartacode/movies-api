@@ -31,7 +31,7 @@ type Category struct {
 
 	// Description of this category if it has one. Not required
 	// required: false
-	Description string `json:"description,omitempty"`
+	Description string `json:"description"`
 
 	// Unique Title for this category
 	//
