@@ -5,12 +5,11 @@ pipeline:
       - docker build --rm -t 527162640954.dkr.ecr.us-east-1.amazonaws.com/vuli-api:${DRONE_BUILD_NUMBER} .
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    privileged: true
+    # privileged: true
   build:
     image: 527162640954.dkr.ecr.us-east-1.amazonaws.com/vuli-api:${DRONE_BUILD_NUMBER}
     commands:
-      - go get
-      - go test
+      - go test ./... -cover
   publish:
     image: plugins/ecr
     repo: 527162640954.dkr.ecr.us-east-1.amazonaws.com/vuli-api
