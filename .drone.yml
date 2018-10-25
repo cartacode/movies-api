@@ -4,7 +4,7 @@ workspace:
 
 pipeline:
   build:
-    image: spryhq/golang-dep:alpine-1.10
+    image: docker.io/spryhq/golang-dep
     pull: true
     commands:
       - /go/bin/dep ensure
