@@ -37,6 +37,7 @@ pipeline:
   slack:
     image: plugins/slack
     username: drone
+    icon_url: https://s3.amazonaws.com/vuli-public-assets/drone.png
     webhook: https://hooks.slack.com/services/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
     when:
       status: [ success, failure ]
