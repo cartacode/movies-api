@@ -7,10 +7,7 @@ pipeline:
     image: docker.io/spryhq/golang-dep
     pull: true
     commands:
-      - ls /go
-      - ls
-      - pwd
-      - printenv
+      - go get -u github.com/golang/dep/cmd/dep
       - dep ensure
       - go test ./... -cover
     environment:
