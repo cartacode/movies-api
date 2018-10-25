@@ -1,8 +1,7 @@
 pipeline:
   test:
     docker:
-      image: plugins/docker
-      repo: 527162640954.dkr.ecr.us-east-1.amazonaws.com/vuli-api
+      image: golang:1.10-alpine
       commands:
         - go test ./... -cover
   publish:
