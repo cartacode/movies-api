@@ -7,7 +7,8 @@ pipeline:
     image: docker.io/spryhq/golang-dep
     pull: true
     commands:
-      - which dep
+      - ls /go
+      - ls /go/bin
       - ls
       - pwd
       - prinenv
