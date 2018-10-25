@@ -13,8 +13,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/VuliTv/api/libs/requests"
-	"github.com/VuliTv/api/models"
+	"github.com/VuliTv/go-movie-api/libs/requests"
+	"github.com/VuliTv/go-movie-api/models"
 	"gopkg.in/mgo.v2/bson"
 )
 

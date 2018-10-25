@@ -35,8 +35,8 @@ package main
 import (
 	"net/http"
 
-	"github.com/VuliTv/api/libs/logging"
-	"github.com/VuliTv/api/router"
+	"github.com/VuliTv/go-movie-api/libs/logging"
+	"github.com/VuliTv/go-movie-api/router"
 	"github.com/gorilla/handlers"
 	// WARNING!
 	// Change this to a fully-qualified import path
