@@ -1,3 +1,6 @@
+# workspace:
+#   base: /go
+#   path: src/github.com/octocat/hello-world
 pipeline:
   build:
     image: spryhq/golang-dep:alpine-1.10
