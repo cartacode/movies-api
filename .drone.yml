@@ -1,17 +1,10 @@
 pipeline:
-  setup:
-    image: docker
-    commands:
-      - docker build --rm -t 527162640954.dkr.ecr.us-east-1.amazonaws.com/vuli-api:${DRONE_BUILD_NUMBER} .
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    # privileged: true
   build:
-    image: 527162640954.dkr.ecr.us-east-1.amazonaws.com/vuli-api:${DRONE_BUILD_NUMBER}
+    image: spryhq/golang-dep:alpine-1.10
     commands:
-      - pwd
-      - ls
+      - dep ensure
       - go test ./... -cover
+
   publish:
     image: plugins/ecr
     repo: 527162640954.dkr.ecr.us-east-1.amazonaws.com/vuli-api
@@ -40,12 +33,15 @@ pipeline:
     link_names: true
     template: >
       {{#success build.status}}
-        build {{build.number}} forsucceeded. Good job!
+        build {{build.number}} for {{ repo.name }} succeeded. Good job!
         gitref: {{build.ref}}
         author: {{build.author}}
         branch: {{build.branch}}
       {{else}}
-        build {{build.number}} failed. Fix me please. <@channelname> <@hoop>
+        build {{build.number}} for {{ repo.name }} failed. Fix me please.
+        gitref: {{build.ref}}
+        author: {{build.author}}
+        branch: {{build.branch}}
       {{/success}}
 
 
