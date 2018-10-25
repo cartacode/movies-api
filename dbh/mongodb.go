@@ -1,7 +1,7 @@
 package dbh
 
 import (
-	"github.com/VuliTv/api/libs/envhelp"
+	"github.com/VuliTv/go-movie-api/libs/envhelp"
 	"github.com/go-bongo/bongo"
 )
 

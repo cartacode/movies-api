@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"github.com/VuliTv/api/dbh"
-	"github.com/VuliTv/api/libs/logging"
-	"github.com/VuliTv/api/models"
+	"github.com/VuliTv/go-movie-api/dbh"
+	"github.com/VuliTv/go-movie-api/libs/logging"
+	"github.com/VuliTv/go-movie-api/models"
 )
 
 var connection, err = dbh.NewConnection("controllers")

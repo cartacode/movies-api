@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/VuliTv/api/libs/requests"
-	"github.com/VuliTv/api/models"
+	"github.com/VuliTv/go-movie-api/libs/requests"
+	"github.com/VuliTv/go-movie-api/models"
 	"github.com/gorilla/mux"
 )
 

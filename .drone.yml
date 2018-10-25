@@ -1,9 +1,28 @@
+workspace:
+  base: /go
+  path: src/github.com/VuliTv/go-movie-api
+
 pipeline:
+  build:
+    image: docker.io/spryhq/golang-dep
+    pull: true
+    commands:
+      - go get -u github.com/golang/dep/cmd/dep
+      - dep ensure
+      - go test ./... -cover
+    environment:
+      - CGO=0
+      - GOOS=linux
+      - GOARCH=amd64
+
   publish:
     image: plugins/ecr
     repo: 527162640954.dkr.ecr.us-east-1.amazonaws.com/vuli-api
     registry: 527162640954.dkr.ecr.us-east-1.amazonaws.com
     tags: ${DRONE_BUILD_NUMBER}
+    when:
+      branch: develop
+
   deploy:
     image: joshdvir/drone-ecs-deploy
     cluster: stage-vuli
@@ -13,11 +32,31 @@ pipeline:
     timeout: "500" # defaults to 300 / 5 min
     max: "200" # defaults to 200
     min: "100" # defaults to 100
+    when:
+      branch: develop
   slack:
     image: plugins/slack
     username: drone
+    icon_url: https://s3.amazonaws.com/vuli-public-assets/drone.png
     webhook: https://hooks.slack.com/services/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
     when:
       status: [ success, failure ]
-branches: master
+    link_names: true
+    template: >
+      {{#success build.status}}
+        build {{build.number}} for {{ repo.name }} succeeded. Good job!
+        gitref: {{build.ref}}
+        author: {{build.author}}
+        branch: {{build.branch}}
+      {{else}}
+        build {{build.number}} for {{ repo.name }} failed. Fix me please.
+        gitref: {{build.ref}}
+        author: {{build.author}}
+        branch: {{build.branch}}
+      {{/success}}
 
+
+services:
+  mongodb:
+    image: mongo:3.0
+    command: [ --smallfiles ]

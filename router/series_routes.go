@@ -3,7 +3,7 @@ package router
 import (
 	"strings"
 
-	"github.com/VuliTv/api/controllers"
+	"github.com/VuliTv/go-movie-api/controllers"
 )
 
 var seriesRoutes = Routes{

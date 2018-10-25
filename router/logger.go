@@ -13,7 +13,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/VuliTv/api/libs/logging"
+	"github.com/VuliTv/go-movie-api/libs/logging"
 )
 
 var log = logging.GetProdLog()

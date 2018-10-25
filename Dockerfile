@@ -1,9 +1,7 @@
-FROM golang:1.10-alpine
+FROM spryhq/golang-dep:alpine-1.10
 
-RUN apk add git curl
-RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-RUN mkdir -p /go/src/github.com/VuliTv/api/
-WORKDIR /go/src/github.com/VuliTv/api/
+RUN mkdir -p /go/src/github.com/VuliTv/go-movie-api/
+WORKDIR /go/src/github.com/VuliTv/go-movie-api/
 COPY . .
 RUN dep ensure
 
