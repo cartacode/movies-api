@@ -9,6 +9,8 @@ pipeline:
   build:
     image: 527162640954.dkr.ecr.us-east-1.amazonaws.com/vuli-api:${DRONE_BUILD_NUMBER}
     commands:
+      - pwd
+      - ls
       - go test ./... -cover
   publish:
     image: plugins/ecr
