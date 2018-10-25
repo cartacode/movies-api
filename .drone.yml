@@ -1,6 +1,6 @@
-# workspace:
-#   base: /go
-#   path: src/github.com/octocat/hello-world
+workspace:
+  base: /go
+  path: src/github.com/VuliTv/go-movie-api
 pipeline:
   build:
     image: spryhq/golang-dep:alpine-1.10
