@@ -10,7 +10,7 @@ pipeline:
       - ls /go
       - ls
       - pwd
-      - prinenv
+      - printenv
       - dep ensure
       - go test ./... -cover
     environment:
