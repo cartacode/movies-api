@@ -23,19 +23,12 @@ import (
 // swagger:model
 type Movie struct {
 	bongo.DocumentBase `bson:",inline"`
-	MediaContent       `bson:",inline"`
+	MediaContent       `bson:",inline" json:"media"`
 	// List of Categories
 	Category []string `json:"category"`
 
 	// MovieInformation --
-	Information struct {
-		Director []string `json:"director"`
-
-		Studio string `json:"studio"`
-
-		// List of Mongo ObjectID for the Performers in this movie. Embeddable
-		Performers []string `json:"performers"`
-	} `json:"information"`
+	Information MovieInformation `json:"information"`
 
 	// DynamoDBId
 
@@ -94,4 +87,14 @@ func (s *Movie) Validate(*bongo.Collection) []error {
 	}
 
 	return retval
+}
+
+// MovieInformation --
+type MovieInformation struct {
+	Director []string `json:"director"`
+
+	Studio string `json:"studio"`
+
+	// List of Mongo ObjectID for the Performers in this movie. Embeddable
+	Performers []string `json:"performers"`
 }
