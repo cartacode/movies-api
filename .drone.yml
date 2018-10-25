@@ -8,7 +8,6 @@ pipeline:
     pull: true
     commands:
       - ls /go
-      - ls /go/bin
       - ls
       - pwd
       - prinenv
