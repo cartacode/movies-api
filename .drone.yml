@@ -1,6 +1,6 @@
 workspace:
   base: /go
-  # path: src/github.com/VuliTv/go-movie-api
+  path: src/github.com/VuliTv/go-movie-api
 
 pipeline:
   build:
@@ -13,7 +13,6 @@ pipeline:
       - CGO=0
       - GOOS=linux
       - GOARCH=amd64
-      - GOPATH=/go
 
   publish:
     image: plugins/ecr
