@@ -4,6 +4,7 @@ workspace:
 pipeline:
   build:
     image: spryhq/golang-dep:alpine-1.10
+    pull: true
     commands:
       - /go/bin/dep ensure
       - go test ./... -cover
