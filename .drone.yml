@@ -1,9 +1,8 @@
 pipeline:
-  test:
-    build:
-      image: golang:1.10-alpine
-      commands:
-        - go test ./... -cover
+  build:
+    image: golang:1.10-alpine
+    commands:
+      - go test ./... -cover
   publish:
     ecr:
       image: plugins/ecr
