@@ -1,6 +1,6 @@
 pipeline:
   test:
-    docker:
+    build:
       image: golang:1.10-alpine
       commands:
         - go test ./... -cover
