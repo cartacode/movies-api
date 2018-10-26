@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-// JSONErrorResponse --
+// ReturnAPIOK --
 // NotFound
 // swagger:response apiOk
 func ReturnAPIOK(w http.ResponseWriter, json []byte) error {

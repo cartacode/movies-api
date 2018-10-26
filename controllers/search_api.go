@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/VuliTv/go-movie-api/libs/requests"
@@ -166,7 +165,7 @@ func SearchGet(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	collection := params["collection"]
 
-	fmt.Println(collection)
+	// fmt.Println(collection)
 	// get out resuls
 	results := connection.Collection(collection).Find(query)
 

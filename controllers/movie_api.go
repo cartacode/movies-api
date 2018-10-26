@@ -76,17 +76,18 @@ func MovieMovieIDDelete(w http.ResponseWriter, r *http.Request) {
 // MovieMovieIDGet -- Takes Movie ID for a finder
 func MovieMovieIDGet(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	movieID := params["movieID"]
+	objectid := params["objectid"]
 	movie := &models.Movie{}
 
+	// fmt.Println(objectid)
 	// Check valid bson id
-	if !bson.IsObjectIdHex(movieID) {
+	if !bson.IsObjectIdHex(objectid) {
 		requests.ReturnAPIError(w, fmt.Errorf("Not a valid bson Id"))
 		return
 	}
 
 	// Find doc
-	err := connection.Collection("movie").FindById(bson.ObjectIdHex(movieID), movie)
+	err := connection.Collection("movie").FindById(bson.ObjectIdHex(objectid), movie)
 	if err != nil {
 		requests.ReturnAPIError(w, err)
 		return

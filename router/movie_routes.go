@@ -34,16 +34,16 @@ var movieRoutes = Routes{
 		controllers.MovieGet,
 	},
 
-	// swagger:operation DELETE /movie/{ObjectId} movie movieDeleteId
+	// swagger:operation DELETE /movie/{objectid} movie movieDeleteId
 	// ---
-	// summary: Delete a movie the given ObjectId.
+	// summary: Delete a movie the given objectid.
 	// description: Delete a given movie
 	// parameters:
-	// - name: ObjectId
+	// - name: objectid
 	//   in: path
-	//   description: MongoDB ObjectId
+	//   description: MongoDB objectid
 	//   schema:
-	//     "$ref": "#/definitions/ObjectId"
+	//     "$ref": "#/definitions/objectid"
 	//   required: true
 	// responses:
 	//   "200":
@@ -53,20 +53,20 @@ var movieRoutes = Routes{
 	Route{
 		"MovieMovieIDDelete",
 		strings.ToUpper("Delete"),
-		"/movie/{ObjectId}",
+		"/movie/{objectid}",
 		controllers.MovieMovieIDDelete,
 	},
 
-	// swagger:operation GET /movie/{ObjectId} movie movieGetId
+	// swagger:operation GET /movie/{objectid} movie movieGetId
 	// ---
-	// summary: Get a movie the given ObjectId.
+	// summary: Get a movie the given objectid.
 	// description: Get a given movie
 	// parameters:
-	// - name: ObjectId
+	// - name: objectid
 	//   in: path
-	//   description: MongoDB ObjectId
+	//   description: MongoDB objectid
 	//   schema:
-	//     "$ref": "#/definitions/ObjectId"
+	//     "$ref": "#/definitions/objectid"
 	//   required: true
 	// responses:
 	//   "200":
@@ -76,7 +76,7 @@ var movieRoutes = Routes{
 	Route{
 		"MovieMovieIDGet",
 		strings.ToUpper("Get"),
-		"/movie/{ObjectId}",
+		"/movie/{objectid}",
 		controllers.MovieMovieIDGet,
 	},
 
@@ -121,7 +121,7 @@ var movieRoutes = Routes{
 	Route{
 		"MovieMovieIDPatch",
 		strings.ToUpper("Patch"),
-		"/movie/{ObjectId}",
+		"/movie/{objectid}",
 		controllers.MovieMovieIDPatch,
 	},
 

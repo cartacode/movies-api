@@ -6,5 +6,4 @@ type MediaContent struct {
 	Extras     []string `json:"extras"`
 	Trailers   []string `json:"trailers"`
 	CoverImage string   `json:"cover-image"`
-	
 }

@@ -10,10 +10,7 @@
 package models
 
 import (
-	"fmt"
-
 	"github.com/go-bongo/bongo"
-	"gopkg.in/mgo.v2/bson"
 )
 
 // Movie Document
@@ -23,7 +20,7 @@ import (
 // swagger:model
 type Movie struct {
 	bongo.DocumentBase `bson:",inline"`
-	MediaContent       `bson:",inline" json:"media"`
+	MediaContent       MediaContent `bson:",inline" json:"media"`
 	// List of Categories
 	Category []string `json:"category"`
 
@@ -77,14 +74,14 @@ type Movie struct {
 func (s *Movie) Validate(*bongo.Collection) []error {
 
 	retval := make([]error, 0)
-	movie := &Movie{}
+	// movie := &Movie{}
 
 	// Find by slug when posting new movie
-	err := connection.Collection("movie").FindOne(bson.M{"slug": s.Slug}, movie)
+	// err := connection.Collection("movie").FindOne(bson.M{"slug": s.Slug}, movie)
 
-	if err == nil {
-		retval = append(retval, fmt.Errorf("This document is not unique"))
-	}
+	// if err == nil {
+	// retval = append(retval, fmt.Errorf("This document is not unique"))
+	// }
 
 	return retval
 }
