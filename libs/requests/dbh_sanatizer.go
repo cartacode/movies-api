@@ -20,6 +20,12 @@ func QuerySanatizer(params map[string][]string) map[string]interface{} {
 		case "reviewed":
 			value, err = strconv.ParseBool(params[rawParam][0])
 			log.Debugw("converted bool type", rawParam, value)
+		case "page":
+			continue
+		case "perpage":
+			continue
+		case "perPage":
+			continue
 		default:
 			value = params[rawParam][0]
 		}
@@ -30,5 +36,6 @@ func QuerySanatizer(params map[string][]string) map[string]interface{} {
 		query[rawParam] = value
 	}
 
+	log.Debug(query)
 	return query
 }
