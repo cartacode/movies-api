@@ -32,15 +32,8 @@ func NewRouter() *mux.Router {
 
 	router := mux.NewRouter().StrictSlash(true)
 
-	routes := append(routes, categoryRoutes...)
-	routes = append(routes, customerRoutes...)
-	routes = append(routes, movieRoutes...)
-	routes = append(routes, performerRoutes...)
-	routes = append(routes, studioRoutes...)
-	routes = append(routes, sceneRoutes...)
-	routes = append(routes, seriesRoutes...)
-	routes = append(routes, volumeRoutes...)
-	routes = append(routes, searchRoutes...)
+	routes = append(routes, operationsRoutes...)
+	routes = append(routes, crudRoutes...)
 
 	for _, route := range routes {
 		var handler http.Handler

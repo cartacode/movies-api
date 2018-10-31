@@ -33,15 +33,21 @@ type Performer struct {
 
 	Birthplace string `json:"birthplace"`
 
-	Social *PerformerSocial `json:"social"`
+	Rank int `json:"rank"`
+
+	Social PerformerSocial `json:"social"`
 
 	Slug string `json:"slug"`
 
 	Gender string `json:"gender"`
 
-	Size *PerformerSize `json:"size"`
+	Size PerformerSize `json:"size"`
 
-	Traits *PerformerTraits `json:"traits"`
+	Picture string `json:"picture"`
+
+	Traits PerformerTraits `json:"traits"`
+
+	Director bool `json:"director"`
 }
 
 // Validate --

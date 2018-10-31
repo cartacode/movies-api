@@ -2,3 +2,4 @@ vendor/*
 gin-bin
 scripts/data/movie.json
 swagger.json
+scripts/venv

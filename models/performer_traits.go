@@ -15,5 +15,5 @@ type PerformerTraits struct {
 	HairColor string `json:"haircolor"`
 	Piercings bool   `json:"piercings"`
 	Tattoos   bool   `json:"tattoos"`
-	StarSign  bool   `json:"sign"`
+	StarSign  string `json:"sign"`
 }

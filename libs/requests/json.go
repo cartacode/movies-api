@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-// JSONErrorResponse --
+// ReturnAPIOK --
 // NotFound
 // swagger:response apiOk
 func ReturnAPIOK(w http.ResponseWriter, json []byte) error {
@@ -13,6 +13,18 @@ func ReturnAPIOK(w http.ResponseWriter, json []byte) error {
 	w.WriteHeader(http.StatusOK)
 	w.Write(json)
 	return nil
+}
+
+// JSONPaginationResponse --
+// HTTP status code 200 and repository model in data
+// swagger:response jsonPaginationResp
+type JSONPaginationResponse struct {
+	// in: body
+	Results       interface{} `json:"results"`
+	TotalResults  int         `json:"total"`
+	RecordsOnPage int         `json:"recordsonpage"`
+	Page          int         `json:"page"`
+	TotalPages    int         `json:"totalpages"`
 }
 
 // JSONErrorResponse --
@@ -26,8 +38,9 @@ type JSONErrorResponse struct {
 // Success response
 // swagger:response ok
 type JSONSuccessResponse struct {
-	Message    string `json:"message"`
-	Identifier string `json:"identifier"`
+	Message    string      `json:"message"`
+	Identifier string      `json:"identifier"`
+	Extra      interface{} `json:"extra"`
 }
 
 // ReturnAPIError --
@@ -40,14 +53,13 @@ func ReturnAPIError(w http.ResponseWriter, err error) {
 	w.Write(js)
 }
 
-// JSONPaginationResponse --
-// HTTP status code 200 and repository model in data
-// swagger:response volumeResp
-type JSONPaginationResponse struct {
-	// in: body
-	Results       interface{} `json:"results"`
-	TotalResults  int         `json:"total"`
-	RecordsOnPage int         `json:"recordsonpage"`
-	Page          int         `json:"page"`
-	TotalPages    int         `json:"totalpages"`
+// ReturnOnError --
+func ReturnOnError(w http.ResponseWriter, err error) bool {
+	if err != nil {
+		log.Fatal(err)
+		ReturnAPIError(w, err)
+		return true
+
+	}
+	return false
 }
