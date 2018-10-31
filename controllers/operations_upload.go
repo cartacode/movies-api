@@ -8,6 +8,7 @@ import (
 
 	"github.com/VuliTv/go-movie-api/libs/envhelp"
 	"github.com/VuliTv/go-movie-api/libs/requests"
+	"github.com/VuliTv/go-movie-api/models"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/gorilla/mux"
@@ -91,6 +92,7 @@ func OperationsUploadTrailer(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	objectid := params["objectid"]
 	collection := params["collection"]
+	slug := params["slug"]
 
 	// Check for a hexId
 	if !bson.IsObjectIdHex(objectid) {
@@ -118,21 +120,25 @@ func OperationsUploadTrailer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Upload to our bucket
-	path, err := requests.AddFileToS3(s, bucket, "media/"+objectid+"/trailers/", content)
+	path, err := requests.AddFileToS3(s, bucket, "media/"+objectid+"/trailers/"+slug, content)
 	if requests.ReturnOnError(w, err) {
 		return
 	}
 
 	// Patch the collection document with the new image path
-	patch := make(map[string]string)
-	patch["coverimage"] = path
-	err = connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(objectid)}, bson.M{"$set": patch})
+	patch := models.Trailer{Title: slug}
+
+	patch.Title = slug
+	patch.Path = path
+
+	fmt.Println(patch)
+	err = connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(objectid)}, bson.M{"$addToSet": bson.M{"trailers": patch}})
 
 	if requests.ReturnOnError(w, err) {
 		return
 	}
-	// Sending our response
-	response := &requests.JSONSuccessResponse{Message: path, Identifier: "success"}
+	// // Sending our response
+	response := &requests.JSONSuccessResponse{Message: path, Identifier: "success", Extra: patch}
 	js, err := json.Marshal(response)
 
 	if requests.ReturnOnError(w, err) {

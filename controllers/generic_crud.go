@@ -225,7 +225,6 @@ func GenericCrudIDPatch(w http.ResponseWriter, r *http.Request) {
 		requests.ReturnAPIError(w, err)
 		return
 	}
-
 	// Update the document
 	err = connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(objectid)}, bson.M{"$set": patchBody})
 

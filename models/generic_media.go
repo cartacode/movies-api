@@ -13,9 +13,17 @@ type MediaContent struct {
 		TrayFeaturedThumbnail string `json:"tray_featured_thumbnail"`
 		MobileThumbnail       string `json:"mobile_thumbnail"`
 	} `json:"images"`
-	Extras     []string `json:"extras"`
-	Trailers   []string `json:"trailers"`
-	CoverImage string   `json:"cover-image"`
+	Extras     []string  `json:"extras"`
+	Trailers   []Trailer `json:"trailers"`
+	CoverImage string    `json:"cover-image"`
+}
+
+// Trailer --
+type Trailer struct {
+	Title  string `json:"title"`
+	Length int    `json:"length"`
+	Image  string `json:"image"`
+	Path   string `json:"path"`
 }
 
 // MediaInformation --
