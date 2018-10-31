@@ -33,10 +33,10 @@ type Category struct {
 	// required: false
 	Description string `json:"description"`
 
-	// Unique Title for this category
+	// Unique Name for this category
 	//
 	// required: true
-	Title string `json:"title"`
+	Name string `json:"name"`
 }
 
 // Validate --
@@ -45,6 +45,10 @@ func (s *Category) Validate(*bongo.Collection) []error {
 	retval := make([]error, 0)
 	category := &Category{}
 
+	if s.Name == "" || s.Slug == "" {
+		retval = append(retval, fmt.Errorf("Name cannot be empty"))
+		return retval
+	}
 	// Find by slug when posting new category
 	err := connection.Collection("category").FindOne(bson.M{"slug": s.Slug}, category)
 

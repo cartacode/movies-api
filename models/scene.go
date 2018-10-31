@@ -23,45 +23,38 @@ import (
 // swagger:model
 type Scene struct {
 	bongo.DocumentBase `bson:",inline"`
-
+	MediaContent       MediaContent `bson:",inline" json:"media"`
+	// List of Categories
 	Category []string `json:"category"`
 
-	Information *VolumeInformation `json:"information"`
+	// MovieInformation --
+	Information MediaInformation `json:"information"`
+	// MovieInformation --
 
-	// Unique Slug for this scene. Made of <title><studio> lowercase and character stripped
-	Slug string `json:"slug"`
+	Performance Performance `json:"performance"`
 
-	// Description of this scene if it has one. Not required
-	Description string `json:"description"`
-
-	// Calculated by user view. Only increases.
-	Views int32 `json:"views"`
-
-	// Calculated by user input. Only decreases.
-	Downvotes int32 `json:"downvotes"`
-
-	// Unique Title for this scene
+	// Unique Title for this movie
 	Title string `json:"title"`
 
-	// Calculated externally and maintained here
-	Rank int32 `json:"rank"`
+	// DynamoDBId
+	DynamoDBId string `json:"dynamoId"`
 
-	// True/False. Has someone reviewed this scene
-	Reviewed bool `json:"reviewed"`
+	// Ordered list of movie location(s)
+	Playlist []string `json:"playlist"`
 
-	Volume *Volume `json:"volume"`
+	// Description of this movie if it has one. Not required
+	Description string `json:"description"`
 
-	// Total scene length in seconds
-	Length int32 `json:"length"`
-
-	// Calculated by user input. Only increases.
-	Upvotes int32 `json:"upvotes"`
-
-	// Read only value. Only Admin can update. Sets the price for a scene
+	// Read only value. Only Admin can update. Sets the price for a movie
 	Price float32 `json:"price"`
 
-	// Free list of tag strings
-	Tags []string `json:"tags"`
+	// True/False. Has someone reviewed this movie
+	Reviewed bool `json:"reviewed"`
+
+	// Unique Slug for this movie. Made of <title><studio> lowercase and character stripped
+	Slug string `json:"slug"`
+
+	Series string `json:"series"`
 
 	// True/False. Is it available on the site or not
 	IsPublished bool `json:"is_published"`

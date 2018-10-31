@@ -26,6 +26,7 @@ func GenericCrudGet(w http.ResponseWriter, r *http.Request) {
 
 	var retval []interface{}
 	query := requests.QuerySanatizer(r.URL.Query())
+	log.Debugw("query running", "Q", query)
 	params := mux.Vars(r)
 	collection := params["collection"]
 
@@ -153,6 +154,50 @@ func GenericCrudIDGet(w http.ResponseWriter, r *http.Request) {
 
 // GenericCrudIDDelete --
 func GenericCrudIDDelete(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	objectid := params["objectid"]
+	collection := params["collection"]
+	model, err := models.ModelByCollection(collection)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Check valid bson id
+	if !bson.IsObjectIdHex(objectid) {
+		requests.ReturnAPIError(w, fmt.Errorf("Not a valid bson Id"))
+		return
+	}
+
+	// Find doc
+	err = connection.Collection(collection).FindById(bson.ObjectIdHex(objectid), model)
+	if err != nil {
+		requests.ReturnAPIError(w, err)
+		return
+	}
+	// Delete the document
+	err = connection.Collection(collection).DeleteDocument(model.(bongo.Document))
+	log.Info(err)
+	if err != nil {
+		requests.ReturnAPIError(w, err)
+		return
+	}
+
+	// Send the response
+	retval := model.(bongo.Document)
+	response := requests.JSONSuccessResponse{Message: "success", Identifier: retval.GetId().String()}
+
+	js, err := json.Marshal(response)
+
+	if err != nil {
+		requests.ReturnAPIError(w, err)
+		return
+	}
+
+	requests.ReturnAPIOK(w, js)
+}
+
+// GenericCrudIDPatch --
+func GenericCrudIDPatch(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	objectid := params["objectid"]
 	collection := params["collection"]

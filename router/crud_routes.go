@@ -43,10 +43,18 @@ var crudRoutes = Routes{
 		"/v1/collection/{collection}/{objectid}",
 		controllers.GenericCrudIDGet,
 	},
+
 	Route{
 		"GenericCrudIDDelete",
 		"DELETE",
 		"/v1/collection/{collection}/{objectid}",
 		controllers.GenericCrudIDDelete,
+	},
+
+	Route{
+		"GenericCrudIDPatch",
+		"DELETE",
+		"/v1/collection/{collection}/{objectid}",
+		controllers.GenericCrudIDPatch,
 	},
 }

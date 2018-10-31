@@ -44,6 +44,10 @@ func ModelByCollection(collection string) (interface{}, error) {
 		model := &Category{}
 		return model, nil
 
+	case "studio":
+		model := &Studio{}
+		return model, nil
+
 	}
 	err := fmt.Errorf("No collection found")
 	return "", err
