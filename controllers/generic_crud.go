@@ -21,71 +21,57 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-// JSONPaginationResponse --
-// HTTP status code 200 and repository model in data
-// swagger:response Resp
-type JSONPaginationResponse struct {
-	// in: body
-	Results       []interface{} `json:"results"`
-	TotalResults  int           `json:"total"`
-	RecordsOnPage int           `json:"recordsonpage"`
-	Page          int           `json:"page"`
-	TotalPages    int           `json:"totalpages"`
-}
-
 // GenericCrudGet --
 func GenericCrudGet(w http.ResponseWriter, r *http.Request) {
 
-	var model interface{}
 	var retval []interface{}
-
 	query := requests.QuerySanatizer(r.URL.Query())
 	params := mux.Vars(r)
 	collection := params["collection"]
 
-	// fmt.Println(collection)
 	// get out resuls
 	results := connection.Collection(collection).Find(query)
 
 	// Get pagination information
 	perPage, page := requests.GetPaginationInfo(r)
-	fmt.Println(perPage, page)
 	pagination, err := results.Paginate(perPage, page)
 
 	if err != nil {
 		requests.ReturnAPIError(w, err)
+		log.Fatal(err)
 		return
 	}
 
 	// Get which page we are on to skip
 	// results.Query.Skip(page * perpage)
 
-	fmt.Println(collection)
-	fmt.Println(results)
+	model, err := models.ModelByCollection(collection)
 
-	model, err = models.ModelByCollection(collection)
 	if err != nil {
+		requests.ReturnAPIError(w, err)
 		log.Fatal(err)
+		return
 	}
 
 	// Add the found results
-	for results.Next(model) {
+	for results.Next(&model) {
 		retval = append(retval, model)
 
 	}
+	// log.Debug(retval)
 	// Make our pagination response
-	response := JSONPaginationResponse{
+	response := requests.JSONPaginationResponse{
 		Results:       retval,
 		TotalResults:  pagination.TotalRecords,
 		RecordsOnPage: pagination.RecordsOnPage,
 		Page:          pagination.Current,
 		TotalPages:    pagination.TotalPages,
 	}
-
 	// Turn it into a json and serve it up
 	rs, err := json.Marshal(response)
 	if err != nil {
 		requests.ReturnAPIError(w, err)
+		log.Fatal(err)
 		return
 	}
 
@@ -141,10 +127,8 @@ func GenericCrudIDGet(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	// fmt.Println(objectid)
 	// Check valid bson id
 
-	// fmt.Println(hex.Enc(objectid))
 	if !bson.IsObjectIdHex(objectid) {
 		requests.ReturnAPIError(w, fmt.Errorf("Not a valid bson Id"))
 		return

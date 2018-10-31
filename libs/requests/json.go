@@ -15,6 +15,18 @@ func ReturnAPIOK(w http.ResponseWriter, json []byte) error {
 	return nil
 }
 
+// JSONPaginationResponse --
+// HTTP status code 200 and repository model in data
+// swagger:response jsonPaginationResp
+type JSONPaginationResponse struct {
+	// in: body
+	Results       interface{} `json:"results"`
+	TotalResults  int         `json:"total"`
+	RecordsOnPage int         `json:"recordsonpage"`
+	Page          int         `json:"page"`
+	TotalPages    int         `json:"totalpages"`
+}
+
 // JSONErrorResponse --
 // NotFound
 // swagger:response genericJsonError
@@ -38,16 +50,4 @@ func ReturnAPIError(w http.ResponseWriter, err error) {
 	w.Header().Set("Content-Type", "application/json;")
 	w.WriteHeader(http.StatusBadRequest)
 	w.Write(js)
-}
-
-// JSONPaginationResponse --
-// HTTP status code 200 and repository model in data
-// swagger:response volumeResp
-type JSONPaginationResponse struct {
-	// in: body
-	Results       interface{} `json:"results"`
-	TotalResults  int         `json:"total"`
-	RecordsOnPage int         `json:"recordsonpage"`
-	Page          int         `json:"page"`
-	TotalPages    int         `json:"totalpages"`
 }

@@ -36,6 +36,5 @@ func QuerySanatizer(params map[string][]string) map[string]interface{} {
 		query[rawParam] = value
 	}
 
-	log.Debug(query)
 	return query
 }

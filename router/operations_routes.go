@@ -20,7 +20,7 @@ var operationsRoutes = Routes{
 	//     "$ref": "#/definitions/Performer"
 	// responses:
 	//   "200":
-	//     "$ref": "#/responses/performerResp"
+	//     "$ref": "#/responses/JSONPaginationResponse"
 	//   "404":
 	//     "$ref": "#/responses/genericJsonError"
 	Route{

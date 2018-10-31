@@ -13,7 +13,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/VuliTv/go-movie-api/controllers"
 	"github.com/gorilla/mux"
 )
 
@@ -34,6 +33,7 @@ func NewRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 
 	routes = append(routes, operationsRoutes...)
+	routes = append(routes, crudRoutes...)
 
 	for _, route := range routes {
 		var handler http.Handler
@@ -61,31 +61,5 @@ var routes = Routes{
 		"GET",
 		"/",
 		Index,
-	},
-	Route{
-		"GenericCrudGet",
-		"GET",
-		"/v1/collection/{collection}",
-		controllers.GenericCrudGet,
-	},
-
-	Route{
-		"GenericCrudPost",
-		"POST",
-		"/v1/collection/{collection}",
-		controllers.GenericCrudPost,
-	},
-
-	Route{
-		"GenericCrudIDGet",
-		"GET",
-		"/v1/collection/{collection}/{objectid}",
-		controllers.GenericCrudIDGet,
-	},
-	Route{
-		"GenericCrudIDDelete",
-		"DELETE",
-		"/v1/collection/{collection}/{objectid}",
-		controllers.GenericCrudIDDelete,
 	},
 }
