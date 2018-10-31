@@ -38,8 +38,9 @@ type JSONErrorResponse struct {
 // Success response
 // swagger:response ok
 type JSONSuccessResponse struct {
-	Message    string `json:"message"`
-	Identifier string `json:"identifier"`
+	Message    string      `json:"message"`
+	Identifier string      `json:"identifier"`
+	Extra      interface{} `json:"extra"`
 }
 
 // ReturnAPIError --

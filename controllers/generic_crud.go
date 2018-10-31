@@ -201,10 +201,10 @@ func GenericCrudIDPatch(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	objectid := params["objectid"]
 	collection := params["collection"]
-	model, err := models.ModelByCollection(collection)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// model, err := models.ModelByCollection(collection)
+	// if err != nil {
+	// log.Fatal(err)
+	// }
 
 	// Check valid bson id
 	if !bson.IsObjectIdHex(objectid) {
@@ -212,23 +212,30 @@ func GenericCrudIDPatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Find doc
-	err = connection.Collection(collection).FindById(bson.ObjectIdHex(objectid), model)
+	var patchBody interface{}
+
+	if r.Body == nil {
+		requests.ReturnAPIError(w, fmt.Errorf("Please send a request body"))
+		return
+	}
+	err = json.NewDecoder(r.Body).Decode(&patchBody)
+
 	if err != nil {
+		log.Error(err)
 		requests.ReturnAPIError(w, err)
 		return
 	}
-	// Delete the document
-	err = connection.Collection(collection).DeleteDocument(model.(bongo.Document))
-	log.Info(err)
+	fmt.Println(patchBody)
+
+	// Update the document
+	err = connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(objectid)}, bson.M{"$set": patchBody})
+
 	if err != nil {
 		requests.ReturnAPIError(w, err)
 		return
 	}
 
-	// Send the response
-	retval := model.(bongo.Document)
-	response := requests.JSONSuccessResponse{Message: "success", Identifier: retval.GetId().String()}
+	response := requests.JSONSuccessResponse{Message: "success", Identifier: objectid, Extra: patchBody}
 
 	js, err := json.Marshal(response)
 

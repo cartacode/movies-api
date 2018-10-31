@@ -53,7 +53,7 @@ var crudRoutes = Routes{
 
 	Route{
 		"GenericCrudIDPatch",
-		"DELETE",
+		"PATCH",
 		"/v1/collection/{collection}/{objectid}",
 		controllers.GenericCrudIDPatch,
 	},

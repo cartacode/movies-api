@@ -34,7 +34,7 @@ func QuerySanatizer(params map[string][]string) map[string]interface{} {
 			varType := reflect.TypeOf(params[rawParam][0]).Kind()
 
 			// See if it's a string
-			if varType == reflect.String {
+			if len(params[rawParam]) == 1 && varType == reflect.String {
 				switch strings.ToLower(params[rawParam][0]) {
 				case "true":
 					value = true
@@ -42,7 +42,8 @@ func QuerySanatizer(params map[string][]string) map[string]interface{} {
 				case "false":
 					value = false
 					log.Debugw("converted bool type", rawParam, value)
-
+				default:
+					value = params[rawParam][0]
 				}
 
 			} else {
