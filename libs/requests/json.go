@@ -52,3 +52,14 @@ func ReturnAPIError(w http.ResponseWriter, err error) {
 	w.WriteHeader(http.StatusBadRequest)
 	w.Write(js)
 }
+
+// ReturnOnError --
+func ReturnOnError(w http.ResponseWriter, err error) bool {
+	if err != nil {
+		log.Fatal(err)
+		ReturnAPIError(w, err)
+		return true
+
+	}
+	return false
+}

@@ -8,7 +8,6 @@ import (
 
 	"github.com/VuliTv/go-movie-api/libs/envhelp"
 	"github.com/VuliTv/go-movie-api/libs/requests"
-	"github.com/VuliTv/go-movie-api/models"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/gorilla/mux"
@@ -43,45 +42,102 @@ func OperationsUploadCoverImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Create a new session to AWS
 	s, err := session.NewSession(&aws.Config{Region: aws.String(s3Region)})
-	if err != nil {
-		log.Fatal(err)
-	}
-	_, err = s.Config.Credentials.Get()
-	if err != nil {
-		log.Fatal(err)
+	if requests.ReturnOnError(w, err) {
+		return
 	}
 
-	// Upload
-	path, err := requests.AddFileToS3(s, bucket, "cover-art/"+objectid, content)
-	if err != nil {
-		log.Fatal(err)
+	// Quick verification step
+	_, err = s.Config.Credentials.Get()
+
+	if requests.ReturnOnError(w, err) {
+		return
 	}
+
+	// Upload to our bucket
+	path, err := requests.AddFileToS3(s, bucket, "media/"+objectid+"/cover-image", content)
+	if requests.ReturnOnError(w, err) {
+		return
+	}
+
+	// Patch the collection document with the new image path
+	patch := make(map[string]string)
+	patch["coverimage"] = path
+	err = connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(objectid)}, bson.M{"$set": patch})
+
+	if requests.ReturnOnError(w, err) {
+		return
+	}
+	// Sending our response
 	response := &requests.JSONSuccessResponse{Message: path, Identifier: "success"}
 	js, err := json.Marshal(response)
+
+	if requests.ReturnOnError(w, err) {
+		return
+	}
+
+	requests.ReturnAPIOK(w, js)
+}
+
+// OperationsUploadTrailer --
+func OperationsUploadTrailer(w http.ResponseWriter, r *http.Request) {
+
+	if r.Body == nil {
+		http.Error(w, "Body must be set", http.StatusBadRequest)
+		return
+	}
+
+	params := mux.Vars(r)
+	objectid := params["objectid"]
+	collection := params["collection"]
+
+	// Check for a hexId
+	if !bson.IsObjectIdHex(objectid) {
+		requests.ReturnAPIError(w, fmt.Errorf("Not a valid bson Id"))
+		return
+	}
+	// Read the image
+	content, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		log.Fatal(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
-	switch collection {
-	case "movie":
-
-		movie := &models.Movie{}
-		// Find doc
-		err := connection.Collection(collection).FindById(bson.ObjectIdHex(objectid), movie)
-
-		// fmt.Println(dnfError)
-		if err != nil {
-			requests.ReturnAPIError(w, err)
-			return
-		}
-
-		movie.MediaContent.CoverImage = path
-		err = connection.Collection(collection).Save(movie)
-		if err != nil {
-			requests.ReturnAPIError(w, err)
-			return
-		}
+	// Create a new session to AWS
+	s, err := session.NewSession(&aws.Config{Region: aws.String(s3Region)})
+	if requests.ReturnOnError(w, err) {
+		return
 	}
+
+	// Quick verification step
+	_, err = s.Config.Credentials.Get()
+
+	if requests.ReturnOnError(w, err) {
+		return
+	}
+
+	// Upload to our bucket
+	path, err := requests.AddFileToS3(s, bucket, "media/"+objectid+"/trailers/", content)
+	if requests.ReturnOnError(w, err) {
+		return
+	}
+
+	// Patch the collection document with the new image path
+	patch := make(map[string]string)
+	patch["coverimage"] = path
+	err = connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(objectid)}, bson.M{"$set": patch})
+
+	if requests.ReturnOnError(w, err) {
+		return
+	}
+	// Sending our response
+	response := &requests.JSONSuccessResponse{Message: path, Identifier: "success"}
+	js, err := json.Marshal(response)
+
+	if requests.ReturnOnError(w, err) {
+		return
+	}
+
 	requests.ReturnAPIOK(w, js)
 }
