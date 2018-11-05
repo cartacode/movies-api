@@ -30,12 +30,21 @@ db.createCollection( "volume",{
                         "mobilethumbnail": {
                             "bsonType": "string"
                         },
-                        "coverimages": {
-                            "bsonType": "array",
-                            "additionalItems": true,
-                            "uniqueItems": false,
-                            "items": {
-                                "bsonType": "string"
+                        "cover": {
+                            "bsonType": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "selected": {
+                                    "bsonType": "string"
+                                },
+                                "available": {
+                                    "bsonType": "array",
+                                    "additionalItems": true,
+                                    "uniqueItems": false,
+                                    "items": {
+                                        "bsonType": "string"
+                                    }
+                                }
                             }
                         }
                     }

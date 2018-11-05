@@ -125,11 +125,11 @@ func OperationsUploadTrailer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	patch := &models.Trailer{URL: slug}
 	// Patch the collection document with the new image path
-	patch := models.Trailer{Title: slug}
 
 	patch.Title = slug
-	patch.Path = path
+	patch.URL = path
 
 	fmt.Println(patch)
 	err = connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(objectid)}, bson.M{"$addToSet": bson.M{"trailers": patch}})

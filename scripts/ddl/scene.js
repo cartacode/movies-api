@@ -13,9 +13,6 @@ db.createCollection( "scene",{
                 "slug": {
                     "bsonType": "string"
                 },
-                "coverimage": {
-                    "bsonType": "string"
-                },
                 "images": {
                     "bsonType": "object",
                     "properties": {
@@ -31,12 +28,21 @@ db.createCollection( "scene",{
                         "mobilethumbnail": {
                             "bsonType": "string"
                         },
-                        "coverimages": {
-                            "bsonType": "array",
-                            "additionalItems": true,
-                            "uniqueItems": false,
-                            "items": {
-                                "bsonType": "string"
+                        "cover": {
+                            "bsonType": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "selected": {
+                                    "bsonType": "string"
+                                },
+                                "available": {
+                                    "bsonType": "array",
+                                    "additionalItems": true,
+                                    "uniqueItems": false,
+                                    "items": {
+                                        "bsonType": "string"
+                                    }
+                                }
                             }
                         }
                     },
@@ -180,7 +186,6 @@ db.createCollection( "scene",{
                 "_id",
                 "title",
                 "slug",
-                "coverimage",
                 "images",
                 "performance",
                 "dynamodbid",

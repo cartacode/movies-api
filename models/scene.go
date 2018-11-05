@@ -25,7 +25,10 @@ type Scene struct {
 	bongo.DocumentBase `bson:",inline"`
 
 	// Media information
-	MediaContent MediaContent `bson:",inline" json:"media"`
+	Images     Images     `json:"images"`
+	Extras     []Extras   `json:"extras"`
+	Thumbnails Thumbnails `json:"thumbnails"`
+	Trailers   []Trailer  `json:"trailers"`
 
 	// MovieInformation --
 	Information MediaInformation `json:"information"`

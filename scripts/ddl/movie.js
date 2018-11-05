@@ -13,9 +13,6 @@ db.createCollection( "movie",{
                 "slug": {
                     "bsonType": "string"
                 },
-                "coverimage": {
-                    "bsonType": "string"
-                },
                 "images": {
                     "bsonType": "object",
                     "additionalProperties": false,
@@ -32,13 +29,22 @@ db.createCollection( "movie",{
                         "mobilethumbnail": {
                             "bsonType": "string"
                         },
-                        "coverimages": {
-                            "bsonType": "array",
-                            "additionalItems": true,
-                            "uniqueItems": false,
-                            "items": {
-                                "bsonType": "string"
-                            }
+                        "cover": {
+                            "bsonType": "object",
+                            "properties": {
+                                "selected": {
+                                    "bsonType": "string"
+                                },
+                                "available": {
+                                    "bsonType": "array",
+                                    "additionalItems": true,
+                                    "uniqueItems": false,
+                                    "items": {
+                                        "bsonType": "string"
+                                    }
+                                }
+                            },
+                            "additionalProperties": false
                         }
                     }
                 },
@@ -175,7 +181,6 @@ db.createCollection( "movie",{
                 "_id",
                 "title",
                 "slug",
-                "coverimage",
                 "images",
                 "performance",
                 "dynamodbid",

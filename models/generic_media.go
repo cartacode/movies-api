@@ -1,34 +1,39 @@
 package models
 
-// MediaContent --
-type MediaContent struct {
-	Images struct {
-		Detailpage            string `json:"detailpage"`
-		Traythumbnail         string `json:"traythumbnail"`
-		Trayfeaturedthumbnail string `json:"trayfeaturedthumbnail"`
-		Mobilethumbnail       string `json:"mobilethumbnail"`
-		Coverimage            struct {
-			Selected  string   `json:"selected"`
-			Available []string `json:"available"`
-		} `json:"coverimage"`
-	} `json:"images"`
-	Extras []struct {
-		URL       string `json:"url"`
-		Published bool   `json:"published"`
-	} `json:"extras"`
-	Thumbnails struct {
-		Prefix string `json:"prefix"`
-		Count  int    `json:"count"`
-		Format string `json:"format"`
-	} `json:"thumbnails"`
+// Images --
+type Images struct {
+	Detailpage            string `json:"detailpage"`
+	TrayThumbnail         string `json:"traythumbnail"`
+	TrayFeaturedThumbnail string `json:"trayfeaturedthumbnail"`
+	MobileThumbnail       string `json:"mobilethumbnail"`
+	CoverImage            struct {
+		Selected  string   `json:"selected"`
+		Available []string `json:"available"`
+	} `json:"coverimage"`
+	BackgroundImage struct {
+		Selected  string   `json:"selected"`
+		Available []string `json:"available"`
+	} `json:"backgroundimage"`
+}
+
+// Extras --
+type Extras struct {
+	URL       string `json:"url"`
+	Published bool   `json:"published"`
+}
+
+// Thumbnails --
+type Thumbnails struct {
+	Prefix string `json:"prefix"`
+	Count  int    `json:"count"`
+	Format string `json:"format"`
 }
 
 // Trailer --
 type Trailer struct {
-	Title  string `json:"title"`
-	Length int    `json:"length"`
-	Image  string `json:"image"`
-	Path   string `json:"path"`
+	URL       string `json:"url"`
+	Title     string `json:"title"`
+	Published bool   `json:"published"`
 }
 
 // MediaInformation --

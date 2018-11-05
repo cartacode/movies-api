@@ -25,7 +25,10 @@ type Volume struct {
 	bongo.DocumentBase `bson:",inline"`
 
 	// Media information
-	MediaContent MediaContent `bson:",inline" json:"media"`
+	Images     Images     `json:"images"`
+	Extras     Extras     `json:"extras"`
+	Thumbnails Thumbnails `json:"thumbnails"`
+	Trailer    Trailer    `json:"trailer"`
 
 	// MovieInformation --
 	Information MediaInformation `json:"information"`
