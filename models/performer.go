@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/VuliTv/go-movie-api/dbh"
 	"github.com/globalsign/mgo/bson"
 	"github.com/go-bongo/bongo"
 )
@@ -52,14 +53,15 @@ type Performer struct {
 
 // Validate --
 func (s *Performer) Validate(*bongo.Collection) []error {
-
+	connection, err := dbh.NewConnection("models.performer")
+	if err != nil {
+		panic(err)
+	}
 	retval := make([]error, 0)
 	performer := &Performer{}
 
 	// Find by slug when posting new performer
-	err := connection.Collection("performer").FindOne(bson.M{"slug": s.Slug}, performer)
-
-	if err == nil {
+	if err := connection.Collection("performer").FindOne(bson.M{"slug": s.Slug}, performer); err != nil {
 		retval = append(retval, fmt.Errorf("This document is not unique"))
 	}
 

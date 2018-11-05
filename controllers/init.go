@@ -3,25 +3,17 @@ package controllers
 import (
 	"github.com/VuliTv/go-movie-api/dbh"
 	"github.com/VuliTv/go-movie-api/libs/logging"
-	"github.com/VuliTv/go-movie-api/models"
+	"github.com/go-bongo/bongo"
 )
 
-var connection, err = dbh.NewConnection("controllers")
+var connection *bongo.Connection
+var err error
 var log = logging.GetProdLog()
-var page = 0
-var perpage = 20
-var depth = 0
-var collections map[string]interface{}
 
 func init() {
-	collections = make(map[string]interface{})
+	connection, err = dbh.NewConnection("controllers")
+	if err != nil {
+		panic(err)
+	}
 
-	collections["customer"] = &models.Customer{}
-	collections["category"] = &models.Category{}
-}
-
-// ReturnModels --
-func ReturnModels(modelName string) interface{} {
-
-	return collections[modelName]
 }
