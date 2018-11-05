@@ -2,20 +2,25 @@ package models
 
 // MediaContent --
 type MediaContent struct {
+	Images struct {
+		Detailpage            string `json:"detailpage"`
+		Traythumbnail         string `json:"traythumbnail"`
+		Trayfeaturedthumbnail string `json:"trayfeaturedthumbnail"`
+		Mobilethumbnail       string `json:"mobilethumbnail"`
+		Coverimage            struct {
+			Selected  string   `json:"selected"`
+			Available []string `json:"available"`
+		} `json:"coverimage"`
+	} `json:"images"`
+	Extras []struct {
+		URL       string `json:"url"`
+		Published bool   `json:"published"`
+	} `json:"extras"`
 	Thumbnails struct {
 		Prefix string `json:"prefix"`
 		Count  int    `json:"count"`
 		Format string `json:"format"`
 	} `json:"thumbnails"`
-	Images struct {
-		DetailPage            string `json:"detail_page"`
-		TrayThumbnail         string `json:"tray_thumbnail"`
-		TrayFeaturedThumbnail string `json:"tray_featured_thumbnail"`
-		MobileThumbnail       string `json:"mobile_thumbnail"`
-	} `json:"images"`
-	Extras     []string  `json:"extras"`
-	Trailers   []Trailer `json:"trailers"`
-	CoverImage string    `json:"cover-image"`
 }
 
 // Trailer --
@@ -32,8 +37,8 @@ type MediaInformation struct {
 
 	Studio string `json:"studio"`
 
-	// List of Mongo ObjectID for the Performers in this movie. Embeddable
-	Performers []string `json:"performers"`
+	// List of Mongo ObjectID for the Stars in this movie. Embeddable
+	Stars []string `json:"Stars"`
 
 	// Total movie length in seconds
 	Length int32 `json:"length"`

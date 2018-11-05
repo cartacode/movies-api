@@ -34,8 +34,8 @@ func ModelByCollection(collection string) (interface{}, error) {
 		model := &Series{}
 		return model, nil
 
-	case "performer":
-		model := &Performer{}
+	case "star":
+		model := &Star{}
 		return model, nil
 
 	case "scene":

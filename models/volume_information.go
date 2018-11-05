@@ -11,10 +11,10 @@ package models
 
 // VolumeInformation --
 type VolumeInformation struct {
-	Director *Performer `json:"director"`
+	Director *Star `json:"director"`
 
 	Studio *Studio `json:"studio"`
 
-	// List of Mongo ObjectID for the Performers in this scene. Embeddable
-	Performers []string `json:"performers"`
+	// List of Mongo ObjectID for the Stars in this scene. Embeddable
+	Stars []string `json:"Stars"`
 }
