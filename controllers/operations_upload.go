@@ -83,7 +83,7 @@ func OperationsUploadImage(w http.ResponseWriter, r *http.Request) {
 	}
 	// Patch the collection document with the new image path
 	patch := make(map[string]string)
-	patch[field] = path
+	patch["images."+field] = path
 	err = connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(objectid)}, bson.M{"$set": patch})
 
 	if requests.ReturnOnError(w, err) {
