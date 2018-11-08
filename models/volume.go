@@ -26,9 +26,9 @@ type Volume struct {
 
 	// Media information
 	Images     Images     `json:"images"`
-	Extras     Extras     `json:"extras"`
+	Extras     []Extras   `json:"extras"`
 	Thumbnails Thumbnails `json:"thumbnails"`
-	Trailer    Trailer    `json:"trailer"`
+	Trailers   []Trailer  `json:"trailers"`
 
 	// MovieInformation --
 	Information MediaInformation `json:"information"`
@@ -46,7 +46,7 @@ type Volume struct {
 	// Calculated by user view. Only increases.
 	Views int32 `json:"views"`
 
-	Series Series `json:"series"`
+	Series string `json:"series"`
 
 	// Unique Title for this scene
 	Title string `json:"title"`

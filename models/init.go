@@ -6,16 +6,14 @@ import (
 
 	"github.com/VuliTv/go-movie-api/dbh"
 	"github.com/VuliTv/go-movie-api/libs/logging"
-	"github.com/go-bongo/bongo"
 )
 
-var connection *bongo.Connection
+var connection, dbError = dbh.NewConnection("models")
 var err error
 var log = logging.GetProdLog()
 
 func init() {
-	connection, err = dbh.NewConnection("models")
-	if err != nil {
+	if dbError != nil {
 		panic(err)
 	}
 

@@ -87,7 +87,9 @@ func GenericCrudPost(w http.ResponseWriter, r *http.Request) {
 
 	model, err := models.ModelByCollection(collection)
 	if err != nil {
-		log.Fatal(err)
+		requests.ReturnAPIError(w, err)
+		// log.Fatal(err)
+		return
 	}
 	// text := slug.Make("Hellö Wörld хелло ворлд")
 

@@ -13,7 +13,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/VuliTv/go-movie-api/dbh"
 	"github.com/globalsign/mgo/bson"
 	"github.com/go-bongo/bongo"
 )
@@ -53,10 +52,7 @@ type Star struct {
 
 // Validate --
 func (s *Star) Validate(*bongo.Collection) []error {
-	connection, err := dbh.NewConnection("models.Star")
-	if err != nil {
-		panic(err)
-	}
+
 	retval := make([]error, 0)
 	Star := &Star{}
 

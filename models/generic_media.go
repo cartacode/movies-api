@@ -2,18 +2,13 @@ package models
 
 // Images --
 type Images struct {
-	Detailpage            string `json:"detailpage"`
-	TrayThumbnail         string `json:"traythumbnail"`
-	TrayFeaturedThumbnail string `json:"trayfeaturedthumbnail"`
-	MobileThumbnail       string `json:"mobilethumbnail"`
-	CoverImage            struct {
-		Selected  string   `json:"selected"`
-		Available []string `json:"available"`
-	} `json:"coverimage"`
-	BackgroundImage struct {
-		Selected  string   `json:"selected"`
-		Available []string `json:"available"`
-	} `json:"backgroundimage"`
+	Detailpage            string   `json:"detailpage"`
+	TrayThumbnail         string   `json:"traythumbnail"`
+	TrayFeaturedThumbnail string   `json:"trayfeaturedthumbnail"`
+	MobileThumbnail       string   `json:"mobilethumbnail"`
+	CoverImage            string   `json:"coverimage"`
+	BackgroundImage       string   `json:"backgroundimage"`
+	Available             []string `json:"available"`
 }
 
 // Extras --
