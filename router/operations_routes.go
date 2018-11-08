@@ -24,10 +24,10 @@ var operationsRoutes = Routes{
 	//   "404":
 	//     "$ref": "#/responses/genericJsonError"
 	Route{
-		"OperationsUploadCoverImage",
+		"OperationsUploadImage",
 		strings.ToUpper("Post"),
-		"/operations/upload/cover-image/{collection}/{objectid}",
-		controllers.OperationsUploadCoverImage,
+		"/operations/upload/{field}/{collection}/{objectid}",
+		controllers.OperationsUploadImage,
 	},
 	// swagger:operation POST /performer/ performer performerPost
 	// ---
