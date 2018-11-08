@@ -1,249 +1,70 @@
 # coding: utf-8
 SCENES = [
     {
-        "media": {
-            "images": {
-                "detail_page": "https://s3.amazonaws.com/vuli-public-assets/cover-art/a4145f90-4333-46b4-b187-ec4052520a6a",
-                "tray_thumbnail": "",
-                "tray_featured_thumbnail": "",
-                "mobile_thumbnail": ""
-            },
-            "thumbnails": {
-                "prefix": "SPE161_Anal_Innocence_s01_abr_tumb",
-                "count": 360,
-                "format": "jpg"
-            },
-            "extras": [],
-            "trailers": [],
-            "coverimage": "https://s3.amazonaws.com/vuli-public-assets/cover-art/a281fed5-2091-4e66-8d06-0c13ecd23cc0"
-        },
-        "dynamoId": "a281fed5-2091-4e66-8d06-0c13ecd23cc0",
         "category": [
-            "Anal",
-            "Foreign",
-            "All Sex"
+            "507f1f77bcf86cd799439011"
         ],
-        "information": {
-            "director": ["Xavi Rocka"],
-            "studio": "Private",
-            "performers": [
-                "Alberto Blanco",
-                "Cherry Kiss",
-                "Lovenia Lux",
-                "Apolonia LaPiedra"
-            ],
-            "length": 8912
-        },
-        "slug": "private-specials-161-anal-innocence-s1",
         "description": "Though these tender teens have experienced a lot for young girls their age, they have yet to explore the pleasures of anal. That's where Private cum in! In Anal Innocence you will see some seriously tight ass cherries get popped as these young babes embrace their darkest side and give in to the wonders of anal sex. Complete with ATM facials and sticky anal creampies, this ass fucking feature will satisfy all your needs, and then some!",
-        "performance": {
-            "views": 0,
-            "downvotes": 0,
-            "upvotes": 0,
-            "rank": 0
-        },
-        "title": "Private Specials 161: Anal Innocence: Scene 1",
-        "reviewed": False,
-        "volume": "",
-        "series": "",
-        "price": 1.99,
-        "is_published": False
-    },
-    {
-        "media": {
-            "images": {
-                "detail_page": "https://s3.amazonaws.com/vuli-public-assets/cover-art/a4145f90-4333-46b4-b187-ec4052520a6a",
-                "tray_thumbnail": "",
-                "tray_featured_thumbnail": "",
-                "mobile_thumbnail": ""
-            },
-            "thumbnails": {
-                "prefix": "SPE161_Anal_Innocence_s03_abr_tumb",
-                "count": 360,
-                "format": "jpg"
-            },
-            "extras": [],
-            "trailers": [],
-
-        },
-        "dynamoId": "a4145f90-4333-46b4-b187-ec4052520a6a",
-        "category": [
-            "Anal",
-            "Foreign",
-            "All Sex"
+        "dynamodbid": "46a3258c-eca0-4a78-b45a-09ed2290d755",
+        "extras": [
+            {
+                "published": True,
+                "url": "Lorem"
+            }
         ],
-        "information": {
-            "director": ["Xavi Rocka"],
-            "studio": "Private",
-            "performers": [
-                "Alberto Blanco",
-                "Cherry Kiss",
-                "Lovenia Lux",
-                "Apolonia LaPiedra"
-            ],
-            "length": 8912
+        "images": {
+            "backgroundimage": {
+                "available": [
+                    "Lorem"
+                ],
+                "selected": "Lorem"
+            },
+            "coverimage": {
+                "available": [
+                    "Lorem"
+                ],
+                "selected": "Lorem"
+            },
+            "detailpage": "https://s3.amazonaws.com/vuli-public-assets/cover-art/46a3258c-eca0-4a78-b45a-09ed2290d755",
+            "mobilethumbnail": "Lorem",
+            "trayfeaturedthumbnail": "Lorem",
+            "traythumbnail": "Lorem"
         },
-        "slug": "private-specials-161-anal-innocence-s3",
-        "description": "Though these tender teens have experienced a lot for young girls their age, they have yet to explore the pleasures of anal. That's where Private cum in! In Anal Innocence you will see some seriously tight ass cherries get popped as these young babes embrace their darkest side and give in to the wonders of anal sex. Complete with ATM facials and sticky anal creampies, this ass fucking feature will satisfy all your needs, and then some!",
+        "information": {
+            "director": [
+                "507f1f77bcf86cd799439011"
+            ],
+            "length": 8912,
+            "stars": [
+                "507f1f77bcf86cd799439011"
+            ],
+            "studio": "507f1f77bcf86cd799439011"
+        },
+        "ispublished": False,
         "performance": {
-            "views": 0,
             "downvotes": 0,
+            "rank": 0,
             "upvotes": 0,
-            "rank": 0
+            "views": 0
         },
-        "title": "Private Specials 161: Anal Innocence: Scene 3",
-        "reviewed": False,
-        "volume": "",
-        "series": "",
         "price": 1.99,
-        "is_published": False
-    },
-    {
-        "media": {
-            "images": {
-                "detail_page": "https://s3.amazonaws.com/vuli-public-assets/cover-art/f6946ce4-04ad-4a5f-b64a-07c641bddbf3",
-                "tray_thumbnail": "",
-                "tray_featured_thumbnail": "",
-                "mobile_thumbnail": ""
-            },
-            "thumbnails": {
-                "prefix": "SPE161_Anal_Innocence_s02_abr_tumb",
-                "count": 360,
-                "format": "jpg"
-            },
-            "extras": [],
-            "trailers": [],
-
-        },
-        "dynamoId": "f6946ce4-04ad-4a5f-b64a-07c641bddbf3",
-        "category": [
-            "Anal",
-            "Foreign",
-            "All Sex"
-        ],
-        "information": {
-            "director": ["Xavi Rocka"],
-            "studio": "Private",
-            "performers": [
-                "Alberto Blanco",
-                "Cherry Kiss",
-                "Lovenia Lux",
-                "Apolonia LaPiedra"
-            ],
-            "length": 8912
-        },
-        "slug": "private-specials-161-anal-innocence-s2",
-        "description": "Though these tender teens have experienced a lot for young girls their age, they have yet to explore the pleasures of anal. That's where Private cum in! In Anal Innocence you will see some seriously tight ass cherries get popped as these young babes embrace their darkest side and give in to the wonders of anal sex. Complete with ATM facials and sticky anal creampies, this ass fucking feature will satisfy all your needs, and then some!",
-        "performance": {
-            "views": 0,
-            "downvotes": 0,
-            "upvotes": 0,
-            "rank": 0
-        },
-        "title": "Private Specials 161: Anal Innocence: Scene 2",
         "reviewed": False,
-        "volume": "",
         "series": "",
-        "price": 1.99,
-        "is_published": False
-    },
-    {
-        "media": {
-            "images": {
-                "detail_page": "https://s3.amazonaws.com/vuli-public-assets/cover-art/bc85d0f8-3dd1-43f4-a0d2-e00317348c93",
-                "tray_thumbnail": "",
-                "tray_featured_thumbnail": "",
-                "mobile_thumbnail": ""
-            },
-            "thumbnails": {
-                "prefix": "SPE161_Anal_Innocence_s04_abr_tumb",
-                "count": 360,
-                "format": "jpg"
-            },
-            "extras": [],
-            "trailers": [],
-
-        },
-        "dynamoId": "bc85d0f8-3dd1-43f4-a0d2-e00317348c93",
-        "category": [
-            "Anal",
-            "Foreign",
-            "All Sex"
-        ],
-        "information": {
-            "director": ["Xavi Rocka"],
-            "studio": "Private",
-            "performers": [
-                "Alberto Blanco",
-                "Cherry Kiss",
-                "Lovenia Lux",
-                "Apolonia LaPiedra"
-            ],
-            "length": 8912
-        },
-        "slug": "private-specials-161-anal-innocence-s4",
-        "description": "Though these tender teens have experienced a lot for young girls their age, they have yet to explore the pleasures of anal. That's where Private cum in! In Anal Innocence you will see some seriously tight ass cherries get popped as these young babes embrace their darkest side and give in to the wonders of anal sex. Complete with ATM facials and sticky anal creampies, this ass fucking feature will satisfy all your needs, and then some!",
-        "performance": {
-            "views": 0,
-            "downvotes": 0,
-            "upvotes": 0,
-            "rank": 0
-        },
-        "title": "Private Specials 161: Anal Innocence: Scene 4",
-        "reviewed": False,
-        "volume": "",
-        "series": "",
-        "price": 1.99,
-        "is_published": False
-    },
-    {
-        "media": {
-            "images": {
-                "detail_page": "https://s3.amazonaws.com/vuli-public-assets/cover-art/46a3258c-eca0-4a78-b45a-09ed2290d755",
-                "tray_thumbnail": "",
-                "tray_featured_thumbnail": "",
-                "mobile_thumbnail": ""
-            },
-            "thumbnails": {
-                "prefix": "SPE161_Anal_Innocence_s05_abr_tumb",
-                "count": 360,
-                "format": "jpg"
-            },
-            "extras": [],
-            "trailers": [],
-
-        },
-        "dynamoId": "46a3258c-eca0-4a78-b45a-09ed2290d755",
-        "category": [
-            "Anal",
-            "Foreign",
-            "All Sex"
-        ],
-        "information": {
-            "director": ["Xavi Rocka"],
-            "studio": "Private",
-            "performers": [
-                "Alberto Blanco",
-                "Cherry Kiss",
-                "Lovenia Lux",
-                "Apolonia LaPiedra"
-            ],
-            "length": 8912
-        },
         "slug": "private-specials-161-anal-innocence-s5",
-        "description": "Though these tender teens have experienced a lot for young girls their age, they have yet to explore the pleasures of anal. That's where Private cum in! In Anal Innocence you will see some seriously tight ass cherries get popped as these young babes embrace their darkest side and give in to the wonders of anal sex. Complete with ATM facials and sticky anal creampies, this ass fucking feature will satisfy all your needs, and then some!",
-        "performance": {
-            "views": 0,
-            "downvotes": 0,
-            "upvotes": 0,
-            "rank": 0
+        "thumbnails": {
+            "count": 360,
+            "format": "jpg",
+            "prefix": "SPE161_Anal_Innocence_s05_abr_tumb"
         },
         "title": "Private Specials 161: Anal Innocence: Scene 5",
-        "reviewed": False,
-        "volume": "",
-        "series": "",
-        "price": 1.99,
-        "is_published": False
+        "trailers": [
+            {
+                "published": False,
+                "title": "",
+                "url": ""
+            }
+        ],
+        "volume": "507f1f77bcf86cd799439011"
     }
 ]
 

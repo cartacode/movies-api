@@ -46,7 +46,7 @@ type Volume struct {
 	// Calculated by user view. Only increases.
 	Views int32 `json:"views"`
 
-	Series *Series `json:"series"`
+	Series Series `json:"series"`
 
 	// Unique Title for this scene
 	Title string `json:"title"`
