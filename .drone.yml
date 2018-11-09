@@ -4,16 +4,25 @@ workspace:
 
 pipeline:
   build:
-    image: docker.io/spryhq/golang-dep
+    image: docker.io/spryhq/golang-dep-swagger:alpine-1.10
     pull: true
     commands:
       - go get -u github.com/golang/dep/cmd/dep
       - dep ensure
       - go test ./... -cover
+      - swagger generate spec -i swagger.yml -o ./swagger.json --scan-models
     environment:
       - CGO=0
       - GOOS=linux
       - GOARCH=amd64
+
+  publish_swagger_s3:
+    image: plugins/s3
+    bucket: vuli-swagger-ui
+    acl: public-read
+    region: us-east-1
+    source: swagger.json
+    target: swagger.json
 
   publish:
     image: plugins/ecr
@@ -23,18 +32,18 @@ pipeline:
     when:
       branch: develop
       event: [push, tag, deployment]
-  deploy:
-    image: joshdvir/drone-ecs-deploy
-    cluster: stage-vuli
-    service: stage-api
-    image_name: 527162640954.dkr.ecr.us-east-1.amazonaws.com/vuli-api:${DRONE_BUILD_NUMBER}
-    aws_region: us-east-1 # defaults to us-east-1
-    timeout: "500" # defaults to 300 / 5 min
-    max: "200" # defaults to 200
-    min: "100" # defaults to 100
-    when:
-      branch: develop
-      event: [push, tag, deployment]
+  # deploy:
+  #   image: joshdvir/drone-ecs-deploy
+  #   cluster: stage-vuli
+  #   service: stage-api
+  #   image_name: 527162640954.dkr.ecr.us-east-1.amazonaws.com/vuli-api:${DRONE_BUILD_NUMBER}
+  #   aws_region: us-east-1 # defaults to us-east-1
+  #   timeout: "500" # defaults to 300 / 5 min
+  #   max: "200" # defaults to 200
+  #   min: "100" # defaults to 100
+  #   when:
+  #     branch: develop
+  #     event: [push, tag, deployment]
 
   slack:
     image: plugins/slack
