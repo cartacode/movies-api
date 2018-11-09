@@ -22,7 +22,7 @@ pipeline:
     tags: ${DRONE_BUILD_NUMBER}
     when:
       branch: develop
-
+      event: [push, tag, deployment]
   deploy:
     image: joshdvir/drone-ecs-deploy
     cluster: stage-vuli
@@ -34,6 +34,8 @@ pipeline:
     min: "100" # defaults to 100
     when:
       branch: develop
+      event: [push, tag, deployment]
+
   slack:
     image: plugins/slack
     username: drone
