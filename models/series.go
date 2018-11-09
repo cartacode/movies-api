@@ -30,7 +30,8 @@ type Series struct {
 	Thumbnails Thumbnails `json:"thumbnails"`
 	Trailer    Trailer    `json:"trailer"`
 
-	Quality []string `json:"quality"`
+	Quality []int `json:"quality"`
+
 	// List of Categories
 	Category []string `json:"category"`
 
