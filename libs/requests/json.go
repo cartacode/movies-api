@@ -44,19 +44,22 @@ type JSONSuccessResponse struct {
 }
 
 // ReturnAPIError --
-func ReturnAPIError(w http.ResponseWriter, err error) {
+func ReturnAPIError(w http.ResponseWriter, err error) error {
 	payload := JSONErrorResponse{Error: err.Error()}
 	js, err := json.Marshal(payload)
 
+	log.Error(payload)
 	w.Header().Set("Content-Type", "application/json;")
 	w.WriteHeader(http.StatusBadRequest)
 	w.Write(js)
+
+	return err
 }
 
 // ReturnOnError --
 func ReturnOnError(w http.ResponseWriter, err error) bool {
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
 		ReturnAPIError(w, err)
 		return true
 

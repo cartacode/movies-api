@@ -23,6 +23,8 @@ pipeline:
     region: us-east-1
     source: swagger.json
     target: /swagger.json
+    when:
+      branch: develop
 
   publish:
     image: plugins/ecr
@@ -30,7 +32,7 @@ pipeline:
     registry: 527162640954.dkr.ecr.us-east-1.amazonaws.com
     tags: ${DRONE_BUILD_NUMBER}
     when:
-      branch: master
+      branch: develop
       event: [push, tag, deployment]
   deploy:
     image: joshdvir/drone-ecs-deploy
@@ -42,7 +44,7 @@ pipeline:
     max: "200" # defaults to 200
     min: "100" # defaults to 100
     when:
-      branch: master
+      branch: develop
       event: [push, tag, deployment]
 
   slack:

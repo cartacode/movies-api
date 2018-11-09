@@ -17,7 +17,7 @@ import (
 //
 // A Movie we can show. Contains all information and streaming data
 //
-// swagger:model
+// swagger:model movie movieDocument
 type Movie struct {
 	bongo.DocumentBase `bson:",inline"`
 

@@ -72,7 +72,7 @@ func GenericCrudGet(w http.ResponseWriter, r *http.Request) {
 	rs, err := json.Marshal(response)
 	if err != nil {
 		requests.ReturnAPIError(w, err)
-		log.Fatal(err)
+		log.Error(err)
 		return
 	}
 
@@ -88,7 +88,7 @@ func GenericCrudPost(w http.ResponseWriter, r *http.Request) {
 	model, err := models.ModelByCollection(collection)
 	if err != nil {
 		requests.ReturnAPIError(w, err)
-		// log.Fatal(err)
+		log.Error(err)
 		return
 	}
 	// text := slug.Make("Hellö Wörld хелло ворлд")
@@ -126,31 +126,33 @@ func GenericCrudIDGet(w http.ResponseWriter, r *http.Request) {
 	objectid := params["objectid"]
 	collection := params["collection"]
 	model, err := models.ModelByCollection(collection)
-	if err != nil {
-		log.Fatal(err)
+
+	if requests.ReturnOnError(w, err) {
+		return
 	}
 
 	// Check valid bson id
 
 	if !bson.IsObjectIdHex(objectid) {
-		requests.ReturnAPIError(w, fmt.Errorf("Not a valid bson Id"))
-		return
+		if requests.ReturnOnError(w, fmt.Errorf("Not a valid bson Id")) {
+			return
+		}
+
 	}
 
 	// Find doc
 	err = connection.Collection(collection).FindById(bson.ObjectIdHex(objectid), model)
-	if err != nil {
-		requests.ReturnAPIError(w, err)
+	if requests.ReturnOnError(w, err) {
 		return
 	}
 
 	// Json
 	js, err := json.Marshal(model)
 
-	if err != nil {
-		requests.ReturnAPIError(w, err)
+	if requests.ReturnOnError(w, err) {
 		return
 	}
+
 	requests.ReturnAPIOK(w, js)
 }
 

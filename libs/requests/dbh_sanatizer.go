@@ -53,7 +53,8 @@ func QuerySanatizer(params map[string][]string) map[string]interface{} {
 		}
 
 		if err != nil {
-			log.Fatal(err)
+			log.Error(err)
+			return nil
 		}
 		query[rawParam] = value
 	}
