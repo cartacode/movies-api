@@ -27,7 +27,7 @@ type Movie struct {
 	Thumbnails Thumbnails `json:"thumbnails"`
 	Trailers   []Trailer  `json:"trailers"`
 
-	Chapters []int `json:"chapters"`
+	Chapters []Chapter `json:"chapters"`
 
 	Quality []int `json:"quality"`
 

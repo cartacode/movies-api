@@ -59,3 +59,9 @@ type Performance struct {
 	// Calculated by user view. Only increases.
 	Views int32 `json:"views"`
 }
+
+// Chapter --
+type Chapter struct {
+	Name      string `json:"name"`
+	Timestamp int    `json:"timestamp"`
+}
