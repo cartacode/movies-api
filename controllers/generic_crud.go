@@ -39,7 +39,7 @@ func GenericCrudGet(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		requests.ReturnAPIError(w, err)
-		log.Fatal(err)
+		log.Error(err)
 		return
 	}
 
@@ -50,7 +50,7 @@ func GenericCrudGet(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		requests.ReturnAPIError(w, err)
-		log.Fatal(err)
+		log.Error(err)
 		return
 	}
 
@@ -87,7 +87,9 @@ func GenericCrudPost(w http.ResponseWriter, r *http.Request) {
 
 	model, err := models.ModelByCollection(collection)
 	if err != nil {
-		log.Fatal(err)
+		requests.ReturnAPIError(w, err)
+		// log.Fatal(err)
+		return
 	}
 	// text := slug.Make("Hellö Wörld хелло ворлд")
 
@@ -218,29 +220,25 @@ func GenericCrudIDPatch(w http.ResponseWriter, r *http.Request) {
 		requests.ReturnAPIError(w, fmt.Errorf("Please send a request body"))
 		return
 	}
-	err = json.NewDecoder(r.Body).Decode(&patchBody)
-
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&patchBody); err != nil {
 		log.Error(err)
 		requests.ReturnAPIError(w, err)
 		return
 	}
-	// Update the document
-	err = connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(objectid)}, bson.M{"$set": patchBody})
 
-	if err != nil {
+	// Update the document
+	if err := connection.Collection(collection).Collection().Update(
+		bson.M{"_id": bson.ObjectIdHex(objectid)}, bson.M{"$set": patchBody}); err != nil {
 		requests.ReturnAPIError(w, err)
 		return
 	}
 
 	response := requests.JSONSuccessResponse{Message: "success", Identifier: objectid, Extra: patchBody}
 
-	js, err := json.Marshal(response)
-
-	if err != nil {
+	if js, err := json.Marshal(response); err != nil {
 		requests.ReturnAPIError(w, err)
-		return
+	} else {
+		requests.ReturnAPIOK(w, js)
 	}
 
-	requests.ReturnAPIOK(w, js)
 }

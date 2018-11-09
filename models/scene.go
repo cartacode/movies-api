@@ -23,14 +23,17 @@ import (
 // swagger:model
 type Scene struct {
 	bongo.DocumentBase `bson:",inline"`
-	MediaContent       MediaContent `bson:",inline" json:"media"`
-	// List of Categories
-	Category []string `json:"category"`
+
+	// Media information
+	Images     Images     `json:"images"`
+	Extras     []Extras   `json:"extras"`
+	Thumbnails Thumbnails `json:"thumbnails"`
+	Trailers   []Trailer  `json:"trailers"`
 
 	// MovieInformation --
 	Information MediaInformation `json:"information"`
-	// MovieInformation --
 
+	// Media Performance
 	Performance Performance `json:"performance"`
 
 	// Unique Title for this movie
@@ -39,12 +42,13 @@ type Scene struct {
 	// DynamoDBId
 	DynamoDBId string `json:"dynamoId"`
 
-	// Ordered list of movie location(s)
-	Playlist []string `json:"playlist"`
+	// List of Categories
+	Category []string `json:"category"`
 
 	// Description of this movie if it has one. Not required
 	Description string `json:"description"`
 
+	Volume string `json:"volume"`
 	// Read only value. Only Admin can update. Sets the price for a movie
 	Price float32 `json:"price"`
 

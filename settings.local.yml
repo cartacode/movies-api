@@ -1,0 +1,9 @@
+authorize_net:
+    api:
+        id: 65Vv2fYQ
+        key: Simon
+        token: 6z59j6XrGA7V3TbG
+
+mongodb:
+    host: api-mongodb.stage.vuli.io
+    database: vuliapi

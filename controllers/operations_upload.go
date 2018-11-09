@@ -19,8 +19,10 @@ import (
 var s3Region = envhelp.GetEnv("AWS_DEFAULT_REGION", "us-east-1")
 var bucket = "vuli-public-assets"
 
-// OperationsUploadCoverImage --
-func OperationsUploadCoverImage(w http.ResponseWriter, r *http.Request) {
+// OperationsUploadImage --
+func OperationsUploadImage(w http.ResponseWriter, r *http.Request) {
+
+	var path string
 
 	if r.Body == nil {
 		http.Error(w, "Body must be set", http.StatusBadRequest)
@@ -28,6 +30,7 @@ func OperationsUploadCoverImage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	params := mux.Vars(r)
+	field := params["field"]
 	objectid := params["objectid"]
 	collection := params["collection"]
 
@@ -56,20 +59,37 @@ func OperationsUploadCoverImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// if field == "image" {
+	// 	// Upload to our bucket
+	// 	path, err := requests.AddFileToS3(s, bucket, "media/image/available/"+objectid+"/"+field, content)
+	// 	if requests.ReturnOnError(w, err) {
+	// 		return
+	// 	}
+
+	// 	// Patch the collection document with the new image path
+	// 	patch := make(map[string]string)
+	// 	patch[field] = path
+	// 	err = connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(objectid)}, bson.M{"$set": patch})
+
+	// 	if requests.ReturnOnError(w, err) {
+	// 		return
+	// 	}
+	// } else {
+
 	// Upload to our bucket
-	path, err := requests.AddFileToS3(s, bucket, "media/"+objectid+"/cover-image", content)
+	path, err = requests.AddFileToS3(s, bucket, "media/image/"+objectid+"/"+field, content)
 	if requests.ReturnOnError(w, err) {
 		return
 	}
-
 	// Patch the collection document with the new image path
 	patch := make(map[string]string)
-	patch["coverimage"] = path
+	patch["images."+field] = path
 	err = connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(objectid)}, bson.M{"$set": patch})
 
 	if requests.ReturnOnError(w, err) {
 		return
 	}
+
 	// Sending our response
 	response := &requests.JSONSuccessResponse{Message: path, Identifier: "success"}
 	js, err := json.Marshal(response)
@@ -125,11 +145,11 @@ func OperationsUploadTrailer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	patch := &models.Trailer{URL: slug}
 	// Patch the collection document with the new image path
-	patch := models.Trailer{Title: slug}
 
 	patch.Title = slug
-	patch.Path = path
+	patch.URL = path
 
 	fmt.Println(patch)
 	err = connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(objectid)}, bson.M{"$addToSet": bson.M{"trailers": patch}})

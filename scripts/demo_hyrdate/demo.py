@@ -23,19 +23,19 @@ def categories():
         print r.text
 
 
-def performers():
-    for performer in PERFORMERS:
+def stars():
+    for star in PERFORMERS:
 
-        path = "%s/performer" % COLLECTION_PATH
+        path = "%s/star" % COLLECTION_PATH
 
-        r = requests.post(url=path, data=json.dumps(performer))
+        r = requests.post(url=path, data=json.dumps(star))
         print r.text
 
 
 def directors():
     for director in DIRECTORS:
 
-        path = "%s/performer" % COLLECTION_PATH
+        path = "%s/star" % COLLECTION_PATH
 
         r = requests.post(url=path, data=json.dumps(director))
         print r.text
@@ -70,11 +70,11 @@ def series():
 
 def main():
     categories()
-    performers()
+    stars()
     directors()
     studios()
-    scenes()
-    series()
+#     scenes()
+#     series()
 
 
 if __name__ == '__main__':

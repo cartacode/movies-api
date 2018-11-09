@@ -8,8 +8,16 @@ import (
 	"github.com/VuliTv/go-movie-api/libs/logging"
 )
 
-var connection, err = dbh.NewConnection("models")
+var connection, dbError = dbh.NewConnection("models")
+var err error
 var log = logging.GetProdLog()
+
+func init() {
+	if dbError != nil {
+		panic(err)
+	}
+
+}
 
 // ModelByCollection --
 func ModelByCollection(collection string) (interface{}, error) {
@@ -24,8 +32,8 @@ func ModelByCollection(collection string) (interface{}, error) {
 		model := &Series{}
 		return model, nil
 
-	case "performer":
-		model := &Performer{}
+	case "star":
+		model := &Star{}
 		return model, nil
 
 	case "scene":

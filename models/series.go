@@ -23,7 +23,15 @@ import (
 // swagger:model
 type Series struct {
 	bongo.DocumentBase `bson:",inline"`
-	MediaContent       MediaContent `bson:",inline" json:"media"`
+
+	// Media information
+	Images     Images     `json:"images"`
+	Extras     Extras     `json:"extras"`
+	Thumbnails Thumbnails `json:"thumbnails"`
+	Trailer    Trailer    `json:"trailer"`
+
+	Quality []int `json:"quality"`
+
 	// List of Categories
 	Category []string `json:"category"`
 

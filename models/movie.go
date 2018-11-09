@@ -20,15 +20,25 @@ import (
 // swagger:model
 type Movie struct {
 	bongo.DocumentBase `bson:",inline"`
-	MediaContent       MediaContent `bson:",inline" json:"media"`
-	// List of Categories
-	Category []string `json:"category"`
+
+	// Media information
+	Images     Images     `json:"images"`
+	Extras     []Extras   `json:"extras"`
+	Thumbnails Thumbnails `json:"thumbnails"`
+	Trailers   []Trailer  `json:"trailers"`
+
+	Chapters []int `json:"chapters"`
+
+	Quality []int `json:"quality"`
 
 	// MovieInformation --
 	Information MediaInformation `json:"information"`
-	// MovieInformation --
 
+	// Media Performance
 	Performance Performance `json:"performance"`
+
+	// List of Categories
+	Category []string `json:"category"`
 
 	// Unique Title for this movie
 	Title string `json:"title"`
