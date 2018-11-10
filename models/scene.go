@@ -10,9 +10,6 @@
 package models
 
 import (
-	"fmt"
-
-	"github.com/globalsign/mgo/bson"
 	"github.com/go-bongo/bongo"
 )
 
@@ -68,13 +65,13 @@ type Scene struct {
 func (s *Scene) Validate(*bongo.Collection) []error {
 
 	retval := make([]error, 0)
-	scene := &Scene{}
+	// scene := &Scene{}
 
-	// Find by slug when posting new scene
-	err := connection.Collection("scene").FindOne(bson.M{"slug": s.Slug}, scene)
+	// // Find by slug when posting new scene
+	// err := connection.Collection("scene").FindOne(bson.M{"slug": s.Slug}, scene)
 
-	if err == nil {
-		retval = append(retval, fmt.Errorf("This document is not unique"))
-	}
+	// if err == nil {
+	// 	retval = append(retval, fmt.Errorf("This document is not unique"))
+	// }
 	return retval
 }

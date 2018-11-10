@@ -59,7 +59,6 @@ func ReturnAPIError(w http.ResponseWriter, err error) error {
 // ReturnOnError --
 func ReturnOnError(w http.ResponseWriter, err error) bool {
 	if err != nil {
-		log.Error(err)
 		ReturnAPIError(w, err)
 		return true
 

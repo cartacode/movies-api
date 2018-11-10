@@ -2,7 +2,6 @@ package models
 
 import (
 	"fmt"
-	"reflect"
 
 	"github.com/VuliTv/go-movie-api/dbh"
 	"github.com/VuliTv/go-movie-api/libs/logging"
@@ -25,7 +24,6 @@ func ModelByCollection(collection string) (interface{}, error) {
 	switch collection {
 	case "movie":
 		model := &Movie{}
-		fmt.Println(reflect.TypeOf(model))
 		return model, nil
 
 	case "series":

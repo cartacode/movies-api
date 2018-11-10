@@ -11,6 +11,7 @@ import (
 	"github.com/VuliTv/go-movie-api/models"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/go-bongo/bongo"
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -77,7 +78,7 @@ func OperationsUploadImage(w http.ResponseWriter, r *http.Request) {
 	// } else {
 
 	// Upload to our bucket
-	path, err = requests.AddFileToS3(s, bucket, "media/image/"+objectid+"/"+field, content)
+	path, err = requests.AddFileToS3(s, bucket, "media/"+objectid+"/images/"+field, content)
 	if requests.ReturnOnError(w, err) {
 		return
 	}
@@ -116,13 +117,26 @@ func OperationsUploadTrailer(w http.ResponseWriter, r *http.Request) {
 
 	// Check for a hexId
 	if !bson.IsObjectIdHex(objectid) {
-		requests.ReturnAPIError(w, fmt.Errorf("Not a valid bson Id"))
+		if requests.ReturnOnError(w, fmt.Errorf("Not a valid bson Id")) {
+			return
+		}
+	}
+	log.Debugw("looking for collection")
+	model, err := models.ModelByCollection(collection)
+
+	if requests.ReturnOnError(w, err) {
 		return
 	}
-	// Read the image
+
+	// Find the document
+	err = connection.Collection(collection).FindById(bson.ObjectIdHex(objectid), model)
+	if requests.ReturnOnError(w, err) {
+		return
+	}
+
 	content, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+
+	if requests.ReturnOnError(w, err) {
 		return
 	}
 
@@ -138,6 +152,7 @@ func OperationsUploadTrailer(w http.ResponseWriter, r *http.Request) {
 	if requests.ReturnOnError(w, err) {
 		return
 	}
+	log.Infow("logging into AWS")
 
 	// Upload to our bucket
 	path, err := requests.AddFileToS3(s, bucket, "media/"+objectid+"/trailers/"+slug, content)
@@ -145,18 +160,51 @@ func OperationsUploadTrailer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	patch := &models.Trailer{URL: slug}
-	// Patch the collection document with the new image path
+	log.Infow("upload successful")
+	patch := models.Trailer{
+		URL:       path,
+		Title:     slug,
+		Published: false,
+	}
 
-	patch.Title = slug
-	patch.URL = path
+	log.Debugw("creating new patch", "object", patch)
+	switch collection {
+	case "scene":
+		log.Infow("found scene model")
+		scene := *model.(*models.Scene)
 
-	fmt.Println(patch)
-	err = connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(objectid)}, bson.M{"$addToSet": bson.M{"trailers": patch}})
+		scene.Trailers = append(scene.Trailers, patch)
+		err = connection.Collection(collection).Save(&scene)
+		if vErr, ok := err.(*bongo.ValidationError); ok {
+			requests.ReturnAPIError(w, vErr.Errors[0])
+			return
+		}
+	case "movie":
+		log.Infow("found movie model")
+		movie := *model.(*models.Movie)
 
-	if requests.ReturnOnError(w, err) {
+		movie.Trailers = append(movie.Trailers, patch)
+		err = connection.Collection(collection).Save(&movie)
+		if vErr, ok := err.(*bongo.ValidationError); ok {
+			requests.ReturnAPIError(w, vErr.Errors[0])
+			return
+		}
+
+	case "volume":
+		log.Infow("found movie model")
+		movie := *model.(*models.Movie)
+
+		movie.Trailers = append(movie.Trailers, patch)
+		err = connection.Collection(collection).Save(&movie)
+		if vErr, ok := err.(*bongo.ValidationError); ok {
+			requests.ReturnAPIError(w, vErr.Errors[0])
+			return
+		}
+	default:
+		requests.ReturnOnError(w, fmt.Errorf("No such model"))
 		return
 	}
+
 	// // Sending our response
 	response := &requests.JSONSuccessResponse{Message: path, Identifier: "success", Extra: patch}
 	js, err := json.Marshal(response)
