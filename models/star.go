@@ -54,10 +54,12 @@ type Star struct {
 func (s *Star) Validate(*bongo.Collection) []error {
 
 	retval := make([]error, 0)
-	Star := &Star{}
+	star := &Star{}
 
-	// Find by slug when posting new Star
-	if err := connection.Collection("Star").FindOne(bson.M{"slug": s.Slug}, Star); err != nil {
+	// Find by slug when posting new star
+	err := connection.Collection("star").FindOne(bson.M{"slug": s.Slug}, star)
+
+	if err == nil {
 		retval = append(retval, fmt.Errorf("This document is not unique"))
 	}
 
