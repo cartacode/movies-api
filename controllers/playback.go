@@ -17,7 +17,8 @@ import (
 
 // RQ --
 type RQ struct {
-	URL string `json:"url"`
+	HLS  string `json:"hls"`
+	Dash string `json:"dash"`
 }
 
 // SignedS3Playback --
@@ -96,7 +97,7 @@ func SignedS3Playback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Json
-	a := &RQ{URL: item.HlsURL}
+	a := &RQ{HLS: item.HlsURL, Dash: item.DashURL}
 
 	log.Info(a)
 	js, err := json.Marshal(a)
