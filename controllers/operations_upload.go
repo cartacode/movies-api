@@ -168,6 +168,7 @@ func OperationsUploadTrailer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Debugw("creating new patch", "object", patch)
+
 	switch collection {
 	case "scene":
 		log.Infow("found scene model")
