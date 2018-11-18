@@ -48,6 +48,8 @@ type Star struct {
 	Traits StarTraits `json:"traits"`
 
 	Director bool `json:"director"`
+
+	Favorites int `json:"favorites"`
 }
 
 // Validate --
