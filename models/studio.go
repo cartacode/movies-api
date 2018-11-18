@@ -31,6 +31,8 @@ type Studio struct {
 
 	// Unique Slug for this studio. Made of <title><studio> lowercase and character stripped
 	Slug string `json:"slug"`
+
+	Thumbnail string `json:"thumbnail"`
 }
 
 // Validate --
