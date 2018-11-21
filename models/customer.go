@@ -9,13 +9,15 @@
 
 package models
 
+import "github.com/go-bongo/bongo"
+
 // Customer Document
 //
 // A customer on the site and all of their preferences and profile
 //
 // swagger:model
 type Customer struct {
-
+	bongo.DocumentBase `bson:",inline"`
 	// Unique email for this customer, read only, cognito controlled
 	// read only: true
 	Email string `json:"email"`
@@ -74,4 +76,9 @@ type Customer struct {
 		// List of Mongo ObjectID for the volumes wish list. Embeddable
 		Volumes []string `json:"volumes"`
 	} `json:"wishlist"`
+
+	Preferences []struct {
+		Tag    string  `json:"tag"`
+		Weight float64 `json:"weight"`
+	} `json:"preferences"`
 }

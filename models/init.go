@@ -46,10 +46,6 @@ func ModelByCollection(collection string) (interface{}, error) {
 		model := &Customer{}
 		return model, nil
 
-	case "category":
-		model := &Category{}
-		return model, nil
-
 	case "studio":
 		model := &Studio{}
 		return model, nil
