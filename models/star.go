@@ -31,6 +31,16 @@ type Star struct {
 
 	Name string `json:"name"`
 
+	Likes int32 `json:"likes"`
+
+	Dislikes int32 `json:"dislikes"`
+
+	Studios []string `json:"studios"`
+
+	Scenes []string `json:"scenes"`
+
+	Movies []string `json:"movies"`
+
 	Birthdate time.Time `json:"birthdate"`
 
 	Birthplace string `json:"birthplace"`
