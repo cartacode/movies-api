@@ -25,6 +25,8 @@ import (
 type Star struct {
 	bongo.DocumentBase `bson:",inline"`
 
+	Tagline string `json:"tagline"`
+
 	Bio string `json:"bio"`
 
 	Name string `json:"name"`
@@ -35,17 +37,43 @@ type Star struct {
 
 	Rank int `json:"rank"`
 
-	Social StarSocial `json:"social"`
+	Social struct {
+		Twitter string `json:"twitter"`
+
+		Youtube string `json:"youtube"`
+
+		Instagram string `json:"instagram"`
+
+		Snapchat string `json:"snapchat"`
+	} `json:"social"`
 
 	Slug string `json:"slug"`
 
 	Gender string `json:"gender"`
 
-	Size StarSize `json:"size"`
+	StarSize struct {
+		Weight int32 `json:"weight"`
 
-	Picture string `json:"picture"`
+		Waist int32 `json:"waist"`
 
-	Traits StarTraits `json:"traits"`
+		Bust string `json:"bust"`
+
+		Height int32 `json:"height"`
+	} `json:"size"`
+
+	Images struct {
+		Portrait string `json:"portrait"`
+
+		Landscape string `json:"landscape"`
+	} `json:"images"`
+
+	StarTraits struct {
+		Ethnicity string `json:"ethnicity"`
+		HairColor string `json:"haircolor"`
+		Piercings bool   `json:"piercings"`
+		Tattoos   bool   `json:"tattoos"`
+		StarSign  string `json:"sign"`
+	} `json:"traits"`
 
 	Director bool `json:"director"`
 
@@ -66,35 +94,4 @@ func (s *Star) Validate(*bongo.Collection) []error {
 	}
 
 	return retval
-}
-
-// StarTraits --
-type StarTraits struct {
-	Ethnicity string `json:"ethnicity"`
-	HairColor string `json:"haircolor"`
-	Piercings bool   `json:"piercings"`
-	Tattoos   bool   `json:"tattoos"`
-	StarSign  string `json:"sign"`
-}
-
-// StarSocial --
-type StarSocial struct {
-	Twitter string `json:"twitter"`
-
-	Youtube string `json:"youtube"`
-
-	Instagram string `json:"instagram"`
-
-	Snapchat string `json:"snapchat"`
-}
-
-// StarSize --
-type StarSize struct {
-	Weight int32 `json:"weight"`
-
-	Waist int32 `json:"waist"`
-
-	Bust string `json:"bust"`
-
-	Height int32 `json:"height"`
 }
