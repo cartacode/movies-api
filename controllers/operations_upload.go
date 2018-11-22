@@ -163,11 +163,7 @@ func OperationsUploadTrailer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Infow("upload successful")
-	patch := models.Trailer{
-		URL:       path,
-		Title:     field,
-		Published: false,
-	}
+	patch := models.Trailer{Title: field}
 
 	log.Debugw("creating new patch", "object", patch)
 
@@ -176,7 +172,7 @@ func OperationsUploadTrailer(w http.ResponseWriter, r *http.Request) {
 		log.Infow("found scene model")
 		scene := *model.(*models.Scene)
 
-		scene.Trailers = append(scene.Trailers, patch)
+		scene.Trailer = patch
 		err = connection.Collection(collection).Save(&scene)
 		if vErr, ok := err.(*bongo.ValidationError); ok {
 			requests.ReturnAPIError(w, vErr.Errors[0])
@@ -186,7 +182,7 @@ func OperationsUploadTrailer(w http.ResponseWriter, r *http.Request) {
 		log.Infow("found movie model")
 		movie := *model.(*models.Movie)
 
-		movie.Trailers = append(movie.Trailers, patch)
+		movie.Trailer = patch
 		err = connection.Collection(collection).Save(&movie)
 		if vErr, ok := err.(*bongo.ValidationError); ok {
 			requests.ReturnAPIError(w, vErr.Errors[0])
@@ -194,11 +190,11 @@ func OperationsUploadTrailer(w http.ResponseWriter, r *http.Request) {
 		}
 
 	case "volume":
-		log.Infow("found movie model")
-		movie := *model.(*models.Movie)
+		log.Infow("found volume model")
+		volume := *model.(*models.Volume)
 
-		movie.Trailers = append(movie.Trailers, patch)
-		err = connection.Collection(collection).Save(&movie)
+		volume.Trailer = patch
+		err = connection.Collection(collection).Save(&volume)
 		if vErr, ok := err.(*bongo.ValidationError); ok {
 			requests.ReturnAPIError(w, vErr.Errors[0])
 			return
