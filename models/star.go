@@ -88,6 +88,9 @@ type Star struct {
 	Director bool `json:"director"`
 
 	Favorites int `json:"favorites"`
+
+	// List of Tags
+	Tags []string `json:"tags"`
 }
 
 // Validate --

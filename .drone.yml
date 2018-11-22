@@ -16,16 +16,6 @@ pipeline:
       - GOOS=linux
       - GOARCH=amd64
 
-  publish_swagger_s3:
-    image: plugins/s3
-    bucket: vuli-swagger-ui
-    acl: public-read
-    region: us-east-1
-    source: swagger.json
-    target: /swagger.json
-    when:
-      branch: develop
-
   publish:
     image: plugins/ecr
     repo: 527162640954.dkr.ecr.us-east-1.amazonaws.com/vuli-api
