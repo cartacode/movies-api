@@ -23,7 +23,7 @@ type Thumbnails struct {
 
 // Trailer --
 type Trailer struct {
-	DynamoDBId string `json:"dynamoId"`
+	DynamoDBId string `json:"dynamodbid"`
 	Title      string `json:"title"`
 }
 
