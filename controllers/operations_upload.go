@@ -31,8 +31,9 @@ func OperationsUploadImage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	params := mux.Vars(r)
-	field := params["field"]
-	objectid := params["objectid"]
+	query := requests.QuerySanatizer(r.URL.Query())
+	field := query["key"].(string)
+	objectid := query["id"].(string)
 	collection := params["collection"]
 
 	// Check for a hexId
@@ -111,9 +112,10 @@ func OperationsUploadTrailer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	params := mux.Vars(r)
-	objectid := params["objectid"]
+	query := requests.QuerySanatizer(r.URL.Query())
+	field := query["key"].(string)
+	objectid := query["id"].(string)
 	collection := params["collection"]
-	slug := params["slug"]
 
 	// Check for a hexId
 	if !bson.IsObjectIdHex(objectid) {
@@ -155,7 +157,7 @@ func OperationsUploadTrailer(w http.ResponseWriter, r *http.Request) {
 	log.Infow("logging into AWS")
 
 	// Upload to our bucket
-	path, err := requests.AddFileToS3(s, bucket, "media/"+objectid+"/trailers/"+slug, content)
+	path, err := requests.AddFileToS3(s, bucket, "media/"+objectid+"/trailers/"+field, content)
 	if requests.ReturnOnError(w, err) {
 		return
 	}
@@ -163,7 +165,7 @@ func OperationsUploadTrailer(w http.ResponseWriter, r *http.Request) {
 	log.Infow("upload successful")
 	patch := models.Trailer{
 		URL:       path,
-		Title:     slug,
+		Title:     field,
 		Published: false,
 	}
 
