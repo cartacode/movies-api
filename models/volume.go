@@ -28,7 +28,7 @@ type Volume struct {
 	Images     Images     `json:"images"`
 	Extras     []Extras   `json:"extras"`
 	Thumbnails Thumbnails `json:"thumbnails"`
-	Trailers   []Trailer  `json:"trailers"`
+	Trailers   Trailer    `json:"trailers"`
 
 	// MovieInformation --
 	Information MediaInformation `json:"information"`

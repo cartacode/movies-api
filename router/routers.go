@@ -36,6 +36,7 @@ func NewRouter() *mux.Router {
 	routes = append(routes, crudRoutes...)
 	routes = append(routes, searchRoutes...)
 	routes = append(routes, playbackRoutes...)
+	routes = append(routes, authorizationRoutes...)
 
 	for _, route := range routes {
 		var handler http.Handler

@@ -24,19 +24,8 @@ import (
 type Series struct {
 	bongo.DocumentBase `bson:",inline"`
 
-	// Media information
-	Images     Images     `json:"images"`
-	Extras     []Extras   `json:"extras"`
-	Thumbnails Thumbnails `json:"thumbnails"`
-	Trailers   []Trailer  `json:"trailers"`
-
-	Quality []int `json:"quality"`
-
 	// List of Tags
 	Tags []string `json:"tags"`
-
-	// MovieInformation --
-	Information MediaInformation `json:"information"`
 
 	// Volumes
 	Volumes []string `json:"volumes"`
@@ -49,8 +38,6 @@ type Series struct {
 	// Description of this movie if it has one. Not required
 	Description string `json:"description"`
 
-	// Read only value. Only Admin can update. Sets the price for a movie
-	Price float32 `json:"price"`
 
 	// True/False. Has someone reviewed this movie
 	Reviewed bool `json:"reviewed"`

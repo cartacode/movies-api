@@ -2,13 +2,10 @@ package models
 
 // Images --
 type Images struct {
-	Detailpage            string   `json:"detailpage"`
-	TrayThumbnail         string   `json:"traythumbnail"`
-	TrayFeaturedThumbnail string   `json:"trayfeaturedthumbnail"`
-	MobileThumbnail       string   `json:"mobilethumbnail"`
-	CoverImage            string   `json:"coverimage"`
-	BackgroundImage       string   `json:"backgroundimage"`
-	Available             []string `json:"available"`
+	Landscape  string `json:"landscape"`
+	Portrait   string `json:"portrait"`
+	Banner     string `json:"banner"`
+	DetailPage string `json:"detailpage"`
 }
 
 // Extras --
@@ -26,9 +23,8 @@ type Thumbnails struct {
 
 // Trailer --
 type Trailer struct {
-	URL       string `json:"url"`
-	Title     string `json:"title"`
-	Published bool   `json:"published"`
+	DynamoDBId string `json:"dynamoId"`
+	Title      string `json:"title"`
 }
 
 // MediaInformation --
