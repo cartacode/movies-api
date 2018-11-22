@@ -37,8 +37,8 @@ type Movie struct {
 	// Media Performance
 	Performance Performance `json:"performance"`
 
-	// List of Categories
-	Category []string `json:"category"`
+	// List of Tags
+	Tags []string `json:"tags"`
 
 	// Unique Title for this movie
 	Title string `json:"title"`

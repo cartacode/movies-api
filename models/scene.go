@@ -39,8 +39,8 @@ type Scene struct {
 	// DynamoDBId
 	DynamoDBId string `json:"dynamoId"`
 
-	// List of Categories
-	Category []string `json:"category"`
+	// List of Tags
+	Tags []string `json:"tags"`
 
 	// Description of this movie if it has one. Not required
 	Description string `json:"description"`

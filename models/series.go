@@ -26,26 +26,25 @@ type Series struct {
 
 	// Media information
 	Images     Images     `json:"images"`
-	Extras     Extras     `json:"extras"`
+	Extras     []Extras   `json:"extras"`
 	Thumbnails Thumbnails `json:"thumbnails"`
-	Trailer    Trailer    `json:"trailer"`
+	Trailers   []Trailer  `json:"trailers"`
 
 	Quality []int `json:"quality"`
 
-	// List of Categories
-	Category []string `json:"category"`
+	// List of Tags
+	Tags []string `json:"tags"`
 
 	// MovieInformation --
 	Information MediaInformation `json:"information"`
-	// MovieInformation --
+
+	// Volumes
+	Volumes []string `json:"volumes"`
 
 	Performance Performance `json:"performance"`
 
 	// Unique Title for this movie
 	Title string `json:"title"`
-
-	// DynamoDBId
-	DynamoDBId string `json:"dynamoId"`
 
 	// Description of this movie if it has one. Not required
 	Description string `json:"description"`
