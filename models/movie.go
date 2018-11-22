@@ -25,7 +25,7 @@ type Movie struct {
 	Images     Images     `json:"images"`
 	Extras     []Extras   `json:"extras"`
 	Thumbnails Thumbnails `json:"thumbnails"`
-	Trailers   Trailer    `json:"trailers"`
+	Trailer    Trailer    `json:"trailer"`
 
 	Chapters []Chapter `json:"chapters"`
 
