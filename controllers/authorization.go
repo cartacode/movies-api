@@ -15,7 +15,7 @@ func Authorization(w http.ResponseWriter, req *http.Request) {
 	var user models.User
 	_ = json.NewDecoder(req.Body).Decode(&user)
 
-	expiresAt := time.Now().Add(time.Minute * 1).Unix()
+	expiresAt := time.Now().Add(time.Hour * 4).Unix()
 
 	token := jwt.New(jwt.SigningMethodHS256)
 
