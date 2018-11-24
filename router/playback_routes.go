@@ -8,7 +8,7 @@ var playbackRoutes = Routes{
 	Route{
 		"SignedS3Playback",
 		"GET",
-		"/v1/play/{collection}/{objectid}",
+		"/v1/play/{collection}/{objectID}",
 		controllers.SignedS3Playback,
 	},
 

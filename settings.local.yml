@@ -4,6 +4,9 @@ authorize_net:
         key: Simon
         token: 6z59j6XrGA7V3TbG
 
+jwt:
+    secret: B=dd4KgP3vPQ%3Y*Bt*7zfJngXcu=_&nwa&?ZgvdZhczqERseSe*^95zfAx8XrR939w5utP6%X^uF5EC7W8gsS3Su38pwyWDuvT5ZrPnCfTSk6CU!3Gmgt+^mXW^j-AF
+
 mongodb:
     host: api-mongodb.stage.vuli.io
     database: vuliapi

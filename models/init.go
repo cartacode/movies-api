@@ -7,7 +7,7 @@ import (
 	"github.com/VuliTv/go-movie-api/libs/logging"
 )
 
-var connection, dbError = dbh.NewConnection("models")
+var connection, dbError = dbh.NewMongoDBConnection("models")
 var err error
 var log = logging.GetProdLog()
 

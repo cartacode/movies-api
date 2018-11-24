@@ -33,11 +33,11 @@ func OperationsUploadImage(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	query := requests.QuerySanatizer(r.URL.Query())
 	field := query["key"].(string)
-	objectid := query["id"].(string)
+	objectID := query["id"].(string)
 	collection := params["collection"]
 
 	// Check for a hexId
-	if !bson.IsObjectIdHex(objectid) {
+	if !bson.IsObjectIdHex(objectID) {
 		requests.ReturnAPIError(w, fmt.Errorf("Not a valid bson Id"))
 		return
 	}
@@ -63,7 +63,7 @@ func OperationsUploadImage(w http.ResponseWriter, r *http.Request) {
 
 	// if field == "image" {
 	// 	// Upload to our bucket
-	// 	path, err := requests.AddFileToS3(s, bucket, "media/image/available/"+objectid+"/"+field, content)
+	// 	path, err := requests.AddFileToS3(s, bucket, "media/image/available/"+objectID+"/"+field, content)
 	// 	if requests.ReturnOnError(w, err) {
 	// 		return
 	// 	}
@@ -71,7 +71,7 @@ func OperationsUploadImage(w http.ResponseWriter, r *http.Request) {
 	// 	// Patch the collection document with the new image path
 	// 	patch := make(map[string]string)
 	// 	patch[field] = path
-	// 	err = connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(objectid)}, bson.M{"$set": patch})
+	// 	err = connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(objectID)}, bson.M{"$set": patch})
 
 	// 	if requests.ReturnOnError(w, err) {
 	// 		return
@@ -79,14 +79,14 @@ func OperationsUploadImage(w http.ResponseWriter, r *http.Request) {
 	// } else {
 
 	// Upload to our bucket
-	path, err = requests.AddFileToS3(s, bucket, "media/"+objectid+"/images/"+field, content)
+	path, err = requests.AddFileToS3(s, bucket, "media/"+objectID+"/images/"+field, content)
 	if requests.ReturnOnError(w, err) {
 		return
 	}
 	// Patch the collection document with the new image path
 	patch := make(map[string]string)
 	patch["images."+field] = path
-	err = connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(objectid)}, bson.M{"$set": patch})
+	err = connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(objectID)}, bson.M{"$set": patch})
 
 	if requests.ReturnOnError(w, err) {
 		return
@@ -114,11 +114,11 @@ func OperationsUploadTrailer(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	query := requests.QuerySanatizer(r.URL.Query())
 	field := query["key"].(string)
-	objectid := query["id"].(string)
+	objectID := query["id"].(string)
 	collection := params["collection"]
 
 	// Check for a hexId
-	if !bson.IsObjectIdHex(objectid) {
+	if !bson.IsObjectIdHex(objectID) {
 		if requests.ReturnOnError(w, fmt.Errorf("Not a valid bson Id")) {
 			return
 		}
@@ -131,7 +131,7 @@ func OperationsUploadTrailer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Find the document
-	err = connection.Collection(collection).FindById(bson.ObjectIdHex(objectid), model)
+	err = connection.Collection(collection).FindById(bson.ObjectIdHex(objectID), model)
 	if requests.ReturnOnError(w, err) {
 		return
 	}
@@ -157,7 +157,7 @@ func OperationsUploadTrailer(w http.ResponseWriter, r *http.Request) {
 	log.Infow("logging into AWS")
 
 	// Upload to our bucket
-	path, err := requests.AddFileToS3(s, bucket, "media/"+objectid+"/trailers/"+field, content)
+	path, err := requests.AddFileToS3(s, bucket, "media/"+objectID+"/trailers/"+field, content)
 	if requests.ReturnOnError(w, err) {
 		return
 	}

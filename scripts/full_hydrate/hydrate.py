@@ -72,7 +72,7 @@ def length(timedelta):
     return length
 
 
-def findObjectID(uri, slug):
+def findObjectId(uri, slug):
     # print slugify(slug)
     r = requests.get('%s/%s/slug/%s' % (HOST, uri, slugify(slug)))
 
@@ -86,7 +86,7 @@ def findObjectID(uri, slug):
 
 
 def getOrMakePerformer(performer):
-    objectId = findObjectID('performer', performer)
+    objectId = findObjectId('performer', performer)
 
     if not objectId:
         print "Making new requests for %s" % performer
@@ -117,7 +117,7 @@ def movie(path=None):
         #     # r = requests.post('%s/category' % HOST,
         #     #   json={'title': category, 'slug': slugify(category)})
         #     print "category %s" % category
-        #     categories.append(findObjectID('category', category)['_id'])
+        #     categories.append(findObjectId('category', category)['_id'])
 
         # print "found %d categories" % len(categories)
         # performers = []

@@ -13,8 +13,11 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/VuliTv/go-movie-api/dbh"
 	"github.com/gorilla/mux"
 )
+
+var rDB, rError = dbh.NewRedisConnection()
 
 // Route --
 type Route struct {

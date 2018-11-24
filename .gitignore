@@ -5,3 +5,4 @@ swagger.json
 scripts/venv
 .vscode/temp.sql
 .vscode/last.sql
+scripts/ddl/vuliapi_mongo.dump

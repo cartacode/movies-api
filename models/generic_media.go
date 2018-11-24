@@ -33,7 +33,7 @@ type MediaInformation struct {
 
 	Studio string `json:"studio"`
 
-	// List of Mongo ObjectID for the Stars in this movie. Embeddable
+	// List of Mongo ObjectId for the Stars in this movie. Embeddable
 	Stars []string `json:"Stars"`
 
 	// Total movie length in seconds

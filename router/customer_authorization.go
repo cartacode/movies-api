@@ -10,16 +10,21 @@ import (
 	"github.com/VuliTv/go-movie-api/models"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/context"
-	"github.com/gorilla/mux"
 	"github.com/mitchellh/mapstructure"
 )
 
 var authorizationRoutes = Routes{
 	Route{
-		"Authorization",
+		"Login",
 		"POST",
-		"/v1/authorize",
-		controllers.Authorization,
+		"/v1/authorize/login",
+		controllers.Login,
+	},
+	Route{
+		"Signup",
+		"POST",
+		"/v1/authorize/signup",
+		controllers.Signup,
 	},
 }
 
@@ -33,7 +38,7 @@ func validateTokenMiddleware(next http.HandlerFunc) http.HandlerFunc {
 					if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 						return nil, fmt.Errorf("There was an error")
 					}
-					return []byte("secret"), nil
+					return []byte(models.JWTSecret), nil
 				})
 				if error != nil {
 					json.NewEncoder(w).Encode(models.ErrorMsg{Message: error.Error()})
@@ -41,19 +46,38 @@ func validateTokenMiddleware(next http.HandlerFunc) http.HandlerFunc {
 				}
 				if token.Valid {
 
-					// return
-					var user models.User
-					mapstructure.Decode(token.Claims, &user)
+					// // return
+					var authUser models.AuthUser
+					mapstructure.Decode(token.Claims, &authUser)
 
-					vars := mux.Vars(req)
-					name := vars["userId"]
-					if name != user.Email {
+					val, err := rDB.Get(authUser.ObjectID).Result()
+
+					if val != bearerToken[1] {
+						log.Error(err)
 						json.NewEncoder(w).Encode(models.ErrorMsg{Message: "Invalid authorization token - Does not match UserID"})
 						return
 					}
+					if err != nil {
+						log.Error(err)
+						json.NewEncoder(w).Encode(models.ErrorMsg{Message: "Invalid authorization token - Does not match UserID"})
+						return
+					}
+					// log.Info(token.Claims)
 
-					log.Info(user)
-					log.Debug(user)
+					// vars := mux.Vars(req)
+					// name := vars["customerId"]
+					// log.Info(authUser)
+					// log.Debug(vars)
+					// if name != authUser.Email {
+					// 	json.NewEncoder(w).Encode(models.ErrorMsg{Message: "Invalid authorization token - Does not match UserID"})
+					// 	return
+					// }
+
+					if isAdminRoute(req) && !authUser.Admin {
+						json.NewEncoder(w).Encode(models.ErrorMsg{Message: "You don't have the proper permissions"})
+						return
+					}
+					log.Debug(req.RequestURI)
 					context.Set(req, "decoded", token.Claims)
 					next(w, req)
 				} else {
@@ -66,4 +90,19 @@ func validateTokenMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			json.NewEncoder(w).Encode(models.ErrorMsg{Message: "An authorization header is required"})
 		}
 	})
+}
+
+func isAdminRoute(req *http.Request) bool {
+
+	switch req.Method {
+	case "POST":
+		log.Warnw("invalid attempt to POST to admin route!")
+		return true
+	}
+	switch req.RequestURI {
+	case "/v1/collection/studio":
+		log.Info("studio")
+	}
+
+	return false
 }

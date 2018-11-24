@@ -15,7 +15,7 @@ closing	../scripts/scrape_performers.py	/^from contextlib import closing$/;"	kin
 datetime	../scripts/data/scrape_performers.py	/^from datetime import datetime$/;"	kind:namespace	line:8
 datetime	../scripts/scrape_performers.py	/^from datetime import datetime$/;"	kind:namespace	line:8
 directors	../scripts/data/hydrate.py	/^def directors(data):$/;"	kind:function	line:33
-findObjectID	../scripts/data/hydrate.py	/^def findObjectID(uri, slug):$/;"	kind:function	line:75
+findObjectId	../scripts/data/hydrate.py	/^def findObjectId(uri, slug):$/;"	kind:function	line:75
 get	../scripts/data/scrape_performers.py	/^from requests import get, post$/;"	kind:namespace	line:4
 get	../scripts/scrape_performers.py	/^from requests import get, post$/;"	kind:namespace	line:4
 getOrMakePerformer	../scripts/data/hydrate.py	/^def getOrMakePerformer(performer):$/;"	kind:function	line:88

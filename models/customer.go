@@ -22,38 +22,41 @@ type Customer struct {
 	// read only: true
 	Email string `json:"email"`
 
+	Password string
+
 	// True/False. Is the user active
 	Active bool `json:"active"`
+	Admin  bool `json:"admin"`
 
 	// Liked Items
 	Liked struct {
 
-		// List of Mongo ObjectID for the movies wish list. Embeddable
+		// List of Mongo ObjectId for the movies wish list. Embeddable
 		Movies []string `json:"movies"`
 
-		// List of Mongo ObjectID for the scenes wish list. Embeddable
+		// List of Mongo ObjectId for the scenes wish list. Embeddable
 		Scenes []string `json:"scenes"`
 
-		// List of Mongo ObjectID for the volumes wish list. Embeddable
+		// List of Mongo ObjectId for the volumes wish list. Embeddable
 		Volumes []string `json:"volumes"`
 
-		// List of Mongo ObjectID for the stars wish list. Embeddable
+		// List of Mongo ObjectId for the stars wish list. Embeddable
 		Stars []string `json:"stars"`
 	} `json:"liked"`
 
 	// Liked Items
 	Disliked struct {
 
-		// List of Mongo ObjectID for the movies wish list. Embeddable
+		// List of Mongo ObjectId for the movies wish list. Embeddable
 		Movies []string `json:"movies"`
 
-		// List of Mongo ObjectID for the scenes wish list. Embeddable
+		// List of Mongo ObjectId for the scenes wish list. Embeddable
 		Scenes []string `json:"scenes"`
 
-		// List of Mongo ObjectID for the volumes wish list. Embeddable
+		// List of Mongo ObjectId for the volumes wish list. Embeddable
 		Volumes []string `json:"volumes"`
 
-		// List of Mongo ObjectID for the stars wish list. Embeddable
+		// List of Mongo ObjectId for the stars wish list. Embeddable
 		Stars []string `json:"stars"`
 	} `json:"disliked"`
 
@@ -70,26 +73,26 @@ type Customer struct {
 	// Purchased Items
 	Purchased struct {
 
-		// List of Mongo ObjectID for the movies wish list. Embeddable
+		// List of Mongo ObjectId for the movies wish list. Embeddable
 		Movies []string `json:"movies"`
 
-		// List of Mongo ObjectID for the scenes wish list. Embeddable
+		// List of Mongo ObjectId for the scenes wish list. Embeddable
 		Scenes []string `json:"scenes"`
 
-		// List of Mongo ObjectID for the volumes wish list. Embeddable
+		// List of Mongo ObjectId for the volumes wish list. Embeddable
 		Volumes []string `json:"volumes"`
 	} `json:"purchased"`
 
 	// User wishlist
 	Wishlist struct {
 
-		// List of Mongo ObjectID for the movies wish list. Embeddable
+		// List of Mongo ObjectId for the movies wish list. Embeddable
 		Movies []string `json:"movies"`
 
-		// List of Mongo ObjectID for the scenes wish list. Embeddable
+		// List of Mongo ObjectId for the scenes wish list. Embeddable
 		Scenes []string `json:"scenes"`
 
-		// List of Mongo ObjectID for the volumes wish list. Embeddable
+		// List of Mongo ObjectId for the volumes wish list. Embeddable
 		Volumes []string `json:"volumes"`
 	} `json:"wishlist"`
 

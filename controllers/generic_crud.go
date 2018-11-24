@@ -123,7 +123,7 @@ func GenericCrudPost(w http.ResponseWriter, r *http.Request) {
 func GenericCrudIDGet(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
-	objectid := params["objectid"]
+	objectID := params["objectID"]
 	collection := params["collection"]
 	model, err := models.ModelByCollection(collection)
 
@@ -133,7 +133,7 @@ func GenericCrudIDGet(w http.ResponseWriter, r *http.Request) {
 
 	// Check valid bson id
 
-	if !bson.IsObjectIdHex(objectid) {
+	if !bson.IsObjectIdHex(objectID) {
 		if requests.ReturnOnError(w, fmt.Errorf("Not a valid bson Id")) {
 			return
 		}
@@ -141,7 +141,7 @@ func GenericCrudIDGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Find doc
-	err = connection.Collection(collection).FindById(bson.ObjectIdHex(objectid), model)
+	err = connection.Collection(collection).FindById(bson.ObjectIdHex(objectID), &model)
 	if requests.ReturnOnError(w, err) {
 		return
 	}
@@ -159,7 +159,7 @@ func GenericCrudIDGet(w http.ResponseWriter, r *http.Request) {
 // GenericCrudIDDelete --
 func GenericCrudIDDelete(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	objectid := params["objectid"]
+	objectID := params["objectID"]
 	collection := params["collection"]
 	model, err := models.ModelByCollection(collection)
 	if err != nil {
@@ -167,13 +167,13 @@ func GenericCrudIDDelete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check valid bson id
-	if !bson.IsObjectIdHex(objectid) {
+	if !bson.IsObjectIdHex(objectID) {
 		requests.ReturnAPIError(w, fmt.Errorf("Not a valid bson Id"))
 		return
 	}
 
 	// Find doc
-	err = connection.Collection(collection).FindById(bson.ObjectIdHex(objectid), model)
+	err = connection.Collection(collection).FindById(bson.ObjectIdHex(objectID), model)
 	if err != nil {
 		requests.ReturnAPIError(w, err)
 		return
@@ -203,7 +203,7 @@ func GenericCrudIDDelete(w http.ResponseWriter, r *http.Request) {
 // GenericCrudIDPatch --
 func GenericCrudIDPatch(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	objectid := params["objectid"]
+	objectID := params["objectID"]
 	collection := params["collection"]
 	// model, err := models.ModelByCollection(collection)
 	// if err != nil {
@@ -211,7 +211,7 @@ func GenericCrudIDPatch(w http.ResponseWriter, r *http.Request) {
 	// }
 
 	// Check valid bson id
-	if !bson.IsObjectIdHex(objectid) {
+	if !bson.IsObjectIdHex(objectID) {
 		requests.ReturnAPIError(w, fmt.Errorf("Not a valid bson Id"))
 		return
 	}
@@ -230,12 +230,12 @@ func GenericCrudIDPatch(w http.ResponseWriter, r *http.Request) {
 
 	// Update the document
 	if err := connection.Collection(collection).Collection().Update(
-		bson.M{"_id": bson.ObjectIdHex(objectid)}, bson.M{"$set": patchBody}); err != nil {
+		bson.M{"_id": bson.ObjectIdHex(objectID)}, bson.M{"$set": patchBody}); err != nil {
 		requests.ReturnAPIError(w, err)
 		return
 	}
 
-	response := requests.JSONSuccessResponse{Message: "success", Identifier: objectid, Extra: patchBody}
+	response := requests.JSONSuccessResponse{Message: "success", Identifier: objectID, Extra: patchBody}
 
 	if js, err := json.Marshal(response); err != nil {
 		requests.ReturnAPIError(w, err)

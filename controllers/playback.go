@@ -26,7 +26,7 @@ type RQ struct {
 func SignedS3Playback(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
-	objectid := params["objectid"]
+	objectID := params["objectID"]
 	collection := params["collection"]
 	model, err := models.ModelByCollection(collection)
 
@@ -36,7 +36,7 @@ func SignedS3Playback(w http.ResponseWriter, r *http.Request) {
 
 	// Check valid bson id
 
-	if !bson.IsObjectIdHex(objectid) {
+	if !bson.IsObjectIdHex(objectID) {
 		if requests.ReturnOnError(w, fmt.Errorf("Not a valid bson Id")) {
 			return
 		}
@@ -44,7 +44,7 @@ func SignedS3Playback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Find doc
-	err = connection.Collection(collection).FindById(bson.ObjectIdHex(objectid), model)
+	err = connection.Collection(collection).FindById(bson.ObjectIdHex(objectID), model)
 
 	if requests.ReturnOnError(w, err) {
 		return

@@ -17,7 +17,7 @@ type ORM struct {
 
 // SetCollection --
 func (o *ORM) SetCollection(col string) error {
-	connection, err := NewConnection("controllers")
+	connection, err := NewMongoDBConnection("controllers")
 	if err != nil {
 		return err
 	}

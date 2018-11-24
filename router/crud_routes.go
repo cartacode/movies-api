@@ -16,27 +16,27 @@ var crudRoutes = Routes{
 		"GenericCrudPost",
 		"POST",
 		"/v1/collection/{collection}",
-		controllers.GenericCrudPost,
+		validateTokenMiddleware(controllers.GenericCrudPost),
 	},
 
 	Route{
 		"GenericCrudIDGet",
 		"GET",
-		"/v1/collection/{collection}/{objectid}",
-		controllers.GenericCrudIDGet,
+		"/v1/collection/{collection}/{objectID}",
+		validateTokenMiddleware(controllers.GenericCrudIDGet),
 	},
 
 	Route{
 		"GenericCrudIDDelete",
 		"DELETE",
-		"/v1/collection/{collection}/{objectid}",
-		controllers.GenericCrudIDDelete,
+		"/v1/collection/{collection}/{objectID}",
+		validateTokenMiddleware(controllers.GenericCrudIDDelete),
 	},
 
 	Route{
 		"GenericCrudIDPatch",
 		"PATCH",
-		"/v1/collection/{collection}/{objectid}",
-		controllers.GenericCrudIDPatch,
+		"/v1/collection/{collection}/{objectID}",
+		validateTokenMiddleware(controllers.GenericCrudIDPatch),
 	},
 }
