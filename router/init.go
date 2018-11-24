@@ -10,14 +10,18 @@
 package router
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
 	"github.com/VuliTv/go-movie-api/dbh"
+	"github.com/VuliTv/go-movie-api/libs/requests"
+
 	"github.com/gorilla/mux"
 )
 
 var rDB, rError = dbh.NewRedisConnection()
+var mDB, mError = dbh.NewMongoDBConnection("router")
 
 // Route --
 type Route struct {
@@ -58,7 +62,25 @@ func NewRouter() *mux.Router {
 
 // Index --
 func Index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello World!")
+	fmt.Fprintf(w, "vuli")
+}
+
+// HealthCheck --
+func HealthCheck(w http.ResponseWriter, r *http.Request) {
+
+	if err := mDB.Session.Ping(); err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
+		return
+	}
+
+	if ok := rDB.Ping(); ok == nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, ok.String()))
+		return
+	}
+	message := requests.JSONSuccessResponse{Message: "healthy"}
+	js, _ := json.Marshal(message)
+
+	requests.ReturnAPIOK(w, js)
 }
 
 var routes = Routes{
@@ -67,5 +89,11 @@ var routes = Routes{
 		"GET",
 		"/",
 		Index,
+	},
+	Route{
+		"Status",
+		"GET",
+		"/v1/healthcheck",
+		HealthCheck,
 	},
 }

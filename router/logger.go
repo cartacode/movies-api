@@ -25,13 +25,17 @@ func Logger(inner http.Handler, name string) http.Handler {
 
 		inner.ServeHTTP(w, r)
 
+		if r.RequestURI == "/v1/healthcheck" {
+			return
+		}
+
 		log.Infow("api_call",
 			"type", w.Header()["Content-Type"],
 			"request", r.Method,
+			"remote", r.RemoteAddr,
 			"uri", r.RequestURI,
 			"method", name,
 			"response", time.Since(start),
 		)
 	})
 }
-
