@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/VuliTv/go-movie-api/libs/requests"
@@ -30,23 +29,22 @@ func SignedS3Playback(w http.ResponseWriter, r *http.Request) {
 	collection := params["collection"]
 	model, err := models.ModelByCollection(collection)
 
-	if requests.ReturnOnError(w, err) {
+	if err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
 		return
 	}
 
 	// Check valid bson id
 
 	if !bson.IsObjectIdHex(objectID) {
-		if requests.ReturnOnError(w, fmt.Errorf("Not a valid bson Id")) {
-			return
-		}
+		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, "Not a valid bson Id"))
+		return
 
 	}
 
 	// Find doc
-	err = connection.Collection(collection).FindById(bson.ObjectIdHex(objectID), model)
-
-	if requests.ReturnOnError(w, err) {
+	if err = connection.Collection(collection).FindById(bson.ObjectIdHex(objectID), model); err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
 		return
 	}
 
@@ -63,7 +61,7 @@ func SignedS3Playback(w http.ResponseWriter, r *http.Request) {
 		DynamoID = movie.DynamoDBId
 
 	default:
-		requests.ReturnOnError(w, fmt.Errorf("No such model"))
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, "No such model"))
 		return
 	}
 
@@ -84,15 +82,15 @@ func SignedS3Playback(w http.ResponseWriter, r *http.Request) {
 		},
 	})
 
-	if requests.ReturnOnError(w, err) {
+	if err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
 		return
 	}
 
 	item := models.MediaDynamoRecord{}
 
-	err = dynamodbattribute.UnmarshalMap(result.Item, &item)
-
-	if requests.ReturnOnError(w, err) {
+	if err = dynamodbattribute.UnmarshalMap(result.Item, &item); err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
 		return
 	}
 
@@ -102,7 +100,8 @@ func SignedS3Playback(w http.ResponseWriter, r *http.Request) {
 	log.Info(a)
 	js, err := json.Marshal(a)
 
-	if requests.ReturnOnError(w, err) {
+	if err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
 		return
 	}
 

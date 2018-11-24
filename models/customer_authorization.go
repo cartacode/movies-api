@@ -3,6 +3,7 @@ package models
 import jwt "github.com/dgrijalva/jwt-go"
 
 // JWTSecret --
+// This needs to go into an ENV variable or secret file. This is for dev only
 var JWTSecret = "B=dd4KgP3vPQ%3Y*Bt*7zfJngXcu=_&nwa&?ZgvdZhczqERseSe*^95zfAx8XrR939w5utP6%X^uF5EC7W8gsS3Su38pwyWDuvT5ZrPnCfTSk6CU!3Gmgt+^mXW^j-AFB=dd4KgP3vPQ%3Y*Bt*7zfJngXcu=_&nwaZgvdZhczqERseSe*^95zfAx8XrR939w5utP6%X^uF5EC7W8gsS3Su38pwyWDuvT5ZrPnCfTSB=dd4KgP3vPQ%3Y*Bt*7zfJngXcu=_&nwa&?ZgvdZhcuF5EC7W8gsS3Su38pwyWDuvT5ZrPnCfTSk6CU!3Gmgt+^mXW^j-AF3vPQ%3Y*Bt*7zfJngXcu=_&nwa&?ZgvdZhczqERseSe*^95zfAx8XrR939w5utP6%X^uF5EC7W8gsS3Su38pwyWDuvT5ZrPnCfTSk6CU!3Gmgt+^mXW^j-AF"
 
 // ErrorMsg ...

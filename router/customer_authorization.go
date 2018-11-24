@@ -52,16 +52,18 @@ func validateTokenMiddleware(next http.HandlerFunc) http.HandlerFunc {
 
 					val, err := rDB.Get(authUser.ObjectID).Result()
 
-					if val != bearerToken[1] {
-						log.Error(err)
-						json.NewEncoder(w).Encode(models.ErrorMsg{Message: "Invalid authorization token - Does not match UserID"})
-						return
-					}
 					if err != nil {
 						log.Error(err)
-						json.NewEncoder(w).Encode(models.ErrorMsg{Message: "Invalid authorization token - Does not match UserID"})
+						json.NewEncoder(w).Encode(models.ErrorMsg{Message: "Invalid authorization token - Token expired"})
 						return
 					}
+
+					if val != bearerToken[1] {
+						log.Error(err)
+						json.NewEncoder(w).Encode(models.ErrorMsg{Message: "Invalid authorization token - Does not pass validation"})
+						return
+					}
+
 					// log.Info(token.Claims)
 
 					// vars := mux.Vars(req)
@@ -73,9 +75,13 @@ func validateTokenMiddleware(next http.HandlerFunc) http.HandlerFunc {
 					// 	return
 					// }
 
-					if isAdminRoute(req) && !authUser.Admin {
-						json.NewEncoder(w).Encode(models.ErrorMsg{Message: "You don't have the proper permissions"})
-						return
+					if isAdminRoute(req) {
+						log.Info("checking admin route")
+						if !authUser.Admin {
+							log.Warnw("not an admin!", "user", authUser.Email, "admin", authUser.Admin)
+							json.NewEncoder(w).Encode(models.ErrorMsg{Message: "You don't have the proper permissions"})
+							return
+						}
 					}
 					log.Debug(req.RequestURI)
 					context.Set(req, "decoded", token.Claims)
@@ -94,14 +100,12 @@ func validateTokenMiddleware(next http.HandlerFunc) http.HandlerFunc {
 
 func isAdminRoute(req *http.Request) bool {
 
-	switch req.Method {
-	case "POST":
-		log.Warnw("invalid attempt to POST to admin route!")
-		return true
-	}
 	switch req.RequestURI {
 	case "/v1/collection/studio":
-		log.Info("studio")
+		switch req.Method {
+		case "POST":
+			return true
+		}
 	}
 
 	return false

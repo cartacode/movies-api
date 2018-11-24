@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/VuliTv/go-movie-api/libs/requests"
@@ -22,9 +21,9 @@ func GenericSearchGet(w http.ResponseWriter, r *http.Request) {
 
 	log.Debug(params)
 	if _, ok := query["title"]; !ok {
-
-		requests.ReturnAPIError(w, fmt.Errorf("title query missing"))
+		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, "title query missing"))
 		return
+
 	}
 
 	results := connection.Collection(collection).Find(bson.M{"title": bson.RegEx{Pattern: query["title"].(string), Options: "i"}})
@@ -33,7 +32,8 @@ func GenericSearchGet(w http.ResponseWriter, r *http.Request) {
 	perPage, page := requests.GetPaginationInfo(r)
 	pagination, err := results.Paginate(perPage, page)
 
-	if requests.ReturnOnError(w, err) {
+	if err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
 		return
 	}
 
@@ -42,7 +42,8 @@ func GenericSearchGet(w http.ResponseWriter, r *http.Request) {
 
 	model, err := models.ModelByCollection(collection)
 
-	if requests.ReturnOnError(w, err) {
+	if err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
 		return
 	}
 	// Add the found results
@@ -62,7 +63,8 @@ func GenericSearchGet(w http.ResponseWriter, r *http.Request) {
 	// Turn it into a json and serve it up
 	rs, err := json.Marshal(response)
 
-	if requests.ReturnOnError(w, err) {
+	if err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
 		return
 	}
 
