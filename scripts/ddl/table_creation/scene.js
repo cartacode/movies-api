@@ -7,129 +7,27 @@ db.createCollection( "scene",{
                 "_id": {
                     "bsonType": "objectId"
                 },
-                "title": {
-                    "bsonType": "string"
-                },
-                "slug": {
-                    "bsonType": "string"
-                },
                 "images": {
                     "bsonType": "object",
                     "properties": {
+                        "landscape": {
+                            "bsonType": "string",
+                            "pattern": "^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$"
+                        },
+                        "portrait": {
+                            "bsonType": "string",
+                            "pattern": "^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$"
+                        },
+                        "banner": {
+                            "bsonType": "string",
+                            "pattern": "^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$"
+                        },
                         "detailpage": {
-                            "bsonType": "string"
-                        },
-                        "traythumbnail": {
-                            "bsonType": "string"
-                        },
-                        "trayfeaturedthumbnail": {
-                            "bsonType": "string"
-                        },
-                        "mobilethumbnail": {
-                            "bsonType": "string"
-                        },
-                        "cover": {
-                            "bsonType": "object",
-                            "additionalProperties": false,
-                            "properties": {
-                                "selected": {
-                                    "bsonType": "string"
-                                },
-                                "available": {
-                                    "bsonType": "array",
-                                    "additionalItems": true,
-                                    "uniqueItems": false,
-                                    "items": {
-                                        "bsonType": "string"
-                                    }
-                                }
-                            }
+                            "bsonType": "string",
+                            "pattern": "^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$"
                         }
                     },
                     "additionalProperties": false
-                },
-                "performance": {
-                    "bsonType": "object",
-                    "properties": {
-                        "rank": {
-                            "bsonType": "number"
-                        },
-                        "upvotes": {
-                            "bsonType": "number"
-                        },
-                        "downvotes": {
-                            "bsonType": "number"
-                        },
-                        "views": {
-                            "bsonType": "number"
-                        }
-                    },
-                    "additionalProperties": false
-                },
-                "dynamodbid": {
-                    "bsonType": "objectId"
-                },
-                "description": {
-                    "bsonType": "string"
-                },
-                "trailers": {
-                    "bsonType": "object",
-                    "properties": {
-                        "selected": {
-                            "bsonType": "string"
-                        },
-                        "available": {
-                            "bsonType": "array",
-                            "additionalItems": true,
-                            "uniqueItems": false,
-                            "items": {
-                                "bsonType": "string"
-                            }
-                        }
-                    },
-                    "additionalProperties": false
-                },
-                "price": {
-                    "bsonType": "double"
-                },
-                "reviewed": {
-                    "bsonType": "bool"
-                },
-                "volume": {
-                    "bsonType": "objectId"
-                },
-                "ispublished": {
-                    "bsonType": "bool"
-                },
-                "category": {
-                    "bsonType": "array",
-                    "additionalItems": true,
-                    "uniqueItems": false,
-                    "items": {
-                        "bsonType": "objectId"
-                    }
-                },
-                "extras": {
-                    "bsonType": "array",
-                    "additionalItems": true,
-                    "uniqueItems": false,
-                    "items": {
-                        "bsonType": "object",
-                        "properties": {
-                            "url": {
-                                "bsonType": "string"
-                            },
-                            "published": {
-                                "bsonType": "bool"
-                            }
-                        },
-                        "additionalProperties": false
-                    }
-                },
-                "playlist": {
-                    "bsonType": "array",
-                    "additionalItems": true,
-                    "uniqueItems": false
                 },
                 "thumbnails": {
                     "bsonType": "object",
@@ -146,6 +44,19 @@ db.createCollection( "scene",{
                     },
                     "additionalProperties": false
                 },
+                "trailer": {
+                    "bsonType": "object",
+                    "properties": {
+                        "dynamodbid": {
+                            "bsonType": "string",
+                            "pattern": "[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}"
+                        },
+                        "title": {
+                            "bsonType": "string"
+                        }
+                    },
+                    "additionalProperties": false
+                },
                 "information": {
                     "bsonType": "object",
                     "properties": {
@@ -153,8 +64,7 @@ db.createCollection( "scene",{
                             "bsonType": "objectId"
                         },
                         "length": {
-                            "bsonType": "int",
-                            "description": "Length of the scene in seconds"
+                            "bsonType": "int"
                         },
                         "director": {
                             "bsonType": "array",
@@ -162,6 +72,14 @@ db.createCollection( "scene",{
                             "uniqueItems": false,
                             "items": {
                                 "bsonType": "objectId"
+                            }
+                        },
+                        "quality": {
+                            "bsonType": "array",
+                            "additionalItems": true,
+                            "uniqueItems": false,
+                            "items": {
+                                "bsonType": "int"
                             }
                         },
                         "stars": {
@@ -175,33 +93,124 @@ db.createCollection( "scene",{
                     },
                     "additionalProperties": false
                 },
-                "_modified": {
-                    "bsonType": "date"
+                "performance": {
+                    "bsonType": "object",
+                    "properties": {
+                        "rank": {
+                            "bsonType": "int",
+                            "minimum": 0
+                        },
+                        "upvotes": {
+                            "bsonType": "int",
+                            "minimum": 0
+                        },
+                        "downvotes": {
+                            "bsonType": "int",
+                            "minimum": 0
+                        },
+                        "views": {
+                            "bsonType": "number"
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "title": {
+                    "bsonType": "string"
+                },
+                "dynamodbid": {
+                    "bsonType": "string",
+                    "pattern": "[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}"
+                },
+                "description": {
+                    "bsonType": "string"
+                },
+                "volume": {
+                    "bsonType": "objectId"
+                },
+                "price": {
+                    "bsonType": "double"
+                },
+                "slug": {
+                    "bsonType": "string",
+                    "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+                },
+                "series": {
+                    "bsonType": "string"
+                },
+                "ispublished": {
+                    "bsonType": "bool"
                 },
                 "_created": {
                     "bsonType": "date"
+                },
+                "_modified": {
+                    "bsonType": "date"
+                },
+                "chapters": {
+                    "bsonType": "array",
+                    "additionalItems": true,
+                    "uniqueItems": false,
+                    "items": {
+                        "bsonType": "object",
+                        "properties": {
+                            "name": {
+                                "bsonType": "string"
+                            },
+                            "timestamp": {
+                                "bsonType": "int"
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                },
+                "extras": {
+                    "bsonType": "array",
+                    "additionalItems": true,
+                    "uniqueItems": false,
+                    "items": {
+                        "bsonType": "object",
+                        "properties": {
+                            "published": {
+                                "bsonType": "bool"
+                            },
+                            "url": {
+                                "bsonType": "string",
+                                "pattern": "^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$"
+                            }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                            "published",
+                            "url"
+                        ]
+                    }
+                },
+                "tags": {
+                    "bsonType": "array",
+                    "additionalItems": true,
+                    "uniqueItems": false,
+                    "items": {
+                        "bsonType": "string"
+                    }
                 }
             },
             "required": [
                 "_id",
-                "title",
-                "slug",
                 "images",
-                "performance",
-                "dynamodbid",
-                "description",
-                "trailers",
-                "price",
-                "reviewed",
-                "volume",
-                "ispublished",
-                "category",
-                "extras",
-                "playlist",
                 "thumbnails",
+                "trailer",
                 "information",
+                "performance",
+                "title",
+                "volume",
+                "price",
+                "series",
+                "ispublished",
+                "_created",
                 "_modified",
-                "_created"
+                "chapters",
+                "extras",
+                "tags"
             ]
         }
     },

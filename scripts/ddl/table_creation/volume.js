@@ -1,67 +1,64 @@
 db.createCollection( "volume",{
-    "storageEngine": {
-        "wiredTiger": {}
-    },
     "capped": false,
     "validator": {
         "$jsonSchema": {
             "bsonType": "object",
-            "additionalProperties": false,
             "properties": {
                 "_id": {
                     "bsonType": "objectId"
                 },
-                "series": {
-                    "bsonType": "objectId"
-                },
                 "images": {
                     "bsonType": "object",
-                    "additionalProperties": false,
                     "properties": {
+                        "landscape": {
+                            "bsonType": "string",
+                            "pattern": "^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$"
+                        },
+                        "portrait": {
+                            "bsonType": "string",
+                            "pattern": "^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$"
+                        },
+                        "banner": {
+                            "bsonType": "string",
+                            "pattern": "^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$"
+                        },
                         "detailpage": {
-                            "bsonType": "string"
-                        },
-                        "traythumbnail": {
-                            "bsonType": "string"
-                        },
-                        "trayfeaturedthumbnail": {
-                            "bsonType": "string"
-                        },
-                        "mobilethumbnail": {
-                            "bsonType": "string"
-                        },
-                        "cover": {
-                            "bsonType": "object",
-                            "additionalProperties": false,
-                            "properties": {
-                                "selected": {
-                                    "bsonType": "string"
-                                },
-                                "available": {
-                                    "bsonType": "array",
-                                    "additionalItems": true,
-                                    "uniqueItems": false,
-                                    "items": {
-                                        "bsonType": "string"
-                                    }
-                                }
-                            }
+                            "bsonType": "string",
+                            "pattern": "^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$"
                         }
-                    }
+                    },
+                    "additionalProperties": false
+                },
+                "thumbnails": {
+                    "bsonType": "object",
+                    "properties": {
+                        "prefix": {
+                            "bsonType": "string"
+                        },
+                        "count": {
+                            "bsonType": "number"
+                        },
+                        "format": {
+                            "bsonType": "string"
+                        }
+                    },
+                    "additionalProperties": false
                 },
                 "information": {
                     "bsonType": "object",
-                    "additionalProperties": false,
                     "properties": {
                         "studio": {
                             "bsonType": "objectId"
+                        },
+                        "length": {
+                            "bsonType": "number"
                         },
                         "director": {
                             "bsonType": "array",
                             "additionalItems": true,
                             "uniqueItems": false,
                             "items": {
-                                "bsonType": "string"
+                                "bsonType": "objectId"
                             }
                         },
                         "stars": {
@@ -72,30 +69,50 @@ db.createCollection( "volume",{
                                 "bsonType": "objectId"
                             }
                         }
-                    }
+                    },
+                    "additionalProperties": false
                 },
-                "title": {
+                "performance": {
+                    "bsonType": "object",
+                    "properties": {
+                        "rank": {
+                            "bsonType": "number"
+                        },
+                        "upvotes": {
+                            "bsonType": "number"
+                        },
+                        "downvotes": {
+                            "bsonType": "number"
+                        },
+                        "views": {
+                            "bsonType": "number"
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "series": {
+                    "bsonType": "objectId"
+                },
+                "slug": {
                     "bsonType": "string"
                 },
                 "description": {
                     "bsonType": "string"
                 },
+                "title": {
+                    "bsonType": "string"
+                },
                 "price": {
                     "bsonType": "double"
-                },
-                "reviewed": {
-                    "bsonType": "bool"
                 },
                 "ispublished": {
                     "bsonType": "bool"
                 },
-                "category": {
-                    "bsonType": "array",
-                    "additionalItems": true,
-                    "uniqueItems": false,
-                    "items": {
-                        "bsonType": "objectId"
-                    }
+                "_created": {
+                    "bsonType": "date"
+                },
+                "_modified": {
+                    "bsonType": "date"
                 },
                 "extras": {
                     "bsonType": "array",
@@ -103,58 +120,91 @@ db.createCollection( "volume",{
                     "uniqueItems": false,
                     "items": {
                         "bsonType": "object",
-                        "additionalProperties": false,
                         "properties": {
-                            "url": {
-                                "bsonType": "string"
-                            },
                             "published": {
                                 "bsonType": "bool"
+                            },
+                            "url": {
+                                "bsonType": "string",
+                                "pattern": "^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$"
                             }
-                        }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                            "published",
+                            "url"
+                        ]
+                    }
+                },
+                "scenes": {
+                    "bsonType": "array",
+                    "additionalItems": true,
+                    "uniqueItems": false,
+                    "items": {
+                        "bsonType": "objectId"
+                    }
+                },
+                "tags": {
+                    "bsonType": "array",
+                    "additionalItems": true,
+                    "uniqueItems": false,
+                    "items": {
+                        "bsonType": "string"
                     }
                 },
                 "trailers": {
-                    "bsonType": "object",
-                    "additionalProperties": false,
-                    "properties": {
-                        "selected": {
-                            "bsonType": "string"
-                        },
-                        "available": {
-                            "bsonType": "array",
-                            "additionalItems": true,
-                            "uniqueItems": false,
-                            "items": {
+                    "bsonType": "array",
+                    "additionalItems": true,
+                    "uniqueItems": false,
+                    "items": {
+                        "bsonType": "object",
+                        "properties": {
+                            "published": {
+                                "bsonType": "bool"
+                            },
+                            "title": {
                                 "bsonType": "string"
+                            },
+                            "url": {
+                                "bsonType": "string",
+                                "pattern": "^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$"
                             }
-                        }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                            "published",
+                            "title",
+                            "url"
+                        ]
                     }
-                },
-                "_modified": {
-                    "bsonType": "date"
-                },
-                "_created": {
-                    "bsonType": "date"
                 }
             },
             "required": [
                 "_id",
                 "images",
+                "thumbnails",
                 "information",
+                "performance",
                 "title",
-                "description",
                 "price",
-                "reviewed",
                 "ispublished",
-                "category",
-                "extras",
-                "trailers",
+                "_created",
                 "_modified",
-                "_created"
+                "extras",
+                "scenes",
+                "tags",
+                "trailers"
             ]
         }
     },
     "validationLevel": "off",
     "validationAction": "warn"
 });
+db.volume.createIndex(
+{
+    "_id": 1
+},
+{
+    "name": "_id_"
+}
+);

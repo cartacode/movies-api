@@ -7,97 +7,27 @@ db.createCollection( "series",{
                 "_id": {
                     "bsonType": "objectId"
                 },
-                "images": {
-                    "bsonType": "object",
-                    "properties": {
-                        "detailpage": {
-                            "bsonType": "string"
-                        },
-                        "traythumbnail": {
-                            "bsonType": "string"
-                        },
-                        "trayfeaturedthumbnail": {
-                            "bsonType": "string"
-                        },
-                        "mobilethumbnail": {
-                            "bsonType": "string"
-                        },
-                        "coverimages": {
-                            "bsonType": "array",
-                            "additionalItems": true,
-                            "uniqueItems": false,
-                            "items": {
-                                "bsonType": "string"
-                            }
-                        }
-                    },
-                    "additionalProperties": false
-                },
-                "coverimage": {
-                    "bsonType": "string"
-                },
-                "information": {
-                    "bsonType": "object",
-                    "properties": {
-                        "studio": {
-                            "bsonType": "objectId"
-                        },
-                        "director": {
-                            "bsonType": "array",
-                            "additionalItems": true,
-                            "uniqueItems": false,
-                            "items": {
-                                "bsonType": "string"
-                            }
-                        },
-                        "stars": {
-                            "bsonType": "array",
-                            "additionalItems": true,
-                            "uniqueItems": false,
-                            "items": {
-                                "bsonType": "objectId"
-                            }
-                        }
-                    },
-                    "additionalProperties": false
-                },
-                "performance": {
-                    "bsonType": "object",
-                    "properties": {
-                        "rank": {
-                            "bsonType": "number"
-                        },
-                        "upvotes": {
-                            "bsonType": "number"
-                        },
-                        "downvotes": {
-                            "bsonType": "number"
-                        },
-                        "views": {
-                            "bsonType": "number"
-                        }
-                    },
-                    "additionalProperties": false
-                },
                 "title": {
-                    "bsonType": "string"
-                },
-                "description": {
                     "bsonType": "string"
                 },
                 "slug": {
                     "bsonType": "string"
                 },
-                "ispublished": {
+                "description": {
+                    "bsonType": "string"
+                },
+                "is_published": {
                     "bsonType": "bool"
                 },
-                "_created": {
-                    "bsonType": "date"
+                "tags": {
+                    "bsonType": "array",
+                    "additionalItems": true,
+                    "uniqueItems": false,
+                    "items": {
+                        "bsonType": "string"
+                    }
                 },
-                "_modified": {
-                    "bsonType": "date"
-                },
-                "category": {
+                "volumes": {
                     "bsonType": "array",
                     "additionalItems": true,
                     "uniqueItems": false,
@@ -108,17 +38,12 @@ db.createCollection( "series",{
             },
             "required": [
                 "_id",
-                "images",
-                "coverimage",
-                "information",
-                "performance",
                 "title",
-                "description",
                 "slug",
-                "ispublished",
-                "_created",
-                "_modified",
-                "category"
+                "description",
+                "is_published",
+                "tags",
+                "volumes"
             ]
         }
     },

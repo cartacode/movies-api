@@ -1,12 +1,8 @@
 db.createCollection( "customer",{
-    "storageEngine": {
-        "wiredTiger": {}
-    },
     "capped": false,
     "validator": {
         "$jsonSchema": {
             "bsonType": "object",
-            "additionalProperties": false,
             "properties": {
                 "_id": {
                     "bsonType": "objectId"
@@ -14,10 +10,102 @@ db.createCollection( "customer",{
                 "email": {
                     "bsonType": "string"
                 },
-                "cognitoId": {
-                    "bsonType": "string",
-                    "minLength": 0,
-                    "maxLength": 24
+                "password": {
+                    "bsonType": "string"
+                },
+                "active": {
+                    "bsonType": "bool"
+                },
+                "admin": {
+                    "bsonType": "bool"
+                },
+                "liked": {
+                    "bsonType": "object",
+                    "properties": {
+                        "movies": {
+                            "bsonType": "array",
+                            "additionalItems": true,
+                            "uniqueItems": false,
+                            "items": {
+                                "bsonType": "objectId"
+                            }
+                        },
+                        "scenes": {
+                            "bsonType": "array",
+                            "additionalItems": true,
+                            "uniqueItems": false,
+                            "items": {
+                                "bsonType": "objectId"
+                            }
+                        },
+                        "stars": {
+                            "bsonType": "array",
+                            "additionalItems": true,
+                            "uniqueItems": false,
+                            "items": {
+                                "bsonType": "objectId"
+                            }
+                        },
+                        "volumes": {
+                            "bsonType": "array",
+                            "additionalItems": true,
+                            "uniqueItems": false,
+                            "items": {
+                                "bsonType": "objectId"
+                            }
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "disliked": {
+                    "bsonType": "object",
+                    "properties": {
+                        "movies": {
+                            "bsonType": "array",
+                            "additionalItems": true,
+                            "uniqueItems": false,
+                            "items": {
+                                "bsonType": "objectId"
+                            }
+                        },
+                        "scenes": {
+                            "bsonType": "array",
+                            "additionalItems": true,
+                            "uniqueItems": false,
+                            "items": {
+                                "bsonType": "objectId"
+                            }
+                        },
+                        "stars": {
+                            "bsonType": "array",
+                            "additionalItems": true,
+                            "uniqueItems": false,
+                            "items": {
+                                "bsonType": "objectId"
+                            }
+                        },
+                        "volumes": {
+                            "bsonType": "array",
+                            "additionalItems": true,
+                            "uniqueItems": false,
+                            "items": {
+                                "bsonType": "objectId"
+                            }
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "credit": {
+                    "bsonType": "object",
+                    "properties": {
+                        "infostored": {
+                            "bsonType": "bool"
+                        },
+                        "key": {
+                            "bsonType": "string"
+                        }
+                    },
+                    "additionalProperties": false
                 },
                 "purchased": {
                     "bsonType": "object",
@@ -25,9 +113,7 @@ db.createCollection( "customer",{
                         "movies": {
                             "bsonType": "array",
                             "additionalItems": true,
-                            "minItems": 0,
-                            "maxItems": 500,
-                            "uniqueItems": true,
+                            "uniqueItems": false,
                             "items": {
                                 "bsonType": "objectId"
                             }
@@ -39,10 +125,7 @@ db.createCollection( "customer",{
                             "items": {
                                 "bsonType": "objectId"
                             }
-                        }
-                    },
-                    "additionalProperties": false,
-                    "patternProperties": {
+                        },
                         "volumes": {
                             "bsonType": "array",
                             "additionalItems": true,
@@ -51,11 +134,11 @@ db.createCollection( "customer",{
                                 "bsonType": "objectId"
                             }
                         }
-                    }
+                    },
+                    "additionalProperties": false
                 },
                 "wishlist": {
                     "bsonType": "object",
-                    "additionalProperties": false,
                     "properties": {
                         "movies": {
                             "bsonType": "array",
@@ -72,9 +155,7 @@ db.createCollection( "customer",{
                             "items": {
                                 "bsonType": "objectId"
                             }
-                        }
-                    },
-                    "patternProperties": {
+                        },
                         "volumes": {
                             "bsonType": "array",
                             "additionalItems": true,
@@ -83,27 +164,61 @@ db.createCollection( "customer",{
                                 "bsonType": "objectId"
                             }
                         }
-                    }
-                },
-                "credit": {
-                    "bsonType": "object",
-                    "properties": {
-                        "token": {
-                            "bsonType": "string"
-                        },
-                        "is_valid": {
-                            "bsonType": "bool"
-                        }
                     },
                     "additionalProperties": false
+                },
+                "_created": {
+                    "bsonType": "date"
+                },
+                "_modified": {
+                    "bsonType": "date"
+                },
+                "preferences": {
+                    "bsonType": "array",
+                    "additionalItems": true,
+                    "uniqueItems": false,
+                    "items": {
+                        "bsonType": "object",
+                        "properties": {
+                            "tag": {
+                                "bsonType": "string"
+                            },
+                            "weight": {
+                                "bsonType": "number"
+                            }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                            "weight"
+                        ]
+                    }
                 }
             },
             "required": [
                 "_id",
-                "cognitoId"
+                "email",
+                "password",
+                "active",
+                "admin",
+                "liked",
+                "disliked",
+                "credit",
+                "purchased",
+                "wishlist",
+                "_created",
+                "_modified",
+                "preferences"
             ]
         }
     },
     "validationLevel": "off",
     "validationAction": "warn"
 });
+db.customer.createIndex(
+{
+    "_id": 1
+},
+{
+    "name": "_id_"
+}
+);
