@@ -9,6 +9,13 @@ import (
 var paymentRoutes = Routes{
 
 	Route{
+		"GetCustomerProfile",
+		strings.ToUpper("Get"),
+		"/v1/customer/profile/{userID}",
+		controllers.GetCustomerProfile,
+	},
+
+	Route{
 		"CustomerCreateProfile",
 		strings.ToUpper("Post"),
 		"/v1/customer/profile",

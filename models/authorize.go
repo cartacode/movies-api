@@ -2,8 +2,10 @@
  * Vuli API
  *
  * Vuli Authorize.net Model
+ * Schema: https://api.authorize.net/xml/v1/schema/AnetApiSchema.xsd
+ * API: https://developer.authorize.net/api/reference/index.html
  *
- * API version: 3
+ * API version: 1
  */
 
 package models
@@ -27,6 +29,14 @@ const (
 	ResponseError = "Error"
 )
 
+type messages struct {
+	ResultCode string `json:"resultCode"`
+	Message    []struct {
+		Code string `json:"code"`
+		Text string `json:"text"`
+	} `json:"message"`
+}
+
 type AuthorizeMerchant struct {
 	Name           string `json:"name"`
 	TransactionKey string `json:"transactionKey"`
@@ -48,8 +58,10 @@ type AuthorizeCustomer struct {
 }
 
 type AuthorizePaymentProfile struct {
-	CustomerType CustomerType      `json:"customerType"`
-	Payment      *AuthorizePayment `json:"payment,omitempty"`
+	CustomerType             CustomerType      `json:"customerType,omitempty"`
+	Payment                  *AuthorizePayment `json:"payment,omitempty"`
+	CustomerPaymentProfileId string            `json:"customerPaymentProfileId,omitempty"`
+	BillTo                   *BillTo           `json:"billTo,omitempty"`
 }
 
 type CreditCard struct {
@@ -60,6 +72,16 @@ type CreditCard struct {
 
 type AuthorizePayment struct {
 	CreditCard CreditCard `json:"creditCard,omitempty"`
+}
+
+type BillTo struct {
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Address   string `json:"address"`
+	City      string `json:"city"`
+	State     string `json:"state"`
+	Zip       string `json:"zip"`
+	Country   string `json:"country"`
 }
 
 type AuthorizeProfileRequest struct {
@@ -87,11 +109,41 @@ type CreateCustomerProfileResponse struct {
 	CustomerPaymentProfileIdList  []interface{} `json:"customerPaymentProfileIdList"`
 	CustomerShippingAddressIdList []interface{} `json:"customerShippingAddressIdList"`
 	ValidationDirectResponseList  []string      `json:"validationDirectResponseList"`
-	Messages                      struct {
-		ResultCode string `json:"resultCode"`
-		Message    []struct {
-			Code string `json:"code"`
-			Text string `json:"text"`
-		} `json:"message"`
-	} `json:"messages"`
+	Messages                      messages      `json:"messages"`
+}
+
+/******************************************** Customer Profile Fetch */
+type CustomerProfileInformationRequest struct {
+	ID string `json:"id"`
+}
+
+type GetCustomerProfileRequest struct {
+	MerchantAuthentication AuthorizeMerchant `json:"merchantAuthentication"`
+	CustomerProfileId      string            `json:"customerProfileId"`
+	IncludeIssuerInfo      bool              `json:"includeIssuerInfo" default:"true"`
+}
+
+type GetCustomerProfile struct {
+	GetCustomerProfileRequest GetCustomerProfileRequest `json:"getCustomerProfileRequest"`
+}
+
+// CustomerProfileInformationResponse - parse customer profile informatoin
+// response from Authorize.net
+type CustomerProfileInformationResponse struct {
+	Profile struct {
+		MerchantCustomerId string `json:"merchantCustomerId"`
+
+		// Profile description for this customer
+		Description string `json:"description,omitempty"`
+
+		// Unique email for this customer
+		Email string `json:"email"`
+
+		// Customer profile type - regular / guest
+		ProfileType string `json:"profileType"`
+
+		// Unique email for this customer
+		PaymentProfiles []AuthorizePaymentProfile `json:"paymentProfiles"`
+	} `json:"profile"`
+	Messages messages `json:"messages"`
 }

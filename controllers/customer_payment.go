@@ -17,6 +17,7 @@ import (
 	"github.com/VuliTv/go-movie-api/libs/api"
 	"github.com/VuliTv/go-movie-api/libs/envhelp"
 	"github.com/VuliTv/go-movie-api/models"
+	"github.com/gorilla/mux"
 )
 
 var authName = envhelp.GetEnv("AUTHORIZE_ID", "65Vv2fYQ")
@@ -78,6 +79,43 @@ func CustomerCreateProfile(w http.ResponseWriter, r *http.Request) {
 
 	api.Respond(w, r, retval, err)
 	// requests.ReturnAPIOK(w, res)
+}
+
+// GetCustomerProfile -- fetches a user profile from Authorize.net
+func GetCustomerProfile(w http.ResponseWriter, r *http.Request) {
+
+	var retval models.CustomerProfileInformationResponse
+
+	params := mux.Vars(r)
+	objectID := params["userID"]
+
+	var user models.CustomerProfileInformationRequest
+	user.ID = objectID
+
+	data := models.GetCustomerProfile{
+		GetCustomerProfileRequest: models.GetCustomerProfileRequest{
+			MerchantAuthentication: auth,
+			CustomerProfileId:      user.ID,
+			IncludeIssuerInfo:      true,
+		},
+	}
+
+	var req []byte
+	if req, err = json.Marshal(data); err != nil {
+		log.Error("JSON Parse Error: ", err.Error())
+	}
+	// TODO - endpoint from config
+	res, _ := api.Post("https://apitest.authorize.net/xml/v1/request.api", req)
+	res = bytes.TrimPrefix(res, []byte("\xef\xbb\xbf"))
+
+	if err := json.Unmarshal(res, &retval); err != nil {
+		log.Error("JSON Parse Error: ", err.Error())
+	}
+	if retval.Messages.ResultCode != models.ResponseOK {
+		err = errors.New(retval.Messages.Message[0].Text)
+	}
+
+	api.Respond(w, r, retval, err)
 }
 
 // CustomerPaymentAdd --
