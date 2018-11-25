@@ -38,6 +38,9 @@ type MediaInformation struct {
 
 	// Total movie length in seconds
 	Length int32 `json:"length"`
+
+	// List of available qualities for the video
+	Quality []int `json:"quality"`
 }
 
 // Performance --

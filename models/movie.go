@@ -21,15 +21,26 @@ import (
 type Movie struct {
 	bongo.DocumentBase `bson:",inline"`
 
+	// Unique Title for this movie
+	Title string `json:"title"`
+
+	// DynamoDBId
+	DynamoDBId string `json:"dynamoId"`
+
+	// Description of this movie if it has one. Not required
+	Description string `json:"description"`
+
+	// Unique Slug for this movie. Made of <title><studio> lowercase and character stripped
+	Slug string `json:"slug"`
+
+	// Chapter definitions for this movie
+	Chapters []Chapter `json:"chapters"`
+
 	// Media information
 	Images     Images     `json:"images"`
 	Extras     []Extras   `json:"extras"`
 	Thumbnails Thumbnails `json:"thumbnails"`
 	Trailer    Trailer    `json:"trailer"`
-
-	Chapters []Chapter `json:"chapters"`
-
-	Quality []int `json:"quality"`
 
 	// MovieInformation --
 	Information MediaInformation `json:"information"`
@@ -40,23 +51,8 @@ type Movie struct {
 	// List of Tags
 	Tags []string `json:"tags"`
 
-	// Unique Title for this movie
-	Title string `json:"title"`
-
-	// DynamoDBId
-	DynamoDBId string `json:"dynamoId"`
-
-	// Description of this movie if it has one. Not required
-	Description string `json:"description"`
-
 	// Read only value. Only Admin can update. Sets the price for a movie
 	Price float32 `json:"price"`
-
-	// True/False. Has someone reviewed this movie
-	Reviewed bool `json:"reviewed"`
-
-	// Unique Slug for this movie. Made of <title><studio> lowercase and character stripped
-	Slug string `json:"slug"`
 
 	// True/False. Is it available on the site or not
 	IsPublished bool `json:"is_published"`

@@ -25,11 +25,21 @@ import (
 type Star struct {
 	bongo.DocumentBase `bson:",inline"`
 
+	Name string `json:"name"`
+
+	Slug string `json:"slug"`
+
 	Tagline string `json:"tagline"`
 
 	Bio string `json:"bio"`
 
-	Name string `json:"name"`
+	Gender string `json:"gender"`
+
+	Birthdate time.Time `json:"birthdate"`
+
+	Birthplace string `json:"birthplace"`
+
+	Favorites int `json:"favorites"`
 
 	Likes int32 `json:"likes"`
 
@@ -41,11 +51,10 @@ type Star struct {
 
 	Movies []string `json:"movies"`
 
-	Birthdate time.Time `json:"birthdate"`
-
-	Birthplace string `json:"birthplace"`
-
 	Rank int `json:"rank"`
+
+	// List of Tags
+	Tags []string `json:"tags"`
 
 	Social struct {
 		Twitter string `json:"twitter"`
@@ -56,10 +65,6 @@ type Star struct {
 
 		Snapchat string `json:"snapchat"`
 	} `json:"social"`
-
-	Slug string `json:"slug"`
-
-	Gender string `json:"gender"`
 
 	StarSize struct {
 		Weight int32 `json:"weight"`
@@ -86,11 +91,6 @@ type Star struct {
 	} `json:"traits"`
 
 	Director bool `json:"director"`
-
-	Favorites int `json:"favorites"`
-
-	// List of Tags
-	Tags []string `json:"tags"`
 }
 
 // Validate --
