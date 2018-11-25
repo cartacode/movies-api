@@ -22,6 +22,7 @@ import (
 
 var rDB, rError = dbh.NewRedisConnection()
 var mDB, mError = dbh.NewMongoDBConnection("router")
+var aSession, aError = dbh.NewAuthorizeNetSession()
 
 // Route --
 type Route struct {
@@ -78,6 +79,12 @@ func HealthCheck(w http.ResponseWriter, r *http.Request) {
 		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, ok.String()))
 		return
 	}
+
+	if aSession == false {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, aError.Error()))
+		return
+	}
+
 	message := requests.JSONSuccessResponse{Message: "healthy"}
 	js, _ := json.Marshal(message)
 

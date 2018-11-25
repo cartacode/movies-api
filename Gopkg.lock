@@ -144,6 +144,14 @@
   version = "v1.0.0"
 
 [[projects]]
+  digest = "1:d7f1ee6bd30d9930009d6fdd41e7aebf641f725cb3f5b0595f9cdefb92958cb2"
+  name = "github.com/hunterlong/authorizecim"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "3301f44d45459fa5c17845a66a4da647da046593"
+  version = "v1"
+
+[[projects]]
   digest = "1:e22af8c7518e1eab6f2eab2b7d7558927f816262586cd6ed9f349c97a6c285c4"
   name = "github.com/jmespath/go-jmespath"
   packages = ["."]
@@ -336,6 +344,7 @@
     "github.com/gorilla/context",
     "github.com/gorilla/handlers",
     "github.com/gorilla/mux",
+    "github.com/hunterlong/authorizecim",
     "github.com/mitchellh/mapstructure",
     "github.com/spf13/viper",
     "go.uber.org/zap",
