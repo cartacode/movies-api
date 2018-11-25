@@ -41,6 +41,8 @@ type Scene struct {
 	// MovieInformation --
 	Information MediaInformation `json:"information"`
 
+	Chapters []Chapter `json:"chapters"`
+
 	// Media Performance
 	Performance Performance `json:"performance"`
 

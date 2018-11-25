@@ -36,6 +36,9 @@ type Volume struct {
 	// Series this volume is in
 	Series string `json:"series"`
 
+	// Series this volume is in
+	Scenes []string `json:"scenes"`
+
 	// MovieInformation --
 	Information MediaInformation `json:"information"`
 
