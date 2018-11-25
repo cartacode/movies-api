@@ -32,7 +32,11 @@ func CustomerCreateProfile(w http.ResponseWriter, r *http.Request) {
 	var retval models.CreateCustomerProfileResponse
 
 	var user models.CreateCustomerProfileRequest
-	err = json.NewDecoder(r.Body).Decode(&user)
+	if err = json.NewDecoder(r.Body).Decode(&user); err != nil {
+		log.Error("Request Body parse error: ", err.Error())
+		api.Respond(w, r, retval, err)
+		return
+	}
 
 	authPaymentProfile := &models.AuthorizePaymentProfile{
 		CustomerType: models.Individual,
