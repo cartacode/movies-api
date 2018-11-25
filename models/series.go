@@ -24,40 +24,20 @@ import (
 type Series struct {
 	bongo.DocumentBase `bson:",inline"`
 
-	// Media information
-	Images     Images     `json:"images"`
-	Extras     Extras     `json:"extras"`
-	Thumbnails Thumbnails `json:"thumbnails"`
-	Trailer    Trailer    `json:"trailer"`
-
-	Quality []int `json:"quality"`
-
-	// List of Categories
-	Category []string `json:"category"`
-
-	// MovieInformation --
-	Information MediaInformation `json:"information"`
-	// MovieInformation --
-
-	Performance Performance `json:"performance"`
-
 	// Unique Title for this movie
 	Title string `json:"title"`
 
-	// DynamoDBId
-	DynamoDBId string `json:"dynamoId"`
+	// Unique Slug for this movie. Made of <title><studio> lowercase and character stripped
+	Slug string `json:"slug"`
+
+	// List of Tags
+	Tags []string `json:"tags"`
+
+	// Volumes this series contains
+	Volumes []string `json:"volumes"`
 
 	// Description of this movie if it has one. Not required
 	Description string `json:"description"`
-
-	// Read only value. Only Admin can update. Sets the price for a movie
-	Price float32 `json:"price"`
-
-	// True/False. Has someone reviewed this movie
-	Reviewed bool `json:"reviewed"`
-
-	// Unique Slug for this movie. Made of <title><studio> lowercase and character stripped
-	Slug string `json:"slug"`
 
 	// True/False. Is it available on the site or not
 	IsPublished bool `json:"is_published"`

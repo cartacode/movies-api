@@ -11,7 +11,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/VuliTv/go-movie-api/libs/requests"
@@ -38,7 +37,7 @@ func GenericCrudGet(w http.ResponseWriter, r *http.Request) {
 	pagination, err := results.Paginate(perPage, page)
 
 	if err != nil {
-		requests.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		log.Error(err)
 		return
 	}
@@ -49,7 +48,7 @@ func GenericCrudGet(w http.ResponseWriter, r *http.Request) {
 	model, err := models.ModelByCollection(collection)
 
 	if err != nil {
-		requests.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		log.Error(err)
 		return
 	}
@@ -71,8 +70,8 @@ func GenericCrudGet(w http.ResponseWriter, r *http.Request) {
 	// Turn it into a json and serve it up
 	rs, err := json.Marshal(response)
 	if err != nil {
-		requests.ReturnAPIError(w, err)
-		log.Fatal(err)
+		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
+		log.Error(err)
 		return
 	}
 
@@ -87,33 +86,33 @@ func GenericCrudPost(w http.ResponseWriter, r *http.Request) {
 
 	model, err := models.ModelByCollection(collection)
 	if err != nil {
-		requests.ReturnAPIError(w, err)
-		// log.Fatal(err)
+		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
+		log.Error(err)
 		return
 	}
 	// text := slug.Make("Hellö Wörld хелло ворлд")
 
 	if r.Body == nil {
-		requests.ReturnAPIError(w, fmt.Errorf("Please send a request body"))
+		requests.ReturnAPIError(w, http.StatusBadRequest, "Please send a request body")
 		return
 	}
 
 	err = json.NewDecoder(r.Body).Decode(&model)
 	if err != nil {
 		log.Error(err)
-		requests.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	err = connection.Collection(collection).Save(model.(bongo.Document))
 	if vErr, ok := err.(*bongo.ValidationError); ok {
-		requests.ReturnAPIError(w, vErr.Errors[0])
+		requests.ReturnAPIError(w, http.StatusBadRequest, vErr.Errors[0].Error())
 		return
 	}
 
 	// Return the saved document
 	js, err := json.Marshal(model)
 	if err != nil {
-		requests.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	requests.ReturnAPIOK(w, js)
@@ -123,41 +122,41 @@ func GenericCrudPost(w http.ResponseWriter, r *http.Request) {
 func GenericCrudIDGet(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
-	objectid := params["objectid"]
+	objectID := params["objectID"]
 	collection := params["collection"]
 	model, err := models.ModelByCollection(collection)
-	if err != nil {
-		log.Fatal(err)
-	}
 
+	if err != nil {
+		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
+		return
+	}
 	// Check valid bson id
 
-	if !bson.IsObjectIdHex(objectid) {
-		requests.ReturnAPIError(w, fmt.Errorf("Not a valid bson Id"))
+	if !bson.IsObjectIdHex(objectID) {
+		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, "Not a valid bson Id"))
 		return
 	}
 
 	// Find doc
-	err = connection.Collection(collection).FindById(bson.ObjectIdHex(objectid), model)
-	if err != nil {
-		requests.ReturnAPIError(w, err)
+	if err = connection.Collection(collection).FindById(bson.ObjectIdHex(objectID), &model); err != nil {
+		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
 	}
 
 	// Json
-	js, err := json.Marshal(model)
+	js, error := json.Marshal(model)
 
-	if err != nil {
-		requests.ReturnAPIError(w, err)
-		return
+	if error != nil {
+		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 	}
+
 	requests.ReturnAPIOK(w, js)
 }
 
 // GenericCrudIDDelete --
 func GenericCrudIDDelete(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	objectid := params["objectid"]
+	objectID := params["objectID"]
 	collection := params["collection"]
 	model, err := models.ModelByCollection(collection)
 	if err != nil {
@@ -165,22 +164,22 @@ func GenericCrudIDDelete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check valid bson id
-	if !bson.IsObjectIdHex(objectid) {
-		requests.ReturnAPIError(w, fmt.Errorf("Not a valid bson Id"))
+	if !bson.IsObjectIdHex(objectID) {
+		requests.ReturnAPIError(w, http.StatusBadRequest, "Not a valid bson Id")
 		return
 	}
 
 	// Find doc
-	err = connection.Collection(collection).FindById(bson.ObjectIdHex(objectid), model)
+	err = connection.Collection(collection).FindById(bson.ObjectIdHex(objectID), model)
 	if err != nil {
-		requests.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	// Delete the document
 	err = connection.Collection(collection).DeleteDocument(model.(bongo.Document))
 	log.Info(err)
 	if err != nil {
-		requests.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -191,7 +190,7 @@ func GenericCrudIDDelete(w http.ResponseWriter, r *http.Request) {
 	js, err := json.Marshal(response)
 
 	if err != nil {
-		requests.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -201,7 +200,7 @@ func GenericCrudIDDelete(w http.ResponseWriter, r *http.Request) {
 // GenericCrudIDPatch --
 func GenericCrudIDPatch(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	objectid := params["objectid"]
+	objectID := params["objectID"]
 	collection := params["collection"]
 	// model, err := models.ModelByCollection(collection)
 	// if err != nil {
@@ -209,34 +208,34 @@ func GenericCrudIDPatch(w http.ResponseWriter, r *http.Request) {
 	// }
 
 	// Check valid bson id
-	if !bson.IsObjectIdHex(objectid) {
-		requests.ReturnAPIError(w, fmt.Errorf("Not a valid bson Id"))
+	if !bson.IsObjectIdHex(objectID) {
+		requests.ReturnAPIError(w, http.StatusBadRequest, "Not a valid bson Id")
 		return
 	}
 
 	var patchBody interface{}
 
 	if r.Body == nil {
-		requests.ReturnAPIError(w, fmt.Errorf("Please send a request body"))
+		requests.ReturnAPIError(w, http.StatusBadRequest, "Please send a request body")
 		return
 	}
 	if err := json.NewDecoder(r.Body).Decode(&patchBody); err != nil {
 		log.Error(err)
-		requests.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	// Update the document
 	if err := connection.Collection(collection).Collection().Update(
-		bson.M{"_id": bson.ObjectIdHex(objectid)}, bson.M{"$set": patchBody}); err != nil {
-		requests.ReturnAPIError(w, err)
+		bson.M{"_id": bson.ObjectIdHex(objectID)}, bson.M{"$set": patchBody}); err != nil {
+		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	response := requests.JSONSuccessResponse{Message: "success", Identifier: objectid, Extra: patchBody}
+	response := requests.JSONSuccessResponse{Message: "success", Identifier: objectID, Extra: patchBody}
 
 	if js, err := json.Marshal(response); err != nil {
-		requests.ReturnAPIError(w, err)
+		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 	} else {
 		requests.ReturnAPIOK(w, js)
 	}

@@ -12,25 +12,34 @@ For more information, please visit [Drone Build Page](https://drone.vuli.io/Vuli
 To run the server, follow these simple steps:
 
 ```
-go run main.go
+# install dep & gin
+curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+go get github.com/codegangsta/gin
+
+# clone this repo to $GOPATH/src/github.com/VuliTv/go-movie-api
+dep ensure
+
+# easiest to get running
+docker-compose up
+
+# for dev you need to have mongo and redis running locally or set these ENV variables
+#
+# example for stage:
+#
+# export MONGO_HOST="api-mongodb.stage.vuli.io"
+# export REDIS_ADDRESS="api-redis.stage.vuli.io:6379"
+
+gin --immediate
 
 http://127.0.0.1:3001
 ```
 
 
-### Generating Docs
-You first need to install swagger
+### Documentation
 
-```
-download_url=$(curl -s https://api.github.com/repos/go-swagger/go-swagger/releases/latest | \
-  jq -r '.assets[] | select(.name | contains("'"$(uname | tr '[:upper:]' '[:lower:]')"'_amd64")) | .browser_download_url')
-curl -o /usr/local/bin/swagger -L'#' "$download_url"
-chmod +x /usr/local/bin/swagger
-```
+##### API w/ environments and examples
+[Postman Docs and Collection](https://vulitv.postman.co/collections/2363352-b39fcf84-0bf4-4245-b2a1-f55bdefc3852?workspace=b34041b8-635b-4ba7-8435-23b9999b0e86)
 
-Generate the json file and serve it up on your browser
+##### Go Model to MongoDB
 
-```
-swagger generate spec -i swagger.yml -o ./swagger.json --scan-models
-swagger serve -F=swagger swagger.json
-```
+[Model PDF](docs/models.pdf)

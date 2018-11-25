@@ -26,7 +26,7 @@ var operationsRoutes = Routes{
 	Route{
 		"OperationsUploadImage",
 		strings.ToUpper("Post"),
-		"/operations/upload/image/{field}/{collection}/{objectid}",
+		"/v1/operations/upload/image/{collection}",
 		controllers.OperationsUploadImage,
 	},
 	// swagger:operation POST /performer/ performer performerPost
@@ -48,7 +48,7 @@ var operationsRoutes = Routes{
 	Route{
 		"OperationsUploadTrailer",
 		strings.ToUpper("Post"),
-		"/operations/upload/trailer/{collection}/{objectid}/{slug}",
+		"/v1/operations/upload/trailer/{collection}",
 		controllers.OperationsUploadTrailer,
 	},
 }

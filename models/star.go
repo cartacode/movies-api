@@ -25,27 +25,70 @@ import (
 type Star struct {
 	bongo.DocumentBase `bson:",inline"`
 
+	Name string `json:"name"`
+
+	Slug string `json:"slug"`
+
+	Tagline string `json:"tagline"`
+
 	Bio string `json:"bio"`
 
-	Name string `json:"name"`
+	Gender string `json:"gender"`
 
 	Birthdate time.Time `json:"birthdate"`
 
 	Birthplace string `json:"birthplace"`
 
+	Favorites int `json:"favorites"`
+
+	Likes int32 `json:"likes"`
+
+	Dislikes int32 `json:"dislikes"`
+
+	Studios []string `json:"studios"`
+
+	Scenes []string `json:"scenes"`
+
+	Movies []string `json:"movies"`
+
 	Rank int `json:"rank"`
 
-	Social StarSocial `json:"social"`
+	// List of Tags
+	Tags []string `json:"tags"`
 
-	Slug string `json:"slug"`
+	Social struct {
+		Twitter string `json:"twitter"`
 
-	Gender string `json:"gender"`
+		Youtube string `json:"youtube"`
 
-	Size StarSize `json:"size"`
+		Instagram string `json:"instagram"`
 
-	Picture string `json:"picture"`
+		Snapchat string `json:"snapchat"`
+	} `json:"social"`
 
-	Traits StarTraits `json:"traits"`
+	StarSize struct {
+		Weight int32 `json:"weight"`
+
+		Waist int32 `json:"waist"`
+
+		Bust string `json:"bust"`
+
+		Height int32 `json:"height"`
+	} `json:"size"`
+
+	Images struct {
+		Portrait string `json:"portrait"`
+
+		Landscape string `json:"landscape"`
+	} `json:"images"`
+
+	StarTraits struct {
+		Ethnicity string `json:"ethnicity"`
+		HairColor string `json:"haircolor"`
+		Piercings bool   `json:"piercings"`
+		Tattoos   bool   `json:"tattoos"`
+		StarSign  string `json:"sign"`
+	} `json:"traits"`
 
 	Director bool `json:"director"`
 }
@@ -54,43 +97,14 @@ type Star struct {
 func (s *Star) Validate(*bongo.Collection) []error {
 
 	retval := make([]error, 0)
-	Star := &Star{}
+	star := &Star{}
 
-	// Find by slug when posting new Star
-	if err := connection.Collection("Star").FindOne(bson.M{"slug": s.Slug}, Star); err != nil {
+	// Find by slug when posting new star
+	err := connection.Collection("star").FindOne(bson.M{"slug": s.Slug}, star)
+
+	if err == nil {
 		retval = append(retval, fmt.Errorf("This document is not unique"))
 	}
 
 	return retval
-}
-
-// StarTraits --
-type StarTraits struct {
-	Ethnicity string `json:"ethnicity"`
-	HairColor string `json:"haircolor"`
-	Piercings bool   `json:"piercings"`
-	Tattoos   bool   `json:"tattoos"`
-	StarSign  string `json:"sign"`
-}
-
-// StarSocial --
-type StarSocial struct {
-	Twitter string `json:"twitter"`
-
-	Youtube string `json:"youtube"`
-
-	Instagram string `json:"instagram"`
-
-	Snapchat string `json:"snapchat"`
-}
-
-// StarSize --
-type StarSize struct {
-	Weight int32 `json:"weight"`
-
-	Waist int32 `json:"waist"`
-
-	Bust string `json:"bust"`
-
-	Height int32 `json:"height"`
 }

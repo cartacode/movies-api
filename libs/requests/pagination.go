@@ -26,7 +26,7 @@ func GetPaginationInfo(r *http.Request) (int, int) {
 	}
 
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
 		return 1, 20
 	}
 	return perPage, page

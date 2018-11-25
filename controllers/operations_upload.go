@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -11,6 +10,7 @@ import (
 	"github.com/VuliTv/go-movie-api/models"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/go-bongo/bongo"
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -30,38 +30,41 @@ func OperationsUploadImage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	params := mux.Vars(r)
-	field := params["field"]
-	objectid := params["objectid"]
+	query := requests.QuerySanatizer(r.URL.Query())
+	field := query["key"].(string)
+	objectID := query["id"].(string)
 	collection := params["collection"]
 
 	// Check for a hexId
-	if !bson.IsObjectIdHex(objectid) {
-		requests.ReturnAPIError(w, fmt.Errorf("Not a valid bson Id"))
+	if !bson.IsObjectIdHex(objectID) {
+		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, "Not a valid bson Id"))
 		return
 	}
 	// Read the image
 	content, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
 	}
 
 	// Create a new session to AWS
 	s, err := session.NewSession(&aws.Config{Region: aws.String(s3Region)})
-	if requests.ReturnOnError(w, err) {
+	if err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
 	}
 
 	// Quick verification step
 	_, err = s.Config.Credentials.Get()
 
-	if requests.ReturnOnError(w, err) {
+	if err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
 	}
 
 	// if field == "image" {
 	// 	// Upload to our bucket
-	// 	path, err := requests.AddFileToS3(s, bucket, "media/image/available/"+objectid+"/"+field, content)
+	// 	path, err := requests.AddFileToS3(s, bucket, "media/image/available/"+objectID+"/"+field, content)
 	// 	if requests.ReturnOnError(w, err) {
 	// 		return
 	// 	}
@@ -69,7 +72,7 @@ func OperationsUploadImage(w http.ResponseWriter, r *http.Request) {
 	// 	// Patch the collection document with the new image path
 	// 	patch := make(map[string]string)
 	// 	patch[field] = path
-	// 	err = connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(objectid)}, bson.M{"$set": patch})
+	// 	err = connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(objectID)}, bson.M{"$set": patch})
 
 	// 	if requests.ReturnOnError(w, err) {
 	// 		return
@@ -77,16 +80,16 @@ func OperationsUploadImage(w http.ResponseWriter, r *http.Request) {
 	// } else {
 
 	// Upload to our bucket
-	path, err = requests.AddFileToS3(s, bucket, "media/image/"+objectid+"/"+field, content)
-	if requests.ReturnOnError(w, err) {
+	path, err = requests.AddFileToS3(s, bucket, "media/"+objectID+"/images/"+field, content)
+	if err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
 	}
 	// Patch the collection document with the new image path
 	patch := make(map[string]string)
 	patch["images."+field] = path
-	err = connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(objectid)}, bson.M{"$set": patch})
-
-	if requests.ReturnOnError(w, err) {
+	if err = connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(objectID)}, bson.M{"$set": patch}); err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
 	}
 
@@ -94,7 +97,8 @@ func OperationsUploadImage(w http.ResponseWriter, r *http.Request) {
 	response := &requests.JSONSuccessResponse{Message: path, Identifier: "success"}
 	js, err := json.Marshal(response)
 
-	if requests.ReturnOnError(w, err) {
+	if err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
 	}
 
@@ -110,59 +114,112 @@ func OperationsUploadTrailer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	params := mux.Vars(r)
-	objectid := params["objectid"]
+	query := requests.QuerySanatizer(r.URL.Query())
+	field := query["key"].(string)
+	objectID := query["id"].(string)
 	collection := params["collection"]
-	slug := params["slug"]
 
 	// Check for a hexId
-	if !bson.IsObjectIdHex(objectid) {
-		requests.ReturnAPIError(w, fmt.Errorf("Not a valid bson Id"))
+	if !bson.IsObjectIdHex(objectID) {
+		if err != nil {
+			log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, "Not a valid bson Id"))
+			return
+		}
+
+	}
+	log.Debugw("looking for collection")
+	model, err := models.ModelByCollection(collection)
+
+	if err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
 		return
 	}
-	// Read the image
-	content, err := ioutil.ReadAll(r.Body)
+
+	// Find the document
+	err = connection.Collection(collection).FindById(bson.ObjectIdHex(objectID), model)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
+		return
+	}
+
+	content, err := ioutil.ReadAll(r.Body)
+
+	if err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
 		return
 	}
 
 	// Create a new session to AWS
 	s, err := session.NewSession(&aws.Config{Region: aws.String(s3Region)})
-	if requests.ReturnOnError(w, err) {
+	if err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
 		return
 	}
 
 	// Quick verification step
 	_, err = s.Config.Credentials.Get()
 
-	if requests.ReturnOnError(w, err) {
+	if err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
 		return
 	}
+	log.Infow("logging into AWS")
 
 	// Upload to our bucket
-	path, err := requests.AddFileToS3(s, bucket, "media/"+objectid+"/trailers/"+slug, content)
-	if requests.ReturnOnError(w, err) {
+	path, err := requests.AddFileToS3(s, bucket, "media/"+objectID+"/trailers/"+field, content)
+	if err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
 		return
 	}
 
-	patch := &models.Trailer{URL: slug}
-	// Patch the collection document with the new image path
+	log.Infow("upload successful")
+	patch := models.Trailer{Title: field}
 
-	patch.Title = slug
-	patch.URL = path
+	log.Debugw("creating new patch", "object", patch)
 
-	fmt.Println(patch)
-	err = connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(objectid)}, bson.M{"$addToSet": bson.M{"trailers": patch}})
+	switch collection {
+	case "scene":
+		log.Infow("found scene model")
+		scene := *model.(*models.Scene)
 
-	if requests.ReturnOnError(w, err) {
+		scene.Trailer = patch
+		err = connection.Collection(collection).Save(&scene)
+		if vErr, ok := err.(*bongo.ValidationError); ok {
+			log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, vErr.Errors[0].Error()))
+			return
+		}
+	case "movie":
+		log.Infow("found movie model")
+		movie := *model.(*models.Movie)
+
+		movie.Trailer = patch
+		err = connection.Collection(collection).Save(&movie)
+		if vErr, ok := err.(*bongo.ValidationError); ok {
+			log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, vErr.Errors[0].Error()))
+			return
+		}
+
+	case "volume":
+		log.Infow("found volume model")
+		volume := *model.(*models.Volume)
+
+		volume.Trailer = patch
+		err = connection.Collection(collection).Save(&volume)
+		if vErr, ok := err.(*bongo.ValidationError); ok {
+			log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, vErr.Errors[0].Error()))
+			return
+		}
+	default:
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, "No such model"))
 		return
 	}
+
 	// // Sending our response
 	response := &requests.JSONSuccessResponse{Message: path, Identifier: "success", Extra: patch}
 	js, err := json.Marshal(response)
 
-	if requests.ReturnOnError(w, err) {
-		return
+	if err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
 	}
 
 	requests.ReturnAPIOK(w, js)

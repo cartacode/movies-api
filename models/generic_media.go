@@ -2,13 +2,10 @@ package models
 
 // Images --
 type Images struct {
-	Detailpage            string   `json:"detailpage"`
-	TrayThumbnail         string   `json:"traythumbnail"`
-	TrayFeaturedThumbnail string   `json:"trayfeaturedthumbnail"`
-	MobileThumbnail       string   `json:"mobilethumbnail"`
-	CoverImage            string   `json:"coverimage"`
-	BackgroundImage       string   `json:"backgroundimage"`
-	Available             []string `json:"available"`
+	Landscape  string `json:"landscape"`
+	Portrait   string `json:"portrait"`
+	Banner     string `json:"banner"`
+	DetailPage string `json:"detailpage"`
 }
 
 // Extras --
@@ -26,9 +23,8 @@ type Thumbnails struct {
 
 // Trailer --
 type Trailer struct {
-	URL       string `json:"url"`
-	Title     string `json:"title"`
-	Published bool   `json:"published"`
+	DynamoDBId string `json:"dynamodbid"`
+	Title      string `json:"title"`
 }
 
 // MediaInformation --
@@ -37,11 +33,14 @@ type MediaInformation struct {
 
 	Studio string `json:"studio"`
 
-	// List of Mongo ObjectID for the Stars in this movie. Embeddable
+	// List of Mongo ObjectId for the Stars in this movie. Embeddable
 	Stars []string `json:"Stars"`
 
 	// Total movie length in seconds
 	Length int32 `json:"length"`
+
+	// List of available qualities for the video
+	Quality []int `json:"quality"`
 }
 
 // Performance --
@@ -58,4 +57,10 @@ type Performance struct {
 
 	// Calculated by user view. Only increases.
 	Views int32 `json:"views"`
+}
+
+// Chapter --
+type Chapter struct {
+	Name      string `json:"name"`
+	Timestamp int    `json:"timestamp"`
 }

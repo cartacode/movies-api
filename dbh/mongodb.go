@@ -6,20 +6,20 @@ import (
 	"github.com/go-bongo/bongo"
 )
 
-var config = &bongo.Config{
+var mongoConfig = &bongo.Config{
 	ConnectionString: envhelp.GetEnv("MONGO_HOST", "localhost"),
 	Database:         envhelp.GetEnv("MONGO_DATABASE", "vuliapi"),
 }
 
-// NewConnection --
-func NewConnection(caller string) (*bongo.Connection, error) {
+// NewMongoDBConnection --
+func NewMongoDBConnection(caller string) (*bongo.Connection, error) {
 	log.Infow("new database handler created",
-		"connection_string", config.ConnectionString,
-		"database", config.Database,
+		"connection_string", mongoConfig.ConnectionString,
+		"database", mongoConfig.Database,
 		"caller", caller,
 	)
 
-	connection, err := bongo.Connect(config)
+	connection, err := bongo.Connect(mongoConfig)
 
 	log.Infow("testing connection")
 

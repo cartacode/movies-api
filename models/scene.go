@@ -10,9 +10,6 @@
 package models
 
 import (
-	"fmt"
-
-	"github.com/globalsign/mgo/bson"
 	"github.com/go-bongo/bongo"
 )
 
@@ -24,41 +21,42 @@ import (
 type Scene struct {
 	bongo.DocumentBase `bson:",inline"`
 
-	// Media information
-	Images     Images     `json:"images"`
-	Extras     []Extras   `json:"extras"`
-	Thumbnails Thumbnails `json:"thumbnails"`
-	Trailers   []Trailer  `json:"trailers"`
-
-	// MovieInformation --
-	Information MediaInformation `json:"information"`
-
-	// Media Performance
-	Performance Performance `json:"performance"`
-
 	// Unique Title for this movie
 	Title string `json:"title"`
-
-	// DynamoDBId
-	DynamoDBId string `json:"dynamoId"`
-
-	// List of Categories
-	Category []string `json:"category"`
-
-	// Description of this movie if it has one. Not required
-	Description string `json:"description"`
-
-	Volume string `json:"volume"`
-	// Read only value. Only Admin can update. Sets the price for a movie
-	Price float32 `json:"price"`
-
-	// True/False. Has someone reviewed this movie
-	Reviewed bool `json:"reviewed"`
 
 	// Unique Slug for this movie. Made of <title><studio> lowercase and character stripped
 	Slug string `json:"slug"`
 
+	// DynamoDBId this will go away. Used right now to set media information
+	DynamoDBId string `json:"dynamoId"`
+	// Description of this movie if it has one. Not required
+	Description string `json:"description"`
+
+	// Media information
+	Images     Images     `json:"images"`
+	Extras     []Extras   `json:"extras"`
+	Thumbnails Thumbnails `json:"thumbnails"`
+	Trailer    Trailer    `json:"trailer"`
+
+	// MovieInformation --
+	Information MediaInformation `json:"information"`
+
+	Chapters []Chapter `json:"chapters"`
+
+	// Media Performance
+	Performance Performance `json:"performance"`
+
+	// Volume this scene is in. Not all scenes have volumes
+	Volume string `json:"volume"`
+
+	// Some scenes can have no volumes but a series (best of/star profile)
 	Series string `json:"series"`
+
+	// List of Tags
+	Tags []string `json:"tags"`
+
+	// Read only value. Only Admin can update. Sets the price for a movie
+	Price float32 `json:"price"`
 
 	// True/False. Is it available on the site or not
 	IsPublished bool `json:"is_published"`
@@ -68,13 +66,13 @@ type Scene struct {
 func (s *Scene) Validate(*bongo.Collection) []error {
 
 	retval := make([]error, 0)
-	scene := &Scene{}
+	// scene := &Scene{}
 
-	// Find by slug when posting new scene
-	err := connection.Collection("scene").FindOne(bson.M{"slug": s.Slug}, scene)
+	// // Find by slug when posting new scene
+	// err := connection.Collection("scene").FindOne(bson.M{"slug": s.Slug}, scene)
 
-	if err == nil {
-		retval = append(retval, fmt.Errorf("This document is not unique"))
-	}
+	// if err == nil {
+	// 	retval = append(retval, fmt.Errorf("This document is not unique"))
+	// }
 	return retval
 }

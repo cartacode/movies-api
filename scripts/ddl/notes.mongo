@@ -1,0 +1,218 @@
+// Update all scenes
+db.getCollection("scene").updateMany({},{$set:{"information.quality": [1080, 720, 480, 240]}});
+
+
+// Add extras to all scenes
+db.getCollection("scene").updateMany({},{$set:{"extras": [
+        {
+            "url" : "https://www.youtube.com/watch?v=4ifcOah-FQI",
+            "published" : false
+        },
+        {
+            "url" : "https://www.youtube.com/watch?v=f4Mc-NYPHaQ",
+            "published" : false
+        }
+    ]}});
+
+
+// Thumbnails - find
+db.getCollection("scene").find({"thumbnails": { "$exists": false}})
+
+// Add thumbnails if missing
+db.getCollection("scene").updateMany(
+	{"thumbnails": { "$exists": false}},
+	{
+        "prefix" : "deleteme",
+        "count" : 100,
+        "format" : "jpg"
+    }
+)
+
+// Star - add traits
+db.getCollection("star").updateMany({"traits": { "$exists": false }},{
+  $set: {
+	  	"traits" : {
+        "haircolor" : "hair",
+        "ethnicity" : "person",
+        "piercings" : false,
+        "tattoos" : false
+    },
+  }
+})
+
+// Star - add birthdate
+db.getCollection("star").updateMany({"birthdate": {   "$exists": false}},
+	{$set: {
+	  	"birthdate": ISODate("1993-01-01T00:00:00.000+0000")
+	}}
+)
+
+// Star - update social
+db.getCollection("star").updateMany({"social": { "$exists": false }},{
+  $set: {
+    "social" : {
+        "twitter" : "https://twitter.com/",
+        "instagram" : "https://www.instagram.com/",
+        "snapchat" : "snapname"
+    }
+  }
+})
+
+// Start - update size
+db.getCollection("star").updateMany({"size": { "$exists": false }},{
+  $set: {
+    "size" : {
+        "weight" : 0,
+        "waist" : 0,
+        "bust" : "34D",
+        "height" : 0
+    }
+  }
+})
+
+// Star - images
+db.getCollection("star").updateMany({"images": { "$exists": false }},{
+  $set: {
+    "images" : {
+        "landscape" : "http://vuli.tv",
+        "portrait" : "vuli.tv"
+    },
+  }
+})
+
+// Star Nationality
+db.getCollection("star").updateMany({"nationality": { "$exists": false }},{
+  $set: {
+    "nationality" : "unknown",
+  }
+})
+
+// Star Orientation
+db.getCollection("star").updateMany({"birthplace": { "$exists": false }},{
+  $set: {
+    "birthplace" : "unknown",
+  }
+})
+
+// VOLUME
+// images
+db.getCollection("volume").updateMany({"images": { "$exists": false }},{
+  $set: {
+    "images" : {
+        "landscape" : "",
+        "portrait" : "",
+        "banner" : "",
+        "detailpahe" : ""
+    },
+  }
+})
+// extras
+db.getCollection("volume").updateMany({"extras": { "$exists": false }},{
+  $set: {
+    "extras" : [
+        {
+            "url" : "Lorem",
+            "published" : true
+        }
+    ]
+  }
+})
+// thumbnails
+db.getCollection("volume").updateMany({"thumbnails": { "$exists": false }},{
+  $set: {
+    "thumbnails" : {
+        "prefix" : "",
+        "count" : 0,
+        "format" : ""
+    }
+  }
+})
+// trailers
+db.getCollection("volume").updateMany({"trailers": { "$exists": false }},{
+  $set: {
+    "trailers" : [
+        {
+            "url" : "",
+            "title" : "",
+            "published" : false
+        }
+    ]
+  }
+})
+
+// performance
+db.getCollection("volume").updateMany({"performance": { "$exists": false }},{
+  $set: {
+    "performance" : {
+        "rank" : 0,
+        "upvotes" : 0,
+        "downvotes" : 0,
+        "views" : 0
+    }
+  }
+})
+db.getCollection("volume").updateMany({"tags": { "$exists": false }},{
+  $set: {
+    "tags" : [
+        "anal"
+    ],
+  }
+})
+db.getCollection("scene").updateMany({"ispublished": { "$exists": false }},{
+  $set: {
+    "ispublished" : false
+
+  }
+})
+
+var ops = [];
+db.getCollection("scene").find({},{ "volume": 1 }).forEach(doc => {
+  doc.volume = new ObjectId(doc.user.valueOf());
+
+  ops.push({
+    "updateOne": {
+      "filter": { "_id": doc._id },
+      "update": {
+        "$set": { "volume": doc.volume }
+      }
+    }
+  });
+
+  if ( ops.length >= 500 ) {
+    db.getCollection("scene").bulkWrite(ops);
+    ops = [];
+  }
+});
+
+if ( ops.length > 0 ) {
+  db.getCollection("scene").bulkWrite(ops);
+  ops = [];
+}
+
+// Series update to
+var ops = [];
+db.getCollection("scene").find({},{ "series": 1 }).forEach(doc => {
+  print(doc.series)
+  volume = new ObjectId(doc.series.valueOf());
+
+  ops.push({
+    "updateOne": {
+      "filter": { "_id": doc._id },
+      "update": {
+        "$set": { "series": volume }
+      }
+    }
+  });
+
+  print(ops.entries())
+
+  if ( ops.length >= 500 ) {
+    db.getCollection("scene").bulkWrite(ops);
+    ops = [];
+  }
+});
+
+if ( ops.length > 0 ) {
+  db.getCollection("scene").bulkWrite(ops);
+  ops = [];
+}

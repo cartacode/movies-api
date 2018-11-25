@@ -24,18 +24,8 @@ import (
 type Volume struct {
 	bongo.DocumentBase `bson:",inline"`
 
-	// Media information
-	Images     Images     `json:"images"`
-	Extras     []Extras   `json:"extras"`
-	Thumbnails Thumbnails `json:"thumbnails"`
-	Trailers   []Trailer  `json:"trailers"`
-
-	// MovieInformation --
-	Information MediaInformation `json:"information"`
-
-	// Media Performance
-	Performance Performance `json:"performance"`
-	Category    []string    `json:"category"`
+	// Unique Title for this scene
+	Title string `json:"title"`
 
 	// Unique Slug for this scene. Made of <title><studio> lowercase and character stripped
 	Slug string `json:"slug"`
@@ -43,16 +33,27 @@ type Volume struct {
 	// Description of this scene if it has one. Not required
 	Description string `json:"description"`
 
-	// Calculated by user view. Only increases.
-	Views int32 `json:"views"`
-
+	// Series this volume is in
 	Series string `json:"series"`
 
-	// Unique Title for this scene
-	Title string `json:"title"`
+	// Series this volume is in
+	Scenes []string `json:"scenes"`
 
-	// True/False. Has someone reviewed this scene
-	Reviewed bool `json:"reviewed"`
+	// MovieInformation --
+	Information MediaInformation `json:"information"`
+
+	// Volume Viewing Performance
+	Performance Performance `json:"performance"`
+
+	// Media information
+	Images     Images     `json:"images"`
+	Extras     []Extras   `json:"extras"`
+	Thumbnails Thumbnails `json:"thumbnails"`
+	Trailer    Trailer    `json:"trailer"`
+
+	// List of Tags
+	Tags []string `json:"tags"`
+
 	// Read only value. Only Admin can update. Sets the price for a the volume which supersedes the scene price
 	Price float32 `json:"price"`
 
