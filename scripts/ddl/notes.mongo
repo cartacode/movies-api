@@ -1,0 +1,27 @@
+// Update all scenes
+db.getCollection("scene").updateMany({},{$set:{"information.quality": [1080, 720, 480, 240]}});
+
+
+// Add extras to all scenes
+db.getCollection("scene").updateMany({},{$set:{"extras": [
+        {
+            "url" : "https://www.youtube.com/watch?v=4ifcOah-FQI",
+            "published" : false
+        },
+        {
+            "url" : "https://www.youtube.com/watch?v=f4Mc-NYPHaQ",
+            "published" : false
+        }
+    ]}});
+
+
+// Thumbnails
+db.getCollection("scene").find({"thumbnails": { "$exists": false}})
+db.getCollection("scene").updateMany(
+	{"thumbnails": { "$exists": false}},
+	{
+        "prefix" : "deleteme",
+        "count" : NumberInt(100),
+        "format" : "jpg"
+    }
+)

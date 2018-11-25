@@ -18,15 +18,19 @@ import "github.com/go-bongo/bongo"
 // swagger:model
 type Customer struct {
 	bongo.DocumentBase `bson:",inline"`
+
 	// Unique email for this customer, read only, cognito controlled
 	// read only: true
 	Email string `json:"email"`
 
+	// Stored as a bcrypt hash
 	Password string
 
 	// True/False. Is the user active
 	Active bool `json:"active"`
-	Admin  bool `json:"admin"`
+
+	// Are they an admin or now. Allows for POST/PUT/PATCH to CRUD routes
+	Admin bool `json:"admin"`
 
 	// Liked Items
 	Liked struct {

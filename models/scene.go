@@ -21,6 +21,17 @@ import (
 type Scene struct {
 	bongo.DocumentBase `bson:",inline"`
 
+	// Unique Title for this movie
+	Title string `json:"title"`
+
+	// Unique Slug for this movie. Made of <title><studio> lowercase and character stripped
+	Slug string `json:"slug"`
+
+	// DynamoDBId this will go away. Used right now to set media information
+	DynamoDBId string `json:"dynamoId"`
+	// Description of this movie if it has one. Not required
+	Description string `json:"description"`
+
 	// Media information
 	Images     Images     `json:"images"`
 	Extras     []Extras   `json:"extras"`
@@ -30,32 +41,22 @@ type Scene struct {
 	// MovieInformation --
 	Information MediaInformation `json:"information"`
 
+	Chapters []Chapter `json:"chapters"`
+
 	// Media Performance
 	Performance Performance `json:"performance"`
 
-	// Unique Title for this movie
-	Title string `json:"title"`
+	// Volume this scene is in. Not all scenes have volumes
+	Volume string `json:"volume"`
 
-	// DynamoDBId
-	DynamoDBId string `json:"dynamoId"`
+	// Some scenes can have no volumes but a series (best of/star profile)
+	Series string `json:"series"`
 
 	// List of Tags
 	Tags []string `json:"tags"`
 
-	// Description of this movie if it has one. Not required
-	Description string `json:"description"`
-
-	Volume string `json:"volume"`
 	// Read only value. Only Admin can update. Sets the price for a movie
 	Price float32 `json:"price"`
-
-	// True/False. Has someone reviewed this movie
-	Reviewed bool `json:"reviewed"`
-
-	// Unique Slug for this movie. Made of <title><studio> lowercase and character stripped
-	Slug string `json:"slug"`
-
-	Series string `json:"series"`
 
 	// True/False. Is it available on the site or not
 	IsPublished bool `json:"is_published"`
