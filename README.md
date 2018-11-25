@@ -12,7 +12,24 @@ For more information, please visit [Drone Build Page](https://drone.vuli.io/Vuli
 To run the server, follow these simple steps:
 
 ```
-go run main.go
+# install dep & gin
+curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+go get github.com/codegangsta/gin
+
+# clone this repo to $GOPATH/src/github.com/VuliTv/go-movie-api
+dep ensure
+
+# easiest to get running
+docker-compose up
+
+# for dev you need to have mongo and redis running locally or set these ENV variables
+#
+# example for stage:
+#
+# export MONGO_HOST="api-mongodb.stage.vuli.io"
+# export REDIS_ADDRESS="api-redis.stage.vuli.io:6379"
+
+gin --immediate
 
 http://127.0.0.1:3001
 ```
@@ -25,3 +42,4 @@ http://127.0.0.1:3001
 
 ##### Go Model to MongoDB
 
+[Model PDF](docs/models.pdf)
