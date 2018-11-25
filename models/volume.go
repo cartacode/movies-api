@@ -48,6 +48,9 @@ type Volume struct {
 
 	Series string `json:"series"`
 
+	// List of Tags
+	Tags []string `json:"tags"`
+
 	// Unique Title for this scene
 	Title string `json:"title"`
 
