@@ -42,16 +42,14 @@ func CustomerCreateProfile(w http.ResponseWriter, r *http.Request) {
 		authPaymentProfile.Payment = &models.AuthorizePayment{CreditCard: *cc}
 	}
 
-	profile := &models.AuthorizeCustomer{
-		MerchantCustomerId: user.ID,
-		Description:        user.Description,
-		Email:              user.Email,
-		PaymentProfiles:    *authPaymentProfile,
-	}
-
 	data := models.CreateCustomerProfile{
 		CreateCustomerProfileRequest: models.AuthorizeProfileRequest{
-			Profile:                *profile,
+			Profile: models.AuthorizeCustomer{
+				MerchantCustomerId: user.ID,
+				Description:        user.Description,
+				Email:              user.Email,
+				PaymentProfiles:    *authPaymentProfile,
+			},
 			MerchantAuthentication: auth,
 			ValidationMode:         models.ValidationModeTest,
 		},
