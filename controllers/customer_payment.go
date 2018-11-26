@@ -23,7 +23,8 @@ var authName = envhelp.GetEnv("AUTHORIZE_ID", "65Vv2fYQ")
 var authKey = envhelp.GetEnv("AUTHORIZE_TRANSACTION_KEY", "4Ld7LUr432q6e7Uz")
 var authMode = "test"
 
-// GetCustomerProfile -- fetches a customer profile from Authorize.net
+// GetCustomerProfile
+// fetches a customer profile from Authorize.net
 func GetCustomerProfile(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
@@ -44,7 +45,7 @@ func GetCustomerProfile(w http.ResponseWriter, r *http.Request) {
 
 	var retval []byte
 	if retval, err = json.Marshal(customerInfo); err != nil {
-		log.Error("JSON parse error: ", err.Error())
+		log.Error("Error: ", err.Error())
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -52,7 +53,8 @@ func GetCustomerProfile(w http.ResponseWriter, r *http.Request) {
 	requests.ReturnAPIOK(w, retval)
 }
 
-// CustomerCreateProfile -- creates a user profile with Authorize.net
+// CustomerCreateProfile
+// creates a user profile with Authorize.net
 func CustomerCreateProfile(w http.ResponseWriter, r *http.Request) {
 
 	var user models.CreateCustomerProfileRequest
@@ -72,14 +74,14 @@ func CustomerCreateProfile(w http.ResponseWriter, r *http.Request) {
 		cc := &AuthorizeCIM.CreditCard{CardNumber: user.CC.CardNumber, ExpirationDate: user.CC.ExpirationDate, CardCode: user.CC.CardCode}
 		authPaymentProfile.Payment = AuthorizeCIM.Payment{CreditCard: *cc}
 	}
+	// API not supporting
+	// authPaymentProfile.BillTo = user.BillTo
 
 	data := AuthorizeCIM.Profile{
 		MerchantCustomerID: user.ID,
 		Description:        user.Description,
 		Email:              user.Email,
 		PaymentProfiles:    authPaymentProfile,
-		// Shipping           *Address         `json:"address,omitempty"`
-		// PaymentProfile     *PaymentProfile  `json:"paymentProfile,omitempty"`
 	}
 
 	AuthorizeCIM.SetAPIInfo(authName, authKey, authMode)
@@ -91,7 +93,7 @@ func CustomerCreateProfile(w http.ResponseWriter, r *http.Request) {
 
 	var retval []byte
 	if retval, err = json.Marshal(customer); err != nil {
-		log.Error("JSON parse error: ", err.Error())
+		log.Error("Error: ", err.Error())
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -99,8 +101,8 @@ func CustomerCreateProfile(w http.ResponseWriter, r *http.Request) {
 	requests.ReturnAPIOK(w, retval)
 }
 
-// CustomerPaymentAdd -- adds a payment option to
-// Authorize.Net customer profile
+// CustomerPaymentAdd
+// adds a payment option to Authorize.Net customer profile
 func CustomerPaymentAdd(w http.ResponseWriter, r *http.Request) {
 
 	var user models.CustomerPaymentProfileRequest
@@ -117,34 +119,22 @@ func CustomerPaymentAdd(w http.ResponseWriter, r *http.Request) {
 	paymentProfile := AuthorizeCIM.CustomerPaymentProfile{
 		CustomerProfileID: user.ID,
 		PaymentProfile: AuthorizeCIM.PaymentProfile{
-			BillTo: &AuthorizeCIM.BillTo{
-				FirstName:   "Amit",
-				LastName:    "Mangal",
-				Address:     "789 - Sector 2",
-				City:        "Bellevue",
-				State:       "OH",
-				Zip:         "43212",
-				Country:     "USA",
-				PhoneNumber: "347-111-2222",
-			},
+			BillTo: user.BillTo,
 			Payment: &AuthorizeCIM.Payment{
-				CreditCard: AuthorizeCIM.CreditCard{
-					CardNumber:     "4111111111111111",
-					ExpirationDate: "2025-12",
-				},
+				CreditCard: user.CreditCard,
 			},
 		},
 	}
 
 	if customer, err = paymentProfile.Add(); err != nil {
-		log.Error("JSON parse error: ", err.Error())
+		log.Error("Failed to add Payment profile: ", err.Error())
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	var retval []byte
 	if retval, err = json.Marshal(customer); err != nil {
-		log.Error("JSON parse error: ", err.Error())
+		log.Error("Error: ", err.Error())
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -172,7 +162,7 @@ func CustomerPaymentDelete(w http.ResponseWriter, r *http.Request) {
 		PaymentID: user.PaymentID,
 	}
 	if res, err = customer.DeletePaymentProfile(); err != nil {
-		log.Error("Customer Information fetch error: ", err.Error())
+		log.Error("Customer Payment delete error: ", err.Error())
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -222,14 +212,14 @@ func CustomerPaymentUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if res, err = profile.UpdatePaymentProfile(); err != nil {
-		log.Error("Customer Information fetch error: ", err.Error())
+		log.Error("Customer Information update error: ", err.Error())
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	var retval []byte
 	if retval, err = json.Marshal(res); err != nil {
-		log.Error("JSON parse error: ", err.Error())
+		log.Error("Error: ", err.Error())
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}

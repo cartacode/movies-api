@@ -11,7 +11,7 @@
 package models
 
 import (
-	AuthorizeCIM "github.com/hunterlong/authorizecim"
+	AuthorizeCIM "gopkg.in/hunterlong/authorizecim.v1"
 )
 
 const (
@@ -24,6 +24,8 @@ type CreateCustomerProfileRequest struct {
 	Email       string                   `json:"email"`
 	Description string                   `json:"description,omitempty"`
 	CC          *AuthorizeCIM.CreditCard `json:"creditCard,omitempty"`
+	BillTo      *AuthorizeCIM.BillTo     `json:"billingAddress,omitempty"`
+	Shipping    *AuthorizeCIM.Address    `json:"shippingAddress,omitempty"`
 }
 
 type CustomerProfileInformationRequest struct {
@@ -31,7 +33,9 @@ type CustomerProfileInformationRequest struct {
 }
 
 type CustomerPaymentProfileRequest struct {
-	ID string `json:"id"`
+	ID         string                  `json:"id"`
+	BillTo     *AuthorizeCIM.BillTo    `json:"billingAddress,omitempty"`
+	CreditCard AuthorizeCIM.CreditCard `json:"creditCard"`
 }
 
 type CustomerPaymentDeleteRequest struct {
