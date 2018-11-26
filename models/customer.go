@@ -9,7 +9,10 @@
 
 package models
 
-import "github.com/go-bongo/bongo"
+import (
+	"github.com/go-bongo/bongo"
+	"gopkg.in/mgo.v2/bson"
+)
 
 // Customer Document
 //
@@ -36,32 +39,32 @@ type Customer struct {
 	Liked struct {
 
 		// List of Mongo ObjectId for the movies wish list. Embeddable
-		Movies []string `json:"movies"`
+		Movies []*bson.ObjectId `json:"movies"`
 
 		// List of Mongo ObjectId for the scenes wish list. Embeddable
-		Scenes []string `json:"scenes"`
+		Scenes []*bson.ObjectId `json:"scenes"`
 
 		// List of Mongo ObjectId for the volumes wish list. Embeddable
-		Volumes []string `json:"volumes"`
+		Volumes []*bson.ObjectId `json:"volumes"`
 
 		// List of Mongo ObjectId for the stars wish list. Embeddable
-		Stars []string `json:"stars"`
+		Stars []*bson.ObjectId `json:"stars"`
 	} `json:"liked"`
 
 	// Liked Items
 	Disliked struct {
 
 		// List of Mongo ObjectId for the movies wish list. Embeddable
-		Movies []string `json:"movies"`
+		Movies []*bson.ObjectId `json:"movies"`
 
 		// List of Mongo ObjectId for the scenes wish list. Embeddable
-		Scenes []string `json:"scenes"`
+		Scenes []*bson.ObjectId `json:"scenes"`
 
 		// List of Mongo ObjectId for the volumes wish list. Embeddable
-		Volumes []string `json:"volumes"`
+		Volumes []*bson.ObjectId `json:"volumes"`
 
 		// List of Mongo ObjectId for the stars wish list. Embeddable
-		Stars []string `json:"stars"`
+		Stars []*bson.ObjectId `json:"stars"`
 	} `json:"disliked"`
 
 	// Credit Information
@@ -78,26 +81,26 @@ type Customer struct {
 	Purchased struct {
 
 		// List of Mongo ObjectId for the movies wish list. Embeddable
-		Movies []string `json:"movies"`
+		Movies []*bson.ObjectId `json:"movies"`
 
 		// List of Mongo ObjectId for the scenes wish list. Embeddable
-		Scenes []string `json:"scenes"`
+		Scenes []*bson.ObjectId `json:"scenes"`
 
 		// List of Mongo ObjectId for the volumes wish list. Embeddable
-		Volumes []string `json:"volumes"`
+		Volumes []*bson.ObjectId `json:"volumes"`
 	} `json:"purchased"`
 
 	// User wishlist
 	Wishlist struct {
 
 		// List of Mongo ObjectId for the movies wish list. Embeddable
-		Movies []string `json:"movies"`
+		Movies []*bson.ObjectId `json:"movies"`
 
 		// List of Mongo ObjectId for the scenes wish list. Embeddable
-		Scenes []string `json:"scenes"`
+		Scenes []*bson.ObjectId `json:"scenes"`
 
 		// List of Mongo ObjectId for the volumes wish list. Embeddable
-		Volumes []string `json:"volumes"`
+		Volumes []*bson.ObjectId `json:"volumes"`
 	} `json:"wishlist"`
 
 	Preferences []struct {

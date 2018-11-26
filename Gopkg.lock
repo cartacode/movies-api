@@ -338,7 +338,6 @@
     "github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute",
     "github.com/aws/aws-sdk-go/service/s3",
     "github.com/dgrijalva/jwt-go",
-    "github.com/globalsign/mgo/bson",
     "github.com/go-bongo/bongo",
     "github.com/go-redis/redis",
     "github.com/gorilla/context",
