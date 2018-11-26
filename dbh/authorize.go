@@ -2,7 +2,7 @@ package dbh
 
 import (
 	"github.com/VuliTv/go-movie-api/libs/envhelp"
-	auth "github.com/hunterlong/authorizecim"
+	auth "gopkg.in/hunterlong/authorizecim.v1"
 )
 
 // NewAuthorizeNetSession checks for validity of Authorize.net

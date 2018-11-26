@@ -54,5 +54,5 @@
   version = "6.14.2"
 
 [[constraint]]
-  name = "github.com/hunterlong/authorizecim"
+  name = "gopkg.in/hunterlong/authorizecim.v1"
   version = "1.0.0"

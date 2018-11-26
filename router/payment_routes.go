@@ -32,14 +32,14 @@ var paymentRoutes = Routes{
 	Route{
 		"CustomerPaymentDelete",
 		strings.ToUpper("Delete"),
-		"/v1/customer/payment/{ObjectId}",
+		"/v1/customer/payment",
 		controllers.CustomerPaymentDelete,
 	},
 
 	Route{
 		"CustomerPaymentUpdate",
 		strings.ToUpper("Patch"),
-		"/v1/customer/payment/{ObjectId}",
+		"/v1/customer/payment",
 		controllers.CustomerPaymentUpdate,
 	},
 }
