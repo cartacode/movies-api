@@ -273,7 +273,7 @@
     "blowfish",
   ]
   pruneopts = "UT"
-  revision = "3d3f9f413869b949e48070b5bc593aa22cc2b8f2"
+  revision = "9eb0be3963eaeb646c9a9b6d11f3da2b249bb2ca"
 
 [[projects]]
   branch = "master"
@@ -297,6 +297,14 @@
   pruneopts = "UT"
   revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
   version = "v0.3.0"
+
+[[projects]]
+  digest = "1:d7f1ee6bd30d9930009d6fdd41e7aebf641f725cb3f5b0595f9cdefb92958cb2"
+  name = "gopkg.in/hunterlong/authorizecim.v1"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "3301f44d45459fa5c17845a66a4da647da046593"
+  version = "v1"
 
 [[projects]]
   branch = "v2"
@@ -339,6 +347,7 @@
     "github.com/spf13/viper",
     "go.uber.org/zap",
     "golang.org/x/crypto/bcrypt",
+    "gopkg.in/hunterlong/authorizecim.v1",
     "gopkg.in/mgo.v2/bson",
   ]
   solver-name = "gps-cdcl"

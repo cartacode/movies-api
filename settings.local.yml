@@ -1,5 +1,6 @@
 authorize_net:
     api:
+        url: https://apitest.authorize.net/xml/v1/request.api
         id: 65Vv2fYQ
         key: Simon
         token: 6z59j6XrGA7V3TbG
