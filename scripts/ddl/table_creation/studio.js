@@ -16,20 +16,30 @@ db.createCollection( "studio",{
                 "slug": {
                     "bsonType": "string"
                 },
+                "images": {
+                    "bsonType": "object",
+                    "properties": {
+                        "thumbnail": {
+                            "bsonType": "string",
+                            "pattern": "^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$"
+                        }
+                    },
+                    "additionalProperties": false
+                },
                 "_created": {
                     "bsonType": "date"
                 },
                 "_modified": {
                     "bsonType": "date"
+                },
+                "thumbnail": {
+                    "bsonType": "string"
                 }
             },
             "required": [
                 "_id",
-                "description",
                 "name",
-                "slug",
-                "_created",
-                "_modified"
+                "slug"
             ]
         }
     },

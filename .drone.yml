@@ -59,8 +59,3 @@ pipeline:
         link: {{build.link}}
       {{/success}}
 
-
-services:
-  mongodb:
-    image: mongo:3.0
-    command: [ --smallfiles ]
