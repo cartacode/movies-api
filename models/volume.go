@@ -60,13 +60,25 @@ type Volume struct {
 
 	// True/False. Is it available on the site or not
 	IsPublished bool `json:"is_published"`
+
+	diffTracker *bongo.DiffTracker
+}
+
+// GetDiffTracker ..
+func (v *Volume) GetDiffTracker() *bongo.DiffTracker {
+	if v.diffTracker == nil {
+		v.diffTracker = bongo.NewDiffTracker(v)
+	}
+
+	return v.diffTracker
+
 }
 
 // Validate --
 func (v *Volume) Validate(*bongo.Collection) []error {
 
 	retval := make([]error, 0)
-	volume := &Volume{}
+	// volume := &Volume{}
 
 	// Check for series
 	if v.Series != nil {
@@ -99,12 +111,49 @@ func (v *Volume) Validate(*bongo.Collection) []error {
 		}
 	}
 	// Find by slug when posting new volume
-	err := connection.Collection("volume").FindOne(bson.M{"slug": v.Slug}, volume)
+	// err := connection.Collection("volume").FindOne(bson.M{"slug": v.Slug}, volume)
 
-	if err == nil {
-		retval = append(retval, fmt.Errorf("this document is not unique (via slug)"))
+	// if err == nil {
+	// retval = append(retval, fmt.Errorf("this document is not unique (via slug)"))
+	// }
+
+	// log.Debugw("error saving volume", "error", retval)
+	return retval
+}
+
+// AfterSave ..
+func (v *Volume) AfterSave(*bongo.Collection) error {
+
+	/*  Series CASCADE */
+	if v.Series != nil {
+		if err := connection.Collection("series").Collection().Update(bson.M{"_id": v.Series}, bson.M{"$push": bson.M{"volumes": v.Id}}); err != nil {
+			log.Errorw("cascade failure on series add sceneId",
+				"series_id", v.Series,
+				"volume_id", v.Id,
+				"error", err,
+			)
+			return fmt.Errorf("cascade failure")
+		}
 	}
 
-	log.Debugw("error saving volume", "error", retval)
-	return retval
+	return nil
+
+}
+
+// AfterDelete ..
+func (v *Volume) AfterDelete(*bongo.Collection) error {
+
+	/*  Series CASCADE */
+	if v.Series != nil {
+		if err := connection.Collection("series").Collection().Update(bson.M{"_id": v.Series}, bson.M{"$pull": bson.M{"volumes": v.Id}}); err != nil {
+			log.Errorw("cascade failure on series add sceneId",
+				"series_id", v.Series,
+				"volume_id", v.Id,
+				"error", err,
+			)
+			return fmt.Errorf("cascade failure")
+		}
+	}
+	return nil
+
 }

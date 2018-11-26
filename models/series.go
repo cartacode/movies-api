@@ -10,8 +10,6 @@
 package models
 
 import (
-	"fmt"
-
 	"github.com/go-bongo/bongo"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -47,14 +45,14 @@ type Series struct {
 func (s *Series) Validate(*bongo.Collection) []error {
 
 	retval := make([]error, 0)
-	series := &Series{}
+	// series := &Series{}
 
 	// Find by slug when posting new series
-	err := connection.Collection("series").FindOne(bson.M{"slug": s.Slug}, series)
+	// err := connection.Collection("series").FindOne(bson.M{"slug": s.Slug}, series)
 
-	if err == nil {
-		retval = append(retval, fmt.Errorf("This document is not unique"))
-	}
+	// if err == nil {
+	// 	retval = append(retval, fmt.Errorf("This document is not unique"))
+	// }
 
 	return retval
 }

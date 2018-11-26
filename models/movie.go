@@ -14,7 +14,6 @@ import (
 	"strconv"
 
 	"github.com/go-bongo/bongo"
-	"gopkg.in/mgo.v2/bson"
 )
 
 // Movie Document
@@ -66,7 +65,7 @@ type Movie struct {
 func (m *Movie) Validate(*bongo.Collection) []error {
 
 	retval := make([]error, 0)
-	movie := &Movie{}
+	// movie := &Movie{}
 
 	// Check for studio
 	if m.Information.Studio == nil {
@@ -92,11 +91,11 @@ func (m *Movie) Validate(*bongo.Collection) []error {
 		}
 	}
 	// Find by slug when posting new movie
-	err := connection.Collection("movie").FindOne(bson.M{"slug": m.Slug}, movie)
+	// err := connection.Collection("movie").FindOne(bson.M{"slug": m.Slug}, movie)
 
-	if err == nil {
-		retval = append(retval, fmt.Errorf("This document is not unique"))
-	}
+	// if err == nil {
+	// retval = append(retval, fmt.Errorf("This document is not unique"))
+	// }
 
 	// s.Price = math.Ceil(s.Pr*100)/100
 	log.Debugw("error saving volume", "error", retval)
