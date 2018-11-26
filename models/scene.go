@@ -10,6 +10,9 @@
 package models
 
 import (
+	"fmt"
+	"strconv"
+
 	"github.com/go-bongo/bongo"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -57,7 +60,7 @@ type Scene struct {
 	Tags []string `json:"tags"`
 
 	// Read only value. Only Admin can update. Sets the price for a movie
-	Price float32 `json:"price"`
+	Price float64 `json:"price"`
 
 	// True/False. Is it available on the site or not
 	IsPublished bool `json:"is_published"`
@@ -67,13 +70,46 @@ type Scene struct {
 func (s *Scene) Validate(*bongo.Collection) []error {
 
 	retval := make([]error, 0)
-	// scene := &Scene{}
+	scene := &Scene{}
 
-	// // Find by slug when posting new scene
-	// err := connection.Collection("scene").FindOne(bson.M{"slug": s.Slug}, scene)
+	// Check for series
+	if s.Volume == nil {
+		retval = append(retval, fmt.Errorf("volume cannot be empty"))
 
-	// if err == nil {
-	// 	retval = append(retval, fmt.Errorf("This document is not unique"))
-	// }
+	} else {
+		if !s.Volume.Valid() {
+			retval = append(retval, fmt.Errorf("not a valid volume objectId"))
+		}
+	}
+
+	// Check for studio
+	if s.Information.Studio == nil {
+		retval = append(retval, fmt.Errorf("studio cannot be empty"))
+
+	} else {
+		if !s.Information.Studio.Valid() {
+			retval = append(retval, fmt.Errorf("not a valid studio objectId"))
+		}
+	}
+
+	// Check for bad IDs
+	for i, e := range s.Information.Director {
+		if !e.Valid() {
+			retval = append(retval, fmt.Errorf("director id is not valid in position: "+strconv.Itoa(i)))
+		}
+	}
+
+	// Check for bad IDs
+	for i, e := range s.Information.Stars {
+		if !e.Valid() {
+			retval = append(retval, fmt.Errorf("star id is not valid in position: "+strconv.Itoa(i)))
+		}
+	}
+	// Find by slug when posting new scene
+	err := connection.Collection("scene").FindOne(bson.M{"slug": s.Slug}, scene)
+
+	if err == nil {
+		retval = append(retval, fmt.Errorf("This document is not unique"))
+	}
 	return retval
 }

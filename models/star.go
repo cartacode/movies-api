@@ -106,6 +106,7 @@ func (s *Star) Validate(*bongo.Collection) []error {
 		retval = append(retval, fmt.Errorf("this document is not unique"))
 	}
 
+	fmt.Println(s.Director)
 	// Validate fields
 	for i, e := range s.Scenes {
 		fmt.Println(i, e)

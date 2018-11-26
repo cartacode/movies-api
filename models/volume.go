@@ -11,6 +11,7 @@ package models
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/go-bongo/bongo"
 	"gopkg.in/mgo.v2/bson"
@@ -37,7 +38,7 @@ type Volume struct {
 	Series *bson.ObjectId `json:"series"`
 
 	// Series this volume is in
-	Scenes []*bson.ObjectId `json:"scenes"`
+	Scenes []bson.ObjectId `json:"scenes"`
 
 	// MovieInformation --
 	Information MediaInformation `json:"information"`
@@ -55,24 +56,55 @@ type Volume struct {
 	Tags []string `json:"tags"`
 
 	// Read only value. Only Admin can update. Sets the price for a the volume which supersedes the scene price
-	Price float32 `json:"price"`
+	Price float64 `json:"price"`
 
 	// True/False. Is it available on the site or not
 	IsPublished bool `json:"is_published"`
 }
 
 // Validate --
-func (s *Volume) Validate(*bongo.Collection) []error {
+func (v *Volume) Validate(*bongo.Collection) []error {
 
 	retval := make([]error, 0)
 	volume := &Volume{}
 
-	// Find by slug when posting new volume
-	err := connection.Collection("volume").FindOne(bson.M{"slug": s.Slug}, volume)
-
-	fmt.Printf("%+v\n", s)
-	if err == nil {
-		retval = append(retval, fmt.Errorf("This document is not unique"))
+	// Check for series
+	if v.Series != nil {
+		if !v.Series.Valid() {
+			retval = append(retval, fmt.Errorf("not a valid series objectId"))
+		}
 	}
+
+	// Check for studio
+	if v.Information.Studio == nil {
+		retval = append(retval, fmt.Errorf("studio cannot be empty"))
+
+	} else {
+		if !v.Information.Studio.Valid() {
+			retval = append(retval, fmt.Errorf("not a valid studio objectId"))
+		}
+	}
+
+	// Check for bad IDs
+	for i, e := range v.Information.Director {
+		if !e.Valid() {
+			retval = append(retval, fmt.Errorf("director id is not valid in position: "+strconv.Itoa(i)))
+		}
+	}
+
+	// Check for bad IDs
+	for i, e := range v.Information.Stars {
+		if !e.Valid() {
+			retval = append(retval, fmt.Errorf("star id is not valid in position: "+strconv.Itoa(i)))
+		}
+	}
+	// Find by slug when posting new volume
+	err := connection.Collection("volume").FindOne(bson.M{"slug": v.Slug}, volume)
+
+	if err == nil {
+		retval = append(retval, fmt.Errorf("this document is not unique (via slug)"))
+	}
+
+	log.Debugw("error saving volume", "error", retval)
 	return retval
 }

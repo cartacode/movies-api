@@ -10,7 +10,11 @@
 package models
 
 import (
+	"fmt"
+	"strconv"
+
 	"github.com/go-bongo/bongo"
+	"gopkg.in/mgo.v2/bson"
 )
 
 // Movie Document
@@ -52,24 +56,49 @@ type Movie struct {
 	Tags []string `json:"tags"`
 
 	// Read only value. Only Admin can update. Sets the price for a movie
-	Price float32 `json:"price"`
+	Price float64 `json:"price"`
 
 	// True/False. Is it available on the site or not
 	IsPublished bool `json:"is_published"`
 }
 
 // Validate --
-func (s *Movie) Validate(*bongo.Collection) []error {
+func (m *Movie) Validate(*bongo.Collection) []error {
 
 	retval := make([]error, 0)
-	// movie := &Movie{}
+	movie := &Movie{}
 
+	// Check for studio
+	if m.Information.Studio == nil {
+		retval = append(retval, fmt.Errorf("studio cannot be empty"))
+
+	} else {
+		if !m.Information.Studio.Valid() {
+			retval = append(retval, fmt.Errorf("not a valid studio objectId"))
+		}
+	}
+
+	// Check for bad IDs
+	for i, e := range m.Information.Director {
+		if !e.Valid() {
+			retval = append(retval, fmt.Errorf("director id is not valid in position: "+strconv.Itoa(i)))
+		}
+	}
+
+	// Check for bad IDs
+	for i, e := range m.Information.Stars {
+		if !e.Valid() {
+			retval = append(retval, fmt.Errorf("star id is not valid in position: "+strconv.Itoa(i)))
+		}
+	}
 	// Find by slug when posting new movie
-	// err := connection.Collection("movie").FindOne(bson.M{"slug": s.Slug}, movie)
+	err := connection.Collection("movie").FindOne(bson.M{"slug": m.Slug}, movie)
 
-	// if err == nil {
-	// retval = append(retval, fmt.Errorf("This document is not unique"))
-	// }
+	if err == nil {
+		retval = append(retval, fmt.Errorf("This document is not unique"))
+	}
 
+	// s.Price = math.Ceil(s.Pr*100)/100
+	log.Debugw("error saving volume", "error", retval)
 	return retval
 }
