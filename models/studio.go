@@ -10,17 +10,12 @@
 package models
 
 import (
-	"fmt"
-
 	"github.com/go-bongo/bongo"
-	"gopkg.in/mgo.v2/bson"
 )
 
 // Studio Document
 //
 // A studio can be associated with a Series, Volume, or Movie
-//
-// swagger:model
 type Studio struct {
 	bongo.DocumentBase `bson:",inline"`
 	// Public description of the studio
@@ -39,14 +34,14 @@ type Studio struct {
 func (s *Studio) Validate(*bongo.Collection) []error {
 
 	retval := make([]error, 0)
-	studio := &Studio{}
+	// studio := &Studio{}
 
 	// Find by slug when posting new studio
-	err := connection.Collection("studio").FindOne(bson.M{"slug": s.Slug}, studio)
+	// err := connection.Collection("studio").FindOne(bson.M{"slug": s.Slug}, studio)
 
-	if err == nil {
-		retval = append(retval, fmt.Errorf("This document is not unique"))
-	}
+	// if err == nil {
+	// 	retval = append(retval, fmt.Errorf("This document is not unique"))
+	// }
 
 	return retval
 }

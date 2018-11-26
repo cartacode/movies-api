@@ -1,4 +1,4 @@
-db.createCollection("studio", {
+db.createCollection("star", {
 	"capped": false,
 	"validator": {
 		"$jsonSchema": {
@@ -7,47 +7,39 @@ db.createCollection("studio", {
 				"_id": {
 					"bsonType": "objectId"
 				},
-				"description": {
-					"bsonType": "string"
-				},
 				"name": {
 					"bsonType": "string"
 				},
+				"director": {
+					"bsonType": "bool"
+				},
+
 				"slug": {
 					"bsonType": "string",
 					"pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
 				},
-				"images": {
-					"bsonType": "object",
-					"properties": {
-						"thumbnail": {
-							"bsonType": "string",
-							"pattern": "^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$"
-						}
-					},
-					"additionalProperties": false
-				},
+
 				"_created": {
 					"bsonType": "date"
 				},
 				"_modified": {
 					"bsonType": "date"
-				},
-				"thumbnail": {
-					"bsonType": "string"
 				}
 			},
 			"required": [
 				"_id",
 				"name",
-				"slug"
+				"director",
+				"slug",
+				"_created",
+				"_modified"
 			]
 		}
 	},
 	"validationLevel": "off",
 	"validationAction": "warn"
 });
-db.studio.createIndex(
+db.star.createIndex(
 	{
 		"_id": 1
 	},

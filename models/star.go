@@ -97,19 +97,104 @@ type Star struct {
 func (s *Star) Validate(*bongo.Collection) []error {
 
 	retval := make([]error, 0)
-	star := &Star{}
+	// star := &Star{}
 
 	// Find by slug when posting new star
-	err := connection.Collection("star").FindOne(bson.M{"slug": s.Slug}, star)
+	// err := connection.Collection("star").FindOne(bson.M{"slug": s.Slug}, star)
 
-	if err == nil {
-		retval = append(retval, fmt.Errorf("this document is not unique"))
-	}
+	// if err == nil {
+	// 	retval = append(retval, fmt.Errorf("this document is not unique"))
+	// }
 
-	// Validate fields
-	for i, e := range s.Scenes {
-		fmt.Println(i, e)
-	}
-	// retval = append(retval, fmt.Errorf("this document is not unique"))
 	return retval
+}
+
+func (s *Star) addScene(id *bson.ObjectId) error {
+
+	if !id.Valid() {
+		return fmt.Errorf("not a valid bson id")
+	}
+	s.Scenes = append(s.Scenes, id)
+	return nil
+
+}
+func (s *Star) removeScene(id *bson.ObjectId) error {
+
+	if !id.Valid() {
+		return fmt.Errorf("not a valid bson id")
+	}
+
+	for i := 0; i < len(s.Scenes); i++ {
+		if s.Scenes[i] == id {
+			copy(s.Scenes[i:], s.Scenes[i+1:])
+			s.Scenes[len(s.Scenes)-1] = nil // or the zero vs.value of T
+			s.Scenes = s.Scenes[:len(s.Scenes)-1]
+			return nil
+
+		}
+	}
+
+	return fmt.Errorf("bson not in slice")
+}
+
+func (s *Star) addMovie(id *bson.ObjectId) error {
+
+	if id.Valid() {
+		s.Movies = append(s.Movies, id)
+		return nil
+	}
+
+	return fmt.Errorf("not a valid bson id")
+
+}
+
+func (s *Star) removeMovie(id *bson.ObjectId) error {
+
+	if !id.Valid() {
+		return fmt.Errorf("not a valid bson id")
+	}
+
+	for i := 0; i < len(s.Movies); i++ {
+		if s.Movies[i] == id {
+			copy(s.Movies[i:], s.Movies[i+1:])
+			s.Movies[len(s.Movies)-1] = nil // or the zero vs.value of T
+			s.Movies = s.Movies[:len(s.Movies)-1]
+			return nil
+
+		}
+	}
+
+	return fmt.Errorf("bson not in slice")
+
+}
+
+func (s *Star) addStudio(id *bson.ObjectId) error {
+
+	if id.Valid() {
+		s.Studios = append(s.Studios, id)
+		return nil
+	}
+
+	return fmt.Errorf("not a valid bson id")
+
+}
+
+func (s *Star) removeStudio(id *bson.ObjectId) error {
+
+	if !id.Valid() {
+		return fmt.Errorf("not a valid bson id")
+	}
+
+	for i := 0; i < len(s.Studios); i++ {
+		if s.Studios[i] == id {
+			copy(s.Studios[i:], s.Studios[i+1:])
+			s.Studios[len(s.Studios)-1] = nil // or the zero vs.value of T
+			s.Studios = s.Studios[:len(s.Studios)-1]
+			return nil
+
+		}
+	}
+
+	return fmt.Errorf("bson not in slice")
+
 }

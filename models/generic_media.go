@@ -1,5 +1,7 @@
 package models
 
+import "gopkg.in/mgo.v2/bson"
+
 // Images --
 type Images struct {
 	Landscape  string `json:"landscape"`
@@ -29,12 +31,12 @@ type Trailer struct {
 
 // MediaInformation --
 type MediaInformation struct {
-	Director []string `json:"director"`
+	Director []*bson.ObjectId `json:"director"`
 
-	Studio string `json:"studio"`
+	Studio *bson.ObjectId `json:"studio"`
 
 	// List of Mongo ObjectId for the Stars in this movie. Embeddable
-	Stars []string `json:"Stars"`
+	Stars []*bson.ObjectId `json:"Stars"`
 
 	// Total movie length in seconds
 	Length int32 `json:"length"`

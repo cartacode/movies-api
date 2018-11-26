@@ -103,7 +103,13 @@ func GenericCrudPost(w http.ResponseWriter, r *http.Request) {
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}
+
 	err = connection.Collection(collection).Save(model.(bongo.Document))
+	if err != nil {
+		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
 	if vErr, ok := err.(*bongo.ValidationError); ok {
 		requests.ReturnAPIError(w, http.StatusBadRequest, vErr.Errors[0].Error())
 		return
