@@ -70,6 +70,7 @@ func (s *Volume) Validate(*bongo.Collection) []error {
 	// Find by slug when posting new volume
 	err := connection.Collection("volume").FindOne(bson.M{"slug": s.Slug}, volume)
 
+	fmt.Printf("%+v\n", s)
 	if err == nil {
 		retval = append(retval, fmt.Errorf("This document is not unique"))
 	}
