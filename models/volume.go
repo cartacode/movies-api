@@ -12,8 +12,8 @@ package models
 import (
 	"fmt"
 
-	"github.com/globalsign/mgo/bson"
 	"github.com/go-bongo/bongo"
+	"gopkg.in/mgo.v2/bson"
 )
 
 // Volume Document
@@ -34,10 +34,10 @@ type Volume struct {
 	Description string `json:"description"`
 
 	// Series this volume is in
-	Series string `json:"series"`
+	Series *bson.ObjectId `json:"series"`
 
 	// Series this volume is in
-	Scenes []string `json:"scenes"`
+	Scenes []*bson.ObjectId `json:"scenes"`
 
 	// MovieInformation --
 	Information MediaInformation `json:"information"`

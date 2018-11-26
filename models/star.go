@@ -13,8 +13,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/globalsign/mgo/bson"
 	"github.com/go-bongo/bongo"
+	"gopkg.in/mgo.v2/bson"
 )
 
 // Star Document
@@ -45,11 +45,11 @@ type Star struct {
 
 	Dislikes int32 `json:"dislikes"`
 
-	Studios []string `json:"studios"`
+	Studios []*bson.ObjectId `json:"studios"`
 
-	Scenes []string `json:"scenes"`
+	Scenes []*bson.ObjectId `json:"scenes"`
 
-	Movies []string `json:"movies"`
+	Movies []*bson.ObjectId `json:"movies"`
 
 	Rank int `json:"rank"`
 
@@ -66,7 +66,7 @@ type Star struct {
 		Snapchat string `json:"snapchat"`
 	} `json:"social"`
 
-	StarSize struct {
+	Size struct {
 		Weight int32 `json:"weight"`
 
 		Waist int32 `json:"waist"`
@@ -82,7 +82,7 @@ type Star struct {
 		Landscape string `json:"landscape"`
 	} `json:"images"`
 
-	StarTraits struct {
+	Traits struct {
 		Ethnicity string `json:"ethnicity"`
 		HairColor string `json:"haircolor"`
 		Piercings bool   `json:"piercings"`
@@ -103,8 +103,13 @@ func (s *Star) Validate(*bongo.Collection) []error {
 	err := connection.Collection("star").FindOne(bson.M{"slug": s.Slug}, star)
 
 	if err == nil {
-		retval = append(retval, fmt.Errorf("This document is not unique"))
+		retval = append(retval, fmt.Errorf("this document is not unique"))
 	}
 
+	// Validate fields
+	for i, e := range s.Scenes {
+		fmt.Println(i, e)
+	}
+	// retval = append(retval, fmt.Errorf("this document is not unique"))
 	return retval
 }

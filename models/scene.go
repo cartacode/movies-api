@@ -11,6 +11,7 @@ package models
 
 import (
 	"github.com/go-bongo/bongo"
+	"gopkg.in/mgo.v2/bson"
 )
 
 // Scene Document
@@ -47,10 +48,10 @@ type Scene struct {
 	Performance Performance `json:"performance"`
 
 	// Volume this scene is in. Not all scenes have volumes
-	Volume string `json:"volume"`
+	Volume *bson.ObjectId `json:"volume"`
 
 	// Some scenes can have no volumes but a series (best of/star profile)
-	Series string `json:"series"`
+	Series *bson.ObjectId `json:"series"`
 
 	// List of Tags
 	Tags []string `json:"tags"`

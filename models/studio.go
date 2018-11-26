@@ -12,8 +12,8 @@ package models
 import (
 	"fmt"
 
-	"github.com/globalsign/mgo/bson"
 	"github.com/go-bongo/bongo"
+	"gopkg.in/mgo.v2/bson"
 )
 
 // Studio Document

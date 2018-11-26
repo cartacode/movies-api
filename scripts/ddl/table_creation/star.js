@@ -17,7 +17,8 @@ db.createCollection("star", {
 					"bsonType": "string"
 				},
 				"slug": {
-					"bsonType": "string"
+					"bsonType": "string",
+					"pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
 				},
 				"social": {
 					"bsonType": "object",
