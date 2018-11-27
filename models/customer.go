@@ -74,7 +74,10 @@ type Customer struct {
 		InfoStored bool `json:"info_stored"`
 
 		// Key for 3 leg transactions to provider bank
-		Key string `json:"key"`
+		ProfileID string `json:"profileId"`
+
+		// Key for 3 leg transactions to provider bank
+		PaymentID string `json:"paymentId"`
 	} `json:"credit"`
 
 	// Purchased Items

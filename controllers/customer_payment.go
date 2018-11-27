@@ -15,29 +15,39 @@ import (
 	"github.com/VuliTv/go-movie-api/libs/envhelp"
 	"github.com/VuliTv/go-movie-api/libs/requests"
 	"github.com/VuliTv/go-movie-api/models"
-	"github.com/gorilla/mux"
 	AuthorizeCIM "gopkg.in/hunterlong/authorizecim.v1"
+	"gopkg.in/mgo.v2/bson"
 )
 
 var authName = envhelp.GetEnv("AUTHORIZE_ID", "65Vv2fYQ")
 var authKey = envhelp.GetEnv("AUTHORIZE_TRANSACTION_KEY", "4Ld7LUr432q6e7Uz")
 var authMode = "test"
 
-// GetCustomerProfile
+// CustomerGetPaymentProfile ..
 // fetches a customer profile from Authorize.net
-func GetCustomerProfile(w http.ResponseWriter, r *http.Request) {
+func CustomerGetPaymentProfile(w http.ResponseWriter, r *http.Request) {
 
-	params := mux.Vars(r)
-	user := models.CustomerProfileInformationRequest{ID: params["userID"]}
+	// Get auth user information
+	var authUser, err = requests.GetAuthUser(r)
 
-	var err error
+	if err != nil {
+		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
+		return
+	}
+
 	var customerInfo *AuthorizeCIM.GetCustomerProfileResponse
 
-	AuthorizeCIM.SetAPIInfo(authName, authKey, authMode)
-	customer := AuthorizeCIM.Customer{
-		ID: user.ID,
+	// Find doc
+	customer := &models.Customer{}
+	if err = connection.Collection("customer").FindById(bson.ObjectIdHex(authUser.ObjectID), &customer); err != nil {
+		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
+		return
 	}
-	if customerInfo, err = customer.Info(); err != nil {
+	AuthorizeCIM.SetAPIInfo(authName, authKey, authMode)
+	authorizeCustomer := AuthorizeCIM.Customer{
+		ID: customer.Credit.ProfileID,
+	}
+	if customerInfo, err = authorizeCustomer.Info(); err != nil {
 		log.Error("Customer Information fetch error: ", err.Error())
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
@@ -53,19 +63,25 @@ func GetCustomerProfile(w http.ResponseWriter, r *http.Request) {
 	requests.ReturnAPIOK(w, retval)
 }
 
-// CustomerCreateProfile
+// CustomerCreatePaymentProfile ..
 // creates a user profile with Authorize.net
-func CustomerCreateProfile(w http.ResponseWriter, r *http.Request) {
+func CustomerCreatePaymentProfile(w http.ResponseWriter, r *http.Request) {
+	// Get auth user information
+	var authUser, err = requests.GetAuthUser(r)
+
+	if err != nil {
+		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
+		return
+	}
 
 	var user models.CreateCustomerProfileRequest
 	if err = json.NewDecoder(r.Body).Decode(&user); err != nil {
-		log.Error("Request Body parse error: ", err.Error())
+		log.Warn("Request Body parse error: ", err.Error())
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	var err error
-	var customer *AuthorizeCIM.CustomProfileResponse
+	var authorizeCustomer *AuthorizeCIM.CustomProfileResponse
 
 	authPaymentProfile := &AuthorizeCIM.PaymentProfiles{
 		CustomerType: models.Individual,
@@ -78,30 +94,49 @@ func CustomerCreateProfile(w http.ResponseWriter, r *http.Request) {
 	// authPaymentProfile.BillTo = user.BillTo
 
 	data := AuthorizeCIM.Profile{
-		MerchantCustomerID: user.ID,
+		MerchantCustomerID: authUser.Email,
 		Description:        user.Description,
-		Email:              user.Email,
+		Email:              authUser.Email,
 		PaymentProfiles:    authPaymentProfile,
 	}
 
 	AuthorizeCIM.SetAPIInfo(authName, authKey, authMode)
-	if customer, err = AuthorizeCIM.CreateProfile(data); err != nil {
+	if authorizeCustomer, err = AuthorizeCIM.CreateProfile(data); err != nil {
 		log.Error("JSON parse error: ", err.Error())
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	var retval []byte
-	if retval, err = json.Marshal(customer); err != nil {
+	if retval, err = json.Marshal(authorizeCustomer); err != nil {
 		log.Error("Error: ", err.Error())
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
+	if authorizeCustomer.Messages.ResultCode == "Error" {
+		log.Error("Error: ", authorizeCustomer.Messages.Message[0].Text)
+		requests.ReturnAPIError(w, http.StatusBadRequest, authorizeCustomer.Messages.Message[0].Text)
+		return
+	}
+
+	// Find doc
+	customer := &models.Customer{}
+	if err = connection.Collection("customer").FindById(bson.ObjectIdHex(authUser.ObjectID), &customer); err != nil {
+		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
+		return
+	}
+	customer.Credit.InfoStored = true
+	customer.Credit.ProfileID = authorizeCustomer.CustomerProfileID
+	customer.Credit.PaymentID = authorizeCustomer.CustomerPaymentProfileIDList[0]
+	if err = connection.Collection("customer").Save(customer); err != nil {
+		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
+		return
+	}
 	requests.ReturnAPIOK(w, retval)
 }
 
-// CustomerPaymentAdd
+// CustomerPaymentAdd ..
 // adds a payment option to Authorize.Net customer profile
 func CustomerPaymentAdd(w http.ResponseWriter, r *http.Request) {
 
@@ -146,23 +181,42 @@ func CustomerPaymentAdd(w http.ResponseWriter, r *http.Request) {
 // Authorize.Net customer profile
 func CustomerPaymentDelete(w http.ResponseWriter, r *http.Request) {
 
-	var user models.CustomerPaymentDeleteRequest
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		log.Error("JSON parse error: ", err.Error())
+	// Get auth user information
+	var authUser, err = requests.GetAuthUser(r)
+
+	if err != nil {
+		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
+		return
+	}
+
+	// Find doc
+	customer := &models.Customer{}
+	if err = connection.Collection("customer").FindById(bson.ObjectIdHex(authUser.ObjectID), &customer); err != nil {
+		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
+		return
+	}
+
+	var res *AuthorizeCIM.MessagesResponse
+
+	AuthorizeCIM.SetAPIInfo(authName, authKey, authMode)
+	authorizeCustomer := AuthorizeCIM.Customer{
+		ID:        customer.Credit.ProfileID,
+		PaymentID: customer.Credit.PaymentID,
+	}
+	if res, err = authorizeCustomer.DeletePaymentProfile(); err != nil {
+		log.Error("Customer Payment delete error: ", err.Error())
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	var err error
-	var res *AuthorizeCIM.MessagesResponse
-
-	AuthorizeCIM.SetAPIInfo(authName, authKey, authMode)
-	customer := AuthorizeCIM.Customer{
-		ID:        user.ID,
-		PaymentID: user.PaymentID,
+	if res.Messages.ResultCode == "Error" {
+		log.Error("Customer Payment delete error: ", res.Messages.Message[0].Text)
+		requests.ReturnAPIError(w, http.StatusBadRequest, res.Messages.Message[0].Text)
+		return
 	}
-	if res, err = customer.DeletePaymentProfile(); err != nil {
-		log.Error("Customer Payment delete error: ", err.Error())
+	customer.Credit.PaymentID = ""
+
+	if err = connection.Collection("customer").Save(customer); err != nil {
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}

@@ -11,16 +11,14 @@ func NewAuthorizeNetSession() (bool, error) {
 	log.Infow("new Authorize.net handler created")
 
 	// TODO - fetch fallback values from config
-	apiName := envhelp.GetEnv("apiName", "65Vv2fYQ")
-	apiKey := envhelp.GetEnv("apiKey", "6z59j6XrGA7V3TbG")
+	apiID := envhelp.GetEnv("AUTHORIZE_API_ID", "65Vv2fYQ")
+	apiKey := envhelp.GetEnv("AUTHORIZE_API_KEY", "422uVB78H7dn3BcH")
 
-	auth.SetAPIInfo(apiName, apiKey, "test")
+	auth.SetAPIInfo(apiID, apiKey, envhelp.GetEnv("AUTHORIZE_API_ENVIRONMENT", "test"))
 
-	var status bool
 	var err error
-	if status, err = auth.IsConnected(); err != nil {
-		panic(err)
+	if _, err := auth.IsConnected(); err != nil {
+		return false, err
 	}
-
-	return status, err
+	return true, err
 }

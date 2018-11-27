@@ -16,13 +16,34 @@ import (
 
 	"github.com/VuliTv/go-movie-api/dbh"
 	"github.com/VuliTv/go-movie-api/libs/requests"
-
 	"github.com/gorilla/mux"
+	auth "gopkg.in/hunterlong/authorizecim.v1"
 )
 
 var rDB, rError = dbh.NewRedisConnection()
 var mDB, mError = dbh.NewMongoDBConnection("router")
 var aSession, aError = dbh.NewAuthorizeNetSession()
+
+func init() {
+
+	if rError != nil {
+		log.Fatalw("redis connection failure. exiting", "error", rError)
+	}
+	log.Info("redis connected")
+
+	if mError != nil {
+		log.Fatalw("mongodb connection failure. exiting", "error", mError)
+	}
+	log.Info("mongodb connected")
+	if aError != nil {
+		log.Fatalw("authorize.net connection failure. exiting", "error", aError)
+	}
+	log.Info("authorize.net connected", aSession, aError)
+	if aSession == false {
+		log.Fatalw("authorize.net session failure. exiting", "error", aError)
+	}
+	log.Info("authorize.net session connected")
+}
 
 // Route --
 type Route struct {
@@ -80,8 +101,8 @@ func HealthCheck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if aSession == false {
-		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, aError.Error()))
+	if _, err := auth.IsConnected(); err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
 		return
 	}
 

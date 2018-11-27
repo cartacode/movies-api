@@ -20,8 +20,6 @@ const (
 )
 
 type CreateCustomerProfileRequest struct {
-	ID          string                   `json:"id"`
-	Email       string                   `json:"email"`
 	Description string                   `json:"description,omitempty"`
 	CC          *AuthorizeCIM.CreditCard `json:"creditCard,omitempty"`
 	BillTo      *AuthorizeCIM.BillTo     `json:"billingAddress,omitempty"`
@@ -39,8 +37,8 @@ type CustomerPaymentProfileRequest struct {
 }
 
 type CustomerPaymentDeleteRequest struct {
-	ID        string
-	PaymentID string
+	ID        string `json:"id"`
+	PaymentID string `json:"paymentId"`
 }
 
 type CustomerPaymentUpdateRequest struct {

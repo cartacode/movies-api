@@ -9,37 +9,37 @@ import (
 var paymentRoutes = Routes{
 
 	Route{
-		"GetCustomerProfile",
+		"CustomerGetProfile",
 		strings.ToUpper("Get"),
-		"/v1/customer/profile/{userID}",
-		controllers.GetCustomerProfile,
+		"/v1/customer/payment",
+		validateTokenMiddleware(controllers.CustomerGetPaymentProfile),
 	},
 
 	Route{
 		"CustomerCreateProfile",
 		strings.ToUpper("Post"),
-		"/v1/customer/profile",
-		controllers.CustomerCreateProfile,
+		"/v1/customer/payment/create",
+		validateTokenMiddleware(controllers.CustomerCreatePaymentProfile),
 	},
 
 	Route{
 		"CustomerPaymentAdd",
 		strings.ToUpper("Post"),
 		"/v1/customer/payment",
-		controllers.CustomerPaymentAdd,
+		validateTokenMiddleware(controllers.CustomerPaymentAdd),
 	},
 
 	Route{
 		"CustomerPaymentDelete",
 		strings.ToUpper("Delete"),
 		"/v1/customer/payment",
-		controllers.CustomerPaymentDelete,
+		validateTokenMiddleware(controllers.CustomerPaymentDelete),
 	},
 
 	Route{
 		"CustomerPaymentUpdate",
 		strings.ToUpper("Patch"),
 		"/v1/customer/payment",
-		controllers.CustomerPaymentUpdate,
+		validateTokenMiddleware(controllers.CustomerPaymentUpdate),
 	},
 }

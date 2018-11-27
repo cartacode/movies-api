@@ -49,7 +49,7 @@ func GenericCrudGet(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
-		log.Error(err)
+		log.Warnw("collection find error", "collection", collection, "error", err)
 		return
 	}
 

@@ -27,7 +27,7 @@ var customerRoutes = Routes{
 	Route{
 		"CustomerWishlistAddSceneItem",
 		strings.ToUpper("Post"),
-		"/customer/wishlist/scene/{ObjectId}",
+		"/v1/customer/wishlist",
 		controllers.CustomerWishlistAddSceneItem,
 	},
 

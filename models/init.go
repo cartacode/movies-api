@@ -42,10 +42,6 @@ func ModelByCollection(collection string) (interface{}, error) {
 		model := &Volume{}
 		return model, nil
 
-	case "customer":
-		model := &Customer{}
-		return model, nil
-
 	case "studio":
 		model := &Studio{}
 		return model, nil

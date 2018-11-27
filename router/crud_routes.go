@@ -9,14 +9,14 @@ var crudRoutes = Routes{
 		"GenericCrudGet",
 		"GET",
 		"/v1/collection/{collection}",
-		controllers.GenericCrudGet,
+		validateTokenMiddleware(controllers.GenericCrudGet),
 	},
 
 	Route{
 		"GenericCrudIDGet",
 		"GET",
 		"/v1/collection/{collection}/{objectID}",
-		controllers.GenericCrudIDGet,
+		validateTokenMiddleware(controllers.GenericCrudIDGet),
 	},
 
 	Route{
