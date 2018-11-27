@@ -11,6 +11,9 @@ var connection, dbError = dbh.NewMongoDBConnection("models")
 var err error
 var log = logging.GetProdLog()
 
+// CLOUDFRONT .. Our cloudfront URL
+var CLOUDFRONT = "https://cdn.vuli.tv"
+
 func init() {
 	if dbError != nil {
 		panic(err)
