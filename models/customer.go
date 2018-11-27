@@ -27,7 +27,7 @@ type Customer struct {
 	Email string `json:"email"`
 
 	// Stored as a bcrypt hash
-	Password string
+	Password string `json:"password"`
 
 	// True/False. Is the user active
 	Active bool `json:"active"`

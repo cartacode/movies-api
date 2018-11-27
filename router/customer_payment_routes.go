@@ -6,7 +6,7 @@ import (
 	"github.com/VuliTv/go-movie-api/controllers"
 )
 
-var paymentRoutes = Routes{
+var customerPaymentRoutes = Routes{
 
 	Route{
 		"CustomerGetProfile",
