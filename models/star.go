@@ -80,6 +80,8 @@ type Star struct {
 		Portrait string `json:"portrait"`
 
 		Landscape string `json:"landscape"`
+
+		Small string `json:"small"`
 	} `json:"images"`
 
 	Traits struct {

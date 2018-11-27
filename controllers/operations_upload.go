@@ -62,23 +62,6 @@ func OperationsUploadImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// if field == "image" {
-	// 	// Upload to our bucket
-	// 	path, err := requests.AddFileToS3(s, bucket, "media/image/available/"+objectID+"/"+field, content)
-	// 	if requests.ReturnOnError(w, err) {
-	// 		return
-	// 	}
-
-	// 	// Patch the collection document with the new image path
-	// 	patch := make(map[string]string)
-	// 	patch[field] = path
-	// 	err = connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(objectID)}, bson.M{"$set": patch})
-
-	// 	if requests.ReturnOnError(w, err) {
-	// 		return
-	// 	}
-	// } else {
-
 	// Upload to our bucket
 	path, err = requests.AddFileToS3(s, bucket, "media/"+objectID+"/images/"+field, content)
 	if err != nil {
