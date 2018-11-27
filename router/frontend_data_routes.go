@@ -26,4 +26,10 @@ var frontendDataRoutes = Routes{
 		"/v1/data/volume",
 		validateTokenMiddleware(controllers.DataVolumeTray),
 	},
+	Route{
+		"DataSeriesTray",
+		strings.ToUpper("get"),
+		"/v1/data/series",
+		validateTokenMiddleware(controllers.DataSeriesTray),
+	},
 }

@@ -61,6 +61,59 @@ func DataMovieTray(w http.ResponseWriter, r *http.Request) {
 	requests.ReturnAPIOK(w, js)
 }
 
+// DataSeriesTray ..
+// fetches a customer profile from Authorize.net
+func DataSeriesTray(w http.ResponseWriter, r *http.Request) {
+
+	// populate the just_for_you tray when logged in
+	query := make(map[string]interface{})
+	results := connection.Collection("series").Collection().Find(query)
+
+	series := models.Movie{}
+	list := results.Limit(20).Sort("performance.rank").Iter()
+	// Get auth user information
+	authUser, _ := requests.GetAuthUser(r)
+
+	seriesData := &models.FrontEndDataRequestResponse{}
+	for list.Next(&series) {
+		trendingData := &models.Trending{}
+		trendingData.Name = series.Title
+		trendingData.ImageURL = series.Images.Landscape
+		trendingData.Year = series.Information.Year
+		trendingData.Quality = series.Information.BestQuality()
+		trendingData.Length = series.Information.Length
+		trendingData.Description = series.Description
+		trendingData.TrailerURL = series.Trailer.URL()
+
+		trendingData.ID = series.Id.Hex()
+
+		// Add the data
+		seriesData.Trending = append(seriesData.Trending, trendingData)
+		if authUser.ObjectID != "" {
+			justForYouData := &models.JustForYou{}
+			justForYouData.Name = series.Title
+			justForYouData.ImageURL = series.Images.Landscape
+			justForYouData.Year = series.Information.Year
+			justForYouData.Quality = series.Information.BestQuality()
+			justForYouData.Length = series.Information.Length
+			justForYouData.Description = series.Description
+			justForYouData.TrailerURL = series.Trailer.URL()
+
+			justForYouData.ID = series.Id.Hex()
+
+			// Add the data
+			seriesData.JustForYou = append(seriesData.JustForYou, justForYouData)
+		}
+	}
+
+	js, err := json.Marshal(seriesData)
+	if err != nil {
+		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
+		return
+	}
+	requests.ReturnAPIOK(w, js)
+}
+
 // DataVolumeTray ..
 // fetches a customer profile from Authorize.net
 func DataVolumeTray(w http.ResponseWriter, r *http.Request) {
