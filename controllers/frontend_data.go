@@ -16,8 +16,10 @@ func DataMovieTray(w http.ResponseWriter, r *http.Request) {
 	query := make(map[string]interface{})
 	results := connection.Collection("movie").Collection().Find(query)
 
-	movie := models.Scene{}
+	movie := models.Movie{}
 	list := results.Limit(20).Sort("performance.rank").Iter()
+	// Get auth user information
+	authUser, _ := requests.GetAuthUser(r)
 
 	movieData := &models.FrontEndDataRequestResponse{}
 	for list.Next(&movie) {
@@ -29,31 +31,82 @@ func DataMovieTray(w http.ResponseWriter, r *http.Request) {
 		trendingData.Length = movie.Information.Length
 		trendingData.Description = movie.Description
 		trendingData.TrailerURL = movie.Trailer.URL()
+
 		trendingData.ID = movie.Id.Hex()
 
 		// Add the data
 		movieData.Trending = append(movieData.Trending, trendingData)
+		if authUser.ObjectID != "" {
+			justForYouData := &models.JustForYou{}
+			justForYouData.Name = movie.Title
+			justForYouData.ImageURL = movie.Images.Landscape
+			justForYouData.Year = movie.Information.Year
+			justForYouData.Quality = movie.Information.BestQuality()
+			justForYouData.Length = movie.Information.Length
+			justForYouData.Description = movie.Description
+			justForYouData.TrailerURL = movie.Trailer.URL()
 
-	}
+			justForYouData.ID = movie.Id.Hex()
 
-	// Get auth user information
-	var _, err = requests.GetAuthUser(r)
-	if err == nil {
-		justForYouData := &models.JustForYou{}
-		justForYouData.Name = movie.Title
-		justForYouData.ImageURL = movie.Images.Landscape
-		justForYouData.Year = movie.Information.Year
-		justForYouData.Quality = movie.Information.BestQuality()
-		justForYouData.Length = movie.Information.Length
-		justForYouData.Description = movie.Description
-		justForYouData.TrailerURL = movie.Trailer.URL()
-		justForYouData.ID = movie.Id.Hex()
-
-		// Add the data
-		movieData.JustForYou = append(movieData.JustForYou, justForYouData)
+			// Add the data
+			movieData.JustForYou = append(movieData.JustForYou, justForYouData)
+		}
 	}
 
 	js, err := json.Marshal(movieData)
+	if err != nil {
+		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
+		return
+	}
+	requests.ReturnAPIOK(w, js)
+}
+
+// DataVolumeTray ..
+// fetches a customer profile from Authorize.net
+func DataVolumeTray(w http.ResponseWriter, r *http.Request) {
+
+	// populate the just_for_you tray when logged in
+	query := make(map[string]interface{})
+	results := connection.Collection("volume").Collection().Find(query)
+
+	volume := models.Volume{}
+	list := results.Limit(20).Sort("performance.rank").Iter()
+	// Get auth user information
+	authUser, _ := requests.GetAuthUser(r)
+
+	volumeData := &models.FrontEndDataRequestResponse{}
+	for list.Next(&volume) {
+		trendingData := &models.Trending{}
+		trendingData.Name = volume.Title
+		trendingData.ImageURL = volume.Images.Landscape
+		trendingData.Year = volume.Information.Year
+		trendingData.Quality = volume.Information.BestQuality()
+		trendingData.Length = volume.Information.Length
+		trendingData.Description = volume.Description
+		trendingData.TrailerURL = volume.Trailer.URL()
+		trendingData.NumberOfScenes = len(volume.Scenes)
+		trendingData.ID = volume.Id.Hex()
+
+		// Add the data
+		volumeData.Trending = append(volumeData.Trending, trendingData)
+		if authUser.ObjectID != "" {
+			justForYouData := &models.JustForYou{}
+			justForYouData.Name = volume.Title
+			justForYouData.ImageURL = volume.Images.Landscape
+			justForYouData.Year = volume.Information.Year
+			justForYouData.Quality = volume.Information.BestQuality()
+			justForYouData.Length = volume.Information.Length
+			justForYouData.Description = volume.Description
+			justForYouData.TrailerURL = volume.Trailer.URL()
+			justForYouData.NumberOfScenes = len(volume.Scenes)
+			justForYouData.ID = volume.Id.Hex()
+
+			// Add the data
+			volumeData.JustForYou = append(volumeData.JustForYou, justForYouData)
+		}
+	}
+
+	js, err := json.Marshal(volumeData)
 	if err != nil {
 		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
@@ -71,6 +124,8 @@ func DataSceneTray(w http.ResponseWriter, r *http.Request) {
 
 	scene := models.Scene{}
 	list := results.Limit(20).Sort("performance.rank").Iter()
+	// Get auth user information
+	authUser, _ := requests.GetAuthUser(r)
 
 	sceneData := &models.FrontEndDataRequestResponse{}
 	for list.Next(&scene) {
@@ -86,24 +141,20 @@ func DataSceneTray(w http.ResponseWriter, r *http.Request) {
 
 		// Add the data
 		sceneData.Trending = append(sceneData.Trending, trendingData)
+		if authUser.ObjectID != "" {
+			justForYouData := &models.JustForYou{}
+			justForYouData.Name = scene.Title
+			justForYouData.ImageURL = scene.Images.Landscape
+			justForYouData.Year = scene.Information.Year
+			justForYouData.Quality = scene.Information.BestQuality()
+			justForYouData.Length = scene.Information.Length
+			justForYouData.Description = scene.Description
+			justForYouData.TrailerURL = scene.Trailer.URL()
+			justForYouData.ID = scene.Id.Hex()
 
-	}
-
-	// Get auth user information
-	var _, err = requests.GetAuthUser(r)
-	if err == nil {
-		justForYouData := &models.JustForYou{}
-		justForYouData.Name = scene.Title
-		justForYouData.ImageURL = scene.Images.Landscape
-		justForYouData.Year = scene.Information.Year
-		justForYouData.Quality = scene.Information.BestQuality()
-		justForYouData.Length = scene.Information.Length
-		justForYouData.Description = scene.Description
-		justForYouData.TrailerURL = scene.Trailer.URL()
-		justForYouData.ID = scene.Id.Hex()
-
-		// Add the data
-		sceneData.JustForYou = append(sceneData.JustForYou, justForYouData)
+			// Add the data
+			sceneData.JustForYou = append(sceneData.JustForYou, justForYouData)
+		}
 	}
 
 	js, err := json.Marshal(sceneData)
