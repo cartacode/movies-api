@@ -76,7 +76,11 @@ type CustomerWishlistResponse struct {
 func CustomerListAddItem(w http.ResponseWriter, r *http.Request) {
 	// Get auth user information
 	params := mux.Vars(r)
-
+	allowedLists := []string{"wishlist", "liked", "disliked"}
+	if !stringops.StringInSlice(params["list"], allowedLists) {
+		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, "only allowed methods ["+strings.Join(allowedLists, ",")+"]"))
+		return
+	}
 	var authUser, err = requests.GetAuthUser(r)
 	if err != nil {
 		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))

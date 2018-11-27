@@ -49,6 +49,8 @@ type Customer struct {
 
 		// List of Mongo ObjectId for the stars wish list. Embeddable
 		Stars []*bson.ObjectId `json:"stars"`
+
+		Studios []*bson.ObjectId `json:"studios"`
 	} `json:"liked"`
 
 	// Liked Items
@@ -65,6 +67,8 @@ type Customer struct {
 
 		// List of Mongo ObjectId for the stars wish list. Embeddable
 		Stars []*bson.ObjectId `json:"stars"`
+
+		Studios []*bson.ObjectId `json:"studios"`
 	} `json:"disliked"`
 
 	// Credit Information
