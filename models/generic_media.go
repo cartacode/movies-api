@@ -85,6 +85,9 @@ type Performance struct {
 	// Calculated by user input. Only decreases.
 	Downvotes int32 `json:"downvotes"`
 
+	// Calculated by user input. Only decreases.
+	Favorites int64 `json:"favorites"`
+
 	// Calculated by user view. Only increases.
 	Views int32 `json:"views"`
 }

@@ -32,4 +32,10 @@ var frontendDataRoutes = Routes{
 		"/v1/data/series",
 		validateTokenMiddleware(controllers.DataSeriesTray),
 	},
+	Route{
+		"DataStarTray",
+		strings.ToUpper("get"),
+		"/v1/data/star",
+		validateTokenMiddleware(controllers.DataStarTray),
+	},
 }

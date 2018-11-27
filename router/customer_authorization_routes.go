@@ -130,6 +130,11 @@ func isOpenAuthedRoute(req *http.Request) bool {
 		case "GET":
 			return true
 		}
+	case "/v1/data/star":
+		switch req.Method {
+		case "GET":
+			return true
+		}
 	}
 
 	return false

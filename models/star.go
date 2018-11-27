@@ -39,19 +39,14 @@ type Star struct {
 
 	Birthplace string `json:"birthplace"`
 
-	Favorites int `json:"favorites"`
-
-	Likes int32 `json:"likes"`
-
-	Dislikes int32 `json:"dislikes"`
+	// Media Performance
+	Performance Performance `json:"performance"`
 
 	Studios []*bson.ObjectId `json:"studios"`
 
 	Scenes []*bson.ObjectId `json:"scenes"`
 
 	Movies []*bson.ObjectId `json:"movies"`
-
-	Rank int `json:"rank"`
 
 	// List of Tags
 	Tags []string `json:"tags"`

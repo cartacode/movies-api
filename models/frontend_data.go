@@ -16,6 +16,7 @@ type Trending struct {
 	Description    string `json:"description"`
 	TrailerURL     string `json:"trailerUrl"`
 	NumberOfScenes int    `json:"number_of_scenes,omitempty"`
+	TagLine        string `json:"tagline,omitempty"`
 	ID             string `json:"_id"`
 	VuliOriginal   bool   `json:"vuliOriginal"`
 }
@@ -30,6 +31,7 @@ type JustForYou struct {
 	Description    string `json:"description"`
 	TrailerURL     string `json:"trailerUrl"`
 	NumberOfScenes int    `json:"number_of_scenes,omitempty"`
+	TagLine        string `json:"tagline,omitempty"`
 	ID             string `json:"_id"`
 	VuliOriginal   bool   `json:"vuliOriginal"`
 }

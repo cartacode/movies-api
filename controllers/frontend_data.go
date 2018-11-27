@@ -217,3 +217,46 @@ func DataSceneTray(w http.ResponseWriter, r *http.Request) {
 	}
 	requests.ReturnAPIOK(w, js)
 }
+
+// DataStarTray ..
+// fetches a customer profile from Authorize.net
+func DataStarTray(w http.ResponseWriter, r *http.Request) {
+
+	// populate the just_for_you tray when logged in
+	query := make(map[string]interface{})
+	results := connection.Collection("star").Collection().Find(query)
+
+	star := models.Star{}
+	list := results.Limit(20).Sort("-performance.rank").Iter()
+	// Get auth user information
+	authUser, _ := requests.GetAuthUser(r)
+
+	starData := &models.FrontEndDataRequestResponse{}
+	for list.Next(&star) {
+		trendingData := &models.Trending{}
+		trendingData.Name = star.Name
+		trendingData.ImageURL = star.Images.Portrait
+		trendingData.TagLine = star.Tagline
+		trendingData.ID = star.Id.Hex()
+
+		// Add the data
+		starData.Trending = append(starData.Trending, trendingData)
+		if authUser.ObjectID != "" {
+			justForYouData := &models.JustForYou{}
+			justForYouData.Name = star.Name
+			justForYouData.ImageURL = star.Images.Portrait
+			justForYouData.TagLine = star.Tagline
+			justForYouData.ID = star.Id.Hex()
+
+			// Add the data
+			starData.JustForYou = append(starData.JustForYou, justForYouData)
+		}
+	}
+
+	js, err := json.Marshal(starData)
+	if err != nil {
+		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
+		return
+	}
+	requests.ReturnAPIOK(w, js)
+}
