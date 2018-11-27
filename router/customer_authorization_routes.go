@@ -30,6 +30,7 @@ var authorizationRoutes = Routes{
 
 func validateTokenMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+
 		authorizationHeader := req.Header.Get("authorization")
 		if authorizationHeader != "" {
 			bearerToken := strings.Split(authorizationHeader, " ")
@@ -64,17 +65,7 @@ func validateTokenMiddleware(next http.HandlerFunc) http.HandlerFunc {
 						return
 					}
 
-					// log.Info(token.Claims)
-
-					// vars := mux.Vars(req)
-					// name := vars["customerId"]
-					// log.Info(authUser)
-					// log.Debug(vars)
-					// if name != authUser.Email {
-					// 	json.NewEncoder(w).Encode(models.ErrorMsg{Message: "Invalid authorization token - Does not match UserID"})
-					// 	return
-					// }
-
+					// Check admin route priveleges
 					if isAdminRoute(req) {
 						log.Info("checking admin route")
 						if !authUser.Admin {
@@ -93,6 +84,11 @@ func validateTokenMiddleware(next http.HandlerFunc) http.HandlerFunc {
 				json.NewEncoder(w).Encode(models.ErrorMsg{Message: "Invalid authorization token"})
 			}
 		} else {
+			if isOpenAuthedRoute(req) {
+				log.Info("found open or auth route")
+				next(w, req)
+				return
+			}
 			json.NewEncoder(w).Encode(models.ErrorMsg{Message: "An authorization header is required"})
 		}
 	})
@@ -104,6 +100,39 @@ func isAdminRoute(req *http.Request) bool {
 	case "/v1/collection/studio":
 		switch req.Method {
 		case "POST":
+			return true
+		}
+	}
+
+	return false
+}
+
+func isOpenAuthedRoute(req *http.Request) bool {
+
+	switch req.RequestURI {
+	case "/v1/data/movie":
+		switch req.Method {
+		case "GET":
+			return true
+		}
+	case "/v1/data/scene":
+		switch req.Method {
+		case "GET":
+			return true
+		}
+	case "/v1/data/volume":
+		switch req.Method {
+		case "GET":
+			return true
+		}
+	case "/v1/data/series":
+		switch req.Method {
+		case "GET":
+			return true
+		}
+	case "/v1/data/star":
+		switch req.Method {
+		case "GET":
 			return true
 		}
 	}

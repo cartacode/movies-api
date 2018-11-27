@@ -1,6 +1,10 @@
 package models
 
-import "gopkg.in/mgo.v2/bson"
+import (
+	"fmt"
+
+	"gopkg.in/mgo.v2/bson"
+)
 
 // Images --
 type Images struct {
@@ -29,6 +33,16 @@ type Trailer struct {
 	Title      string `json:"title"`
 }
 
+// URL .. Get the url if available from the dynamoDbId
+func (t *Trailer) URL() string {
+
+	if t.DynamoDBId == "" {
+		return ""
+	}
+	url := fmt.Sprintf("%s/%s/hls/%s.m3u8", CLOUDFRONT, t.DynamoDBId, t.Title)
+	return url
+}
+
 // MediaInformation --
 type MediaInformation struct {
 	Director []*bson.ObjectId `json:"director"`
@@ -43,6 +57,20 @@ type MediaInformation struct {
 
 	// List of available qualities for the video
 	Quality []int `json:"quality"`
+
+	Year string `json:"year"`
+}
+
+// BestQuality .. Get the best quality video available from slice
+func (m *MediaInformation) BestQuality() int {
+
+	highest := 480
+	for i := range m.Quality {
+		if i > highest {
+			highest = i
+		}
+	}
+	return highest
 }
 
 // Performance --
@@ -56,6 +84,9 @@ type Performance struct {
 
 	// Calculated by user input. Only decreases.
 	Downvotes int32 `json:"downvotes"`
+
+	// Calculated by user input. Only decreases.
+	Favorites int64 `json:"favorites"`
 
 	// Calculated by user view. Only increases.
 	Views int32 `json:"views"`
