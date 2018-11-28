@@ -5,9 +5,13 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/VuliTv/go-movie-api/app/media"
+	"github.com/VuliTv/go-movie-api/app/movie"
+	"github.com/VuliTv/go-movie-api/app/scene"
+	"github.com/VuliTv/go-movie-api/app/volume"
 	"github.com/VuliTv/go-movie-api/libs/envhelp"
+	"github.com/VuliTv/go-movie-api/libs/models"
 	"github.com/VuliTv/go-movie-api/libs/requests"
-	"github.com/VuliTv/go-movie-api/models"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/go-bongo/bongo"
@@ -156,14 +160,14 @@ func OperationsUploadTrailer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Infow("upload successful")
-	patch := models.Trailer{Title: field}
+	patch := media.Trailer{Title: field}
 
 	log.Debugw("creating new patch", "object", patch)
 
 	switch collection {
 	case "scene":
 		log.Infow("found scene model")
-		scene := *model.(*models.Scene)
+		scene := *model.(*scene.Model)
 
 		scene.Trailer = patch
 		err = connection.Collection(collection).Save(&scene)
@@ -173,7 +177,7 @@ func OperationsUploadTrailer(w http.ResponseWriter, r *http.Request) {
 		}
 	case "movie":
 		log.Infow("found movie model")
-		movie := *model.(*models.Movie)
+		movie := *model.(*movie.Model)
 
 		movie.Trailer = patch
 		err = connection.Collection(collection).Save(&movie)
@@ -184,7 +188,7 @@ func OperationsUploadTrailer(w http.ResponseWriter, r *http.Request) {
 
 	case "volume":
 		log.Infow("found volume model")
-		volume := *model.(*models.Volume)
+		volume := *model.(*volume.Model)
 
 		volume.Trailer = patch
 		err = connection.Collection(collection).Save(&volume)

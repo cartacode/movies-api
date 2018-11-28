@@ -12,9 +12,10 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/VuliTv/go-movie-api/app/customer"
+	"github.com/VuliTv/go-movie-api/app/payments"
 	"github.com/VuliTv/go-movie-api/libs/envhelp"
 	"github.com/VuliTv/go-movie-api/libs/requests"
-	"github.com/VuliTv/go-movie-api/models"
 	AuthorizeCIM "gopkg.in/hunterlong/authorizecim.v1"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -38,7 +39,7 @@ func CustomerGetPaymentProfile(w http.ResponseWriter, r *http.Request) {
 	var customerInfo *AuthorizeCIM.GetCustomerProfileResponse
 
 	// Find doc
-	customer := &models.Customer{}
+	customer := &customer.Model{}
 	if err = connection.Collection("customer").FindById(bson.ObjectIdHex(authUser.ObjectID), &customer); err != nil {
 		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
@@ -74,7 +75,7 @@ func CustomerCreatePaymentProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var user models.CreateCustomerProfileRequest
+	var user payments.CreateCustomerProfileRequest
 	if err = json.NewDecoder(r.Body).Decode(&user); err != nil {
 		log.Warn("Request Body parse error: ", err.Error())
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
@@ -84,7 +85,7 @@ func CustomerCreatePaymentProfile(w http.ResponseWriter, r *http.Request) {
 	var authorizeCustomer *AuthorizeCIM.CustomProfileResponse
 
 	authPaymentProfile := &AuthorizeCIM.PaymentProfiles{
-		CustomerType: models.Individual,
+		CustomerType: payments.Individual,
 	}
 	if len(user.CC.CardNumber) != 0 {
 		cc := &AuthorizeCIM.CreditCard{CardNumber: user.CC.CardNumber, ExpirationDate: user.CC.ExpirationDate, CardCode: user.CC.CardCode}
@@ -121,7 +122,7 @@ func CustomerCreatePaymentProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Find doc
-	customer := &models.Customer{}
+	customer := &customer.Model{}
 	if err = connection.Collection("customer").FindById(bson.ObjectIdHex(authUser.ObjectID), &customer); err != nil {
 		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
@@ -140,7 +141,7 @@ func CustomerCreatePaymentProfile(w http.ResponseWriter, r *http.Request) {
 // adds a payment option to Authorize.Net customer profile
 func CustomerPaymentAdd(w http.ResponseWriter, r *http.Request) {
 
-	var user models.CustomerPaymentProfileRequest
+	var user payments.CustomerPaymentProfileRequest
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		log.Error("JSON parse error: ", err.Error())
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
@@ -190,7 +191,7 @@ func CustomerPaymentDelete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Find doc
-	customer := &models.Customer{}
+	customer := &customer.Model{}
 	if err = connection.Collection("customer").FindById(bson.ObjectIdHex(authUser.ObjectID), &customer); err != nil {
 		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
@@ -235,7 +236,7 @@ func CustomerPaymentDelete(w http.ResponseWriter, r *http.Request) {
 // Authorize.Net customer profile
 func CustomerPaymentUpdate(w http.ResponseWriter, r *http.Request) {
 
-	var user models.CustomerPaymentUpdateRequest
+	var user payments.CustomerPaymentUpdateRequest
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		log.Error("JSON parse error: ", err.Error())
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
@@ -251,7 +252,7 @@ func CustomerPaymentUpdate(w http.ResponseWriter, r *http.Request) {
 	var res *AuthorizeCIM.MessagesResponse
 
 	authPaymentProfile := &AuthorizeCIM.PaymentProfiles{
-		CustomerType: models.Individual,
+		CustomerType: payments.Individual,
 	}
 	if len(user.CC.CardNumber) != 0 {
 		cc := &AuthorizeCIM.CreditCard{CardNumber: user.CC.CardNumber, ExpirationDate: user.CC.ExpirationDate, CardCode: user.CC.CardCode}

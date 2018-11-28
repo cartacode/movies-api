@@ -4,8 +4,12 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/VuliTv/go-movie-api/app/media"
+	"github.com/VuliTv/go-movie-api/app/movie"
+	"github.com/VuliTv/go-movie-api/app/scene"
+
+	"github.com/VuliTv/go-movie-api/libs/models"
 	"github.com/VuliTv/go-movie-api/libs/requests"
-	"github.com/VuliTv/go-movie-api/models"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
@@ -53,11 +57,11 @@ func SignedS3Playback(w http.ResponseWriter, r *http.Request) {
 	switch collection {
 	case "scene":
 		log.Infow("found scene model")
-		scene := *model.(*models.Scene)
+		scene := *model.(*scene.Model)
 		DynamoID = scene.DynamoDBId
 	case "movie":
 		log.Infow("found movie model")
-		movie := *model.(*models.Movie)
+		movie := *model.(*movie.Model)
 		DynamoID = movie.DynamoDBId
 
 	default:
@@ -87,7 +91,7 @@ func SignedS3Playback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	item := models.MediaDynamoRecord{}
+	item := media.DynamoRecord{}
 
 	if err = dynamodbattribute.UnmarshalMap(result.Item, &item); err != nil {
 		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))

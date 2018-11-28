@@ -15,9 +15,10 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/VuliTv/go-movie-api/app/customer"
+
 	"github.com/VuliTv/go-movie-api/libs/requests"
 	"github.com/VuliTv/go-movie-api/libs/stringops"
-	"github.com/VuliTv/go-movie-api/models"
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -175,7 +176,7 @@ func CustomerProfileGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	customer := models.Customer{}
+	customer := customer.Model{}
 	if err := connection.Collection("customer").FindById(bson.ObjectIdHex(authUser.ObjectID), &customer); err != nil {
 		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return

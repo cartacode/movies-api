@@ -20,21 +20,19 @@ import (
 	auth "gopkg.in/hunterlong/authorizecim.v1"
 )
 
-var rDB, rError = dbh.NewRedisConnection()
-var mDB, mError = dbh.NewMongoDBConnection("router")
+var rDB dbh.RedisHandler
+var mDB dbh.MongoDBHandler
 var aSession, aError = dbh.NewAuthorizeNetSession()
 
 func init() {
 
-	if rError != nil {
-		log.Fatalw("redis connection failure. exiting", "error", rError)
+	if err := rDB.New("router"); err != nil {
+		log.Fatalw("redis connection failure. exiting", "error", err)
 	}
-	log.Info("redis connected")
+	if err := mDB.New("router"); err != nil {
+		log.Fatalw("mongodb connection failure. exiting", "error", err)
+	}
 
-	if mError != nil {
-		log.Fatalw("mongodb connection failure. exiting", "error", mError)
-	}
-	log.Info("mongodb connected")
 	if aError != nil {
 		log.Fatalw("authorize.net connection failure. exiting", "error", aError)
 	}

@@ -21,8 +21,8 @@ var log = logging.GetProdLog()
 // Logger --
 func Logger(inner http.Handler, name string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
 
+		start := time.Now()
 		inner.ServeHTTP(w, r)
 
 		if r.RequestURI == "/v1/healthcheck" {

@@ -8,24 +8,24 @@ import (
 	"github.com/VuliTv/go-movie-api/libs/logging"
 )
 
-var connection, dbError = dbh.NewMongoDBConnection("controllers")
-var rDB, rError = dbh.NewRedisConnection()
+var connection dbh.MongoDBHandler
+var rDB dbh.RedisHandler
 var sesConn dbh.SeSHandler
 var err error
 var log = logging.GetProdLog()
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 func init() {
-	if dbError != nil {
-		panic(err)
-	}
 
-	if rError != nil {
-		panic(err)
+	if err := connection.New("controllers"); err != nil {
+		log.Fatal(err)
+	}
+	if err := rDB.New("controllers"); err != nil {
+		log.Fatal(err)
 	}
 
 	if err := sesConn.New(); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	rand.Seed(time.Now().UnixNano())

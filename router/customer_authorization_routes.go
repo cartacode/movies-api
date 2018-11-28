@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/VuliTv/go-movie-api/app/customer"
 	"github.com/VuliTv/go-movie-api/controllers"
-	"github.com/VuliTv/go-movie-api/models"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/context"
 	"github.com/mitchellh/mapstructure"
@@ -52,29 +52,29 @@ func validateTokenMiddleware(next http.HandlerFunc) http.HandlerFunc {
 					if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 						return nil, fmt.Errorf("There was an error")
 					}
-					return []byte(models.JWTSecret), nil
+					return []byte(customer.JWTSecret), nil
 				})
 				if error != nil {
-					json.NewEncoder(w).Encode(models.ErrorMsg{Message: error.Error()})
+					json.NewEncoder(w).Encode(customer.ErrorMsg{Message: error.Error()})
 					return
 				}
 				if token.Valid {
 
 					// // return
-					var authUser models.AuthUser
+					var authUser customer.AuthUser
 					mapstructure.Decode(token.Claims, &authUser)
 
 					val, err := rDB.Get(authUser.ObjectID).Result()
 
 					if err != nil {
 						log.Error(err)
-						json.NewEncoder(w).Encode(models.ErrorMsg{Message: "Invalid authorization token - Token expired"})
+						json.NewEncoder(w).Encode(customer.ErrorMsg{Message: "Invalid authorization token - Token expired"})
 						return
 					}
 
 					if val != bearerToken[1] {
 						log.Error(err)
-						json.NewEncoder(w).Encode(models.ErrorMsg{Message: "Invalid authorization token - Does not pass validation"})
+						json.NewEncoder(w).Encode(customer.ErrorMsg{Message: "Invalid authorization token - Does not pass validation"})
 						return
 					}
 
@@ -83,7 +83,7 @@ func validateTokenMiddleware(next http.HandlerFunc) http.HandlerFunc {
 						log.Info("checking admin route")
 						if !authUser.Admin {
 							log.Warnw("not an admin!", "user", authUser.Email, "admin", authUser.Admin)
-							json.NewEncoder(w).Encode(models.ErrorMsg{Message: "You don't have the proper permissions"})
+							json.NewEncoder(w).Encode(customer.ErrorMsg{Message: "You don't have the proper permissions"})
 							return
 						}
 					}
@@ -91,10 +91,10 @@ func validateTokenMiddleware(next http.HandlerFunc) http.HandlerFunc {
 					context.Set(req, "decoded", token.Claims)
 					next(w, req)
 				} else {
-					json.NewEncoder(w).Encode(models.ErrorMsg{Message: "Invalid authorization token"})
+					json.NewEncoder(w).Encode(customer.ErrorMsg{Message: "Invalid authorization token"})
 				}
 			} else {
-				json.NewEncoder(w).Encode(models.ErrorMsg{Message: "Invalid authorization token"})
+				json.NewEncoder(w).Encode(customer.ErrorMsg{Message: "Invalid authorization token"})
 			}
 		} else {
 			if isOpenAuthedRoute(req) {
@@ -102,7 +102,7 @@ func validateTokenMiddleware(next http.HandlerFunc) http.HandlerFunc {
 				next(w, req)
 				return
 			}
-			json.NewEncoder(w).Encode(models.ErrorMsg{Message: "An authorization header is required"})
+			json.NewEncoder(w).Encode(customer.ErrorMsg{Message: "An authorization header is required"})
 		}
 	})
 }

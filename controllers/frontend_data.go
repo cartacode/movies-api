@@ -4,8 +4,13 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/VuliTv/go-movie-api/app/movie"
+	"github.com/VuliTv/go-movie-api/app/scene"
+	"github.com/VuliTv/go-movie-api/app/series"
+	"github.com/VuliTv/go-movie-api/app/star"
+	"github.com/VuliTv/go-movie-api/app/volume"
+	"github.com/VuliTv/go-movie-api/app/webdata"
 	"github.com/VuliTv/go-movie-api/libs/requests"
-	"github.com/VuliTv/go-movie-api/models"
 )
 
 // DataMovieTray ..
@@ -16,14 +21,14 @@ func DataMovieTray(w http.ResponseWriter, r *http.Request) {
 	query := make(map[string]interface{})
 	results := connection.Collection("movie").Collection().Find(query)
 
-	movie := models.Movie{}
+	movie := movie.Model{}
 	list := results.Limit(20).Sort("performance.rank").Iter()
 	// Get auth user information
 	authUser, _ := requests.GetAuthUser(r)
 
-	movieData := &models.FrontEndDataRequestResponse{}
+	movieData := &webdata.FrontEndDataRequestResponse{}
 	for list.Next(&movie) {
-		trendingData := &models.Trending{}
+		trendingData := &webdata.Trending{}
 		trendingData.Name = movie.Title
 		trendingData.ImageURL = movie.Images.Landscape
 		trendingData.Year = movie.Information.Year
@@ -37,7 +42,7 @@ func DataMovieTray(w http.ResponseWriter, r *http.Request) {
 		// Add the data
 		movieData.Trending = append(movieData.Trending, trendingData)
 		if authUser.ObjectID != "" {
-			justForYouData := &models.JustForYou{}
+			justForYouData := &webdata.JustForYou{}
 			justForYouData.Name = movie.Title
 			justForYouData.ImageURL = movie.Images.Landscape
 			justForYouData.Year = movie.Information.Year
@@ -69,35 +74,25 @@ func DataSeriesTray(w http.ResponseWriter, r *http.Request) {
 	query := make(map[string]interface{})
 	results := connection.Collection("series").Collection().Find(query)
 
-	series := models.Movie{}
+	series := series.Model{}
 	list := results.Limit(20).Sort("performance.rank").Iter()
 	// Get auth user information
 	authUser, _ := requests.GetAuthUser(r)
 
-	seriesData := &models.FrontEndDataRequestResponse{}
+	seriesData := &webdata.FrontEndDataRequestResponse{}
 	for list.Next(&series) {
-		trendingData := &models.Trending{}
+		trendingData := &webdata.Trending{}
 		trendingData.Name = series.Title
-		trendingData.ImageURL = series.Images.Landscape
-		trendingData.Year = series.Information.Year
-		trendingData.Quality = series.Information.BestQuality()
-		trendingData.Length = series.Information.Length
 		trendingData.Description = series.Description
-		trendingData.TrailerURL = series.Trailer.URL()
 
 		trendingData.ID = series.Id.Hex()
 
 		// Add the data
 		seriesData.Trending = append(seriesData.Trending, trendingData)
 		if authUser.ObjectID != "" {
-			justForYouData := &models.JustForYou{}
+			justForYouData := &webdata.JustForYou{}
 			justForYouData.Name = series.Title
-			justForYouData.ImageURL = series.Images.Landscape
-			justForYouData.Year = series.Information.Year
-			justForYouData.Quality = series.Information.BestQuality()
-			justForYouData.Length = series.Information.Length
 			justForYouData.Description = series.Description
-			justForYouData.TrailerURL = series.Trailer.URL()
 
 			justForYouData.ID = series.Id.Hex()
 
@@ -122,14 +117,14 @@ func DataVolumeTray(w http.ResponseWriter, r *http.Request) {
 	query := make(map[string]interface{})
 	results := connection.Collection("volume").Collection().Find(query)
 
-	volume := models.Volume{}
+	volume := volume.Model{}
 	list := results.Limit(20).Sort("performance.rank").Iter()
 	// Get auth user information
 	authUser, _ := requests.GetAuthUser(r)
 
-	volumeData := &models.FrontEndDataRequestResponse{}
+	volumeData := &webdata.FrontEndDataRequestResponse{}
 	for list.Next(&volume) {
-		trendingData := &models.Trending{}
+		trendingData := &webdata.Trending{}
 		trendingData.Name = volume.Title
 		trendingData.ImageURL = volume.Images.Landscape
 		trendingData.Year = volume.Information.Year
@@ -143,7 +138,7 @@ func DataVolumeTray(w http.ResponseWriter, r *http.Request) {
 		// Add the data
 		volumeData.Trending = append(volumeData.Trending, trendingData)
 		if authUser.ObjectID != "" {
-			justForYouData := &models.JustForYou{}
+			justForYouData := &webdata.JustForYou{}
 			justForYouData.Name = volume.Title
 			justForYouData.ImageURL = volume.Images.Landscape
 			justForYouData.Year = volume.Information.Year
@@ -175,14 +170,14 @@ func DataSceneTray(w http.ResponseWriter, r *http.Request) {
 	query := make(map[string]interface{})
 	results := connection.Collection("scene").Collection().Find(query)
 
-	scene := models.Scene{}
+	scene := scene.Model{}
 	list := results.Limit(20).Sort("performance.rank").Iter()
 	// Get auth user information
 	authUser, _ := requests.GetAuthUser(r)
 
-	sceneData := &models.FrontEndDataRequestResponse{}
+	sceneData := &webdata.FrontEndDataRequestResponse{}
 	for list.Next(&scene) {
-		trendingData := &models.Trending{}
+		trendingData := &webdata.Trending{}
 		trendingData.Name = scene.Title
 		trendingData.ImageURL = scene.Images.Landscape
 		trendingData.Year = scene.Information.Year
@@ -195,7 +190,7 @@ func DataSceneTray(w http.ResponseWriter, r *http.Request) {
 		// Add the data
 		sceneData.Trending = append(sceneData.Trending, trendingData)
 		if authUser.ObjectID != "" {
-			justForYouData := &models.JustForYou{}
+			justForYouData := &webdata.JustForYou{}
 			justForYouData.Name = scene.Title
 			justForYouData.ImageURL = scene.Images.Landscape
 			justForYouData.Year = scene.Information.Year
@@ -226,14 +221,14 @@ func DataStarTray(w http.ResponseWriter, r *http.Request) {
 	query := make(map[string]interface{})
 	results := connection.Collection("star").Collection().Find(query)
 
-	star := models.Star{}
+	star := star.Model{}
 	list := results.Limit(20).Sort("-performance.rank").Iter()
 	// Get auth user information
 	authUser, _ := requests.GetAuthUser(r)
 
-	starData := &models.FrontEndDataRequestResponse{}
+	starData := &webdata.FrontEndDataRequestResponse{}
 	for list.Next(&star) {
-		trendingData := &models.Trending{}
+		trendingData := &webdata.Trending{}
 		trendingData.Name = star.Name
 		trendingData.ImageURL = star.Images.Portrait
 		trendingData.TagLine = star.Tagline
@@ -242,7 +237,7 @@ func DataStarTray(w http.ResponseWriter, r *http.Request) {
 		// Add the data
 		starData.Trending = append(starData.Trending, trendingData)
 		if authUser.ObjectID != "" {
-			justForYouData := &models.JustForYou{}
+			justForYouData := &webdata.JustForYou{}
 			justForYouData.Name = star.Name
 			justForYouData.ImageURL = star.Images.Portrait
 			justForYouData.TagLine = star.Tagline

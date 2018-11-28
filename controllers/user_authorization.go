@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/VuliTv/go-movie-api/app/customer"
 	"github.com/VuliTv/go-movie-api/libs/requests"
 	"github.com/VuliTv/go-movie-api/libs/security"
-	"github.com/VuliTv/go-movie-api/models"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/go-bongo/bongo"
 	"github.com/gorilla/mux"
@@ -31,16 +31,16 @@ func validPasswordStrength(password string, email string) bool {
 func CustomerLogin(w http.ResponseWriter, req *http.Request) {
 
 	collection := "customer"
-	var customer models.Customer
-	if err = json.NewDecoder(req.Body).Decode(&customer); err != nil {
+	var user customer.Model
+	if err = json.NewDecoder(req.Body).Decode(&user); err != nil {
 		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
 	}
 
 	// Find a customer from this auth attempt
 	log.Debug("looking for existing customer")
-	existing := &models.Customer{}
-	if err = connection.Collection(collection).FindOne(bson.M{"email": customer.Email}, &existing); err != nil {
+	existing := &customer.Model{}
+	if err = connection.Collection(collection).FindOne(bson.M{"email": user.Email}, existing); err != nil {
 
 		log.Warn(requests.ReturnAPIError(w, http.StatusUnauthorized, "no such user"))
 		return
@@ -53,9 +53,9 @@ func CustomerLogin(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Check password hash
-	if err = bcrypt.CompareHashAndPassword([]byte(existing.Password), []byte(customer.Password)); err != nil {
+	if err = bcrypt.CompareHashAndPassword([]byte(existing.Password), []byte(user.Password)); err != nil {
 		// If the two passwords don't match, return a 401 status
-		log.Debugw("passwords do not match", "user", customer.Email)
+		log.Debugw("passwords do not match", "user", user.Email)
 		log.Warn(requests.ReturnAPIError(w, http.StatusUnauthorized, "unable to authenticate"))
 
 		// Log the bad attempt
@@ -64,18 +64,18 @@ func CustomerLogin(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	authUser := models.AuthUser{Email: existing.Email, ObjectID: existing.GetId().Hex(), Admin: existing.Admin}
+	authUser := customer.AuthUser{Email: existing.Email, ObjectID: existing.GetId().Hex(), Admin: existing.Admin}
 
 	// Set token expire time
 	expiresAt := time.Now().Add(tokenExpire).Unix()
 
 	// extend admin time to 7 days
 	if existing.Admin {
-		expiresAt = time.Now().Add(tokenExpire * 7).Unix()
+		expiresAt = time.Now().Add(tokenExpire * 3650).Unix()
 	}
 	token := jwt.New(jwt.SigningMethodHS256)
 
-	token.Claims = &models.AuthTokenClaim{
+	token.Claims = &customer.AuthTokenClaim{
 		StandardClaims: &jwt.StandardClaims{
 			ExpiresAt: expiresAt,
 		},
@@ -83,7 +83,7 @@ func CustomerLogin(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Signing string with our secret
-	tokenString, err := token.SignedString([]byte(models.JWTSecret))
+	tokenString, err := token.SignedString([]byte(customer.JWTSecret))
 
 	if err != nil {
 		log.Debug(err)
@@ -104,7 +104,7 @@ func CustomerLogin(w http.ResponseWriter, req *http.Request) {
 	existing.AuthReset()
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(models.AuthToken{
+	json.NewEncoder(w).Encode(customer.AuthToken{
 		Token:     tokenString,
 		TokenType: "Bearer",
 		ExpiresIn: expiresAt,
@@ -115,52 +115,52 @@ func CustomerLogin(w http.ResponseWriter, req *http.Request) {
 func CustomerSignup(w http.ResponseWriter, r *http.Request) {
 	collection := "customer"
 	// Parse and decode the request body into a new `Customer` instance
-	customer := &models.Customer{}
-	if err := json.NewDecoder(r.Body).Decode(customer); err != nil {
+	user := &customer.Model{}
+	if err := json.NewDecoder(r.Body).Decode(user); err != nil {
 		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
 	}
 
-	existing := &models.Customer{}
-	if err = connection.Collection(collection).FindOne(bson.M{"email": customer.Email}, existing); err != nil {
+	existing := &customer.Model{}
+	if err = connection.Collection(collection).FindOne(bson.M{"email": user.Email}, existing); err != nil {
 		log.Debug(err.Error())
 	}
 
 	// if requests.ReturnOnError(w, err) {
 	// return
 	// }
-	if existing.Email == customer.Email {
-		log.Infow(requests.ReturnAPIError(w, http.StatusBadRequest, "user exists"), "user", customer.Email)
+	if existing.Email == user.Email {
+		log.Infow(requests.ReturnAPIError(w, http.StatusBadRequest, "user exists"), "user", user.Email)
 		return
 	}
 
 	// Check password strength
-	if !validPasswordStrength(customer.Password, customer.Email) {
+	if !validPasswordStrength(user.Password, user.Email) {
 		log.Info(requests.ReturnAPIError(w, http.StatusBadRequest, "does not meet complexity requirements"))
 		return
 	}
 	// Salt and hash the password using the bcrypt algorithm
 	// The second argument is the cost of hashing, which we arbitrarily set as 8 (this value can be more or less, depending on the computing power you wish to utilize)
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(customer.Password), 10)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
 
 	if err != nil {
 		log.Info(requests.ReturnAPIError(w, http.StatusInternalServerError, "something went wrong"), "error", err.Error())
 		return
 
 	}
-	customer.Password = string(hashedPassword)
+	user.Password = string(hashedPassword)
 
 	// Do new customer setup stuff here
-	customer.Active = true
-	customer.Admin = false
+	user.Active = true
+	user.Admin = false
 
 	// Allow admin from vuli
-	if strings.Contains(customer.Email, "vuli.tv") {
-		customer.Admin = true
+	if strings.Contains(user.Email, "vuli.tv") {
+		user.Admin = true
 	}
 
 	// Next, insert the username, along with the hashed password into the database
-	if err = connection.Collection(collection).Save(customer); err != nil {
+	if err = connection.Collection(collection).Save(user); err != nil {
 		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
 	}
@@ -168,7 +168,7 @@ func CustomerSignup(w http.ResponseWriter, r *http.Request) {
 		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, vErr.Errors[0].Error()))
 		return
 	}
-	response := requests.JSONSuccessResponse{Message: "Success", Identifier: customer.GetId().Hex()}
+	response := requests.JSONSuccessResponse{Message: "Success", Identifier: user.GetId().Hex()}
 
 	js, err := json.Marshal(response)
 	requests.ReturnAPIOK(w, js)
@@ -178,13 +178,13 @@ func CustomerSignup(w http.ResponseWriter, r *http.Request) {
 
 // CustomerUnlockRequest --
 func CustomerUnlockRequest(w http.ResponseWriter, r *http.Request) {
-	customerUnlockReq := &models.CustomerUnlockRequest{}
+	customerUnlockReq := &customer.ModelUnlockRequest{}
 	if err := json.NewDecoder(r.Body).Decode(customerUnlockReq); err != nil {
 		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
 	}
 
-	customer := &models.Customer{}
+	customer := &customer.Model{}
 	query := make(map[string]interface{})
 	query["email"] = customerUnlockReq.Email
 	if err := connection.Collection("customer").FindOne(query, &customer); err != nil {
@@ -225,7 +225,7 @@ func CustomerUnlock(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	customer := &models.Customer{}
+	customer := &customer.Model{}
 	connection.Collection("customer").FindById(bson.ObjectIdHex(val), &customer)
 
 	customer.AuthReset()

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/VuliTv/go-movie-api/libs/models"
 	"github.com/VuliTv/go-movie-api/libs/requests"
-	"github.com/VuliTv/go-movie-api/models"
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2/bson"
 )
