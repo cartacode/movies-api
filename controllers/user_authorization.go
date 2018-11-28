@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -11,6 +12,7 @@ import (
 	"github.com/VuliTv/go-movie-api/models"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/go-bongo/bongo"
+	"github.com/gorilla/mux"
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -25,8 +27,8 @@ func validPasswordStrength(password string, email string) bool {
 	return true
 }
 
-// Login --
-func Login(w http.ResponseWriter, req *http.Request) {
+// CustomerLogin --
+func CustomerLogin(w http.ResponseWriter, req *http.Request) {
 
 	collection := "customer"
 	var customer models.Customer
@@ -44,11 +46,21 @@ func Login(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// Check for Lockout
+	if existing.AuthLocked() {
+		log.Warn(requests.ReturnAPIError(w, http.StatusUnauthorized, "account locked"))
+		return
+	}
+
 	// Check password hash
 	if err = bcrypt.CompareHashAndPassword([]byte(existing.Password), []byte(customer.Password)); err != nil {
 		// If the two passwords don't match, return a 401 status
 		log.Debugw("passwords do not match", "user", customer.Email)
 		log.Warn(requests.ReturnAPIError(w, http.StatusUnauthorized, "unable to authenticate"))
+
+		// Log the bad attempt
+		existing.AuthBadAttempt()
+
 		return
 	}
 
@@ -88,6 +100,9 @@ func Login(w http.ResponseWriter, req *http.Request) {
 		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
 	}
 
+	// reset auth on good attempt
+	existing.AuthReset()
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(models.AuthToken{
 		Token:     tokenString,
@@ -96,8 +111,8 @@ func Login(w http.ResponseWriter, req *http.Request) {
 	})
 }
 
-// Signup --
-func Signup(w http.ResponseWriter, r *http.Request) {
+// CustomerSignup --
+func CustomerSignup(w http.ResponseWriter, r *http.Request) {
 	collection := "customer"
 	// Parse and decode the request body into a new `Customer` instance
 	customer := &models.Customer{}
@@ -156,4 +171,68 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	requests.ReturnAPIOK(w, js)
 	// We reach this point if the credentials we correctly stored in the database, and the default status of 200 is sent back
 
+}
+
+// CustomerUnlockRequest --
+func CustomerUnlockRequest(w http.ResponseWriter, r *http.Request) {
+	customerUnlockReq := &models.CustomerUnlockRequest{}
+	if err := json.NewDecoder(r.Body).Decode(customerUnlockReq); err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
+		return
+	}
+
+	customer := &models.Customer{}
+	query := make(map[string]interface{})
+	query["email"] = customerUnlockReq.Email
+	if err := connection.Collection("customer").FindOne(query, &customer); err != nil {
+		log.Error(err)
+	}
+
+	hash := RandStringRunes(32)
+	if err = rDB.Set(hash, customer.GetId().Hex(), time.Hour*1).Err(); err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
+	}
+
+	body := fmt.Sprintf("<html><body><a href='https://api-stage.vuli.tv/v1/authorize/reset/%s'>Click here to unlock your account</a></body></html>", string(hash[:]))
+	if err := sesConn.GenerateAndSendEmail("dev@vuli.tv", customer.Email, "Vuli: Unlock Your Acccount", body); err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
+		return
+	}
+	log.Infow("account reset password sent", "email", customer.Email)
+
+	response := requests.JSONSuccessResponse{Message: "success", Identifier: customer.GetId().Hex(), Extra: customer.Email}
+
+	js, err := json.Marshal(response)
+	if err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
+		return
+	}
+	requests.ReturnAPIOK(w, js)
+}
+
+// CustomerUnlock --
+func CustomerUnlock(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	hash := params["hash"]
+	val, err := rDB.Get(hash).Result()
+
+	if err != nil {
+		log.Error(err)
+		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
+		return
+	}
+
+	customer := &models.Customer{}
+	connection.Collection("customer").FindById(bson.ObjectIdHex(val), &customer)
+
+	customer.AuthReset()
+
+	response := requests.JSONSuccessResponse{Message: "success", Identifier: customer.GetId().Hex(), Extra: "auth reset"}
+
+	js, err := json.Marshal(response)
+	if err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
+		return
+	}
+	requests.ReturnAPIOK(w, js)
 }

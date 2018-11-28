@@ -15,16 +15,29 @@ import (
 
 var authorizationRoutes = Routes{
 	Route{
-		"Login",
+		"CustomerLogin",
 		"POST",
 		"/v1/authorize/login",
-		controllers.Login,
+		controllers.CustomerLogin,
 	},
 	Route{
-		"Signup",
+		"CustomerSignup",
 		"POST",
 		"/v1/authorize/signup",
-		controllers.Signup,
+		controllers.CustomerSignup,
+	},
+	Route{
+		"CustomerUnlockRequest",
+		"POST",
+		"/v1/authorize/unlock",
+		controllers.CustomerUnlockRequest,
+	},
+
+	Route{
+		"CustomerUnlock",
+		"GET",
+		"/v1/authorize/reset/{hash}",
+		controllers.CustomerUnlock,
 	},
 }
 

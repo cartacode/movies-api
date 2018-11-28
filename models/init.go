@@ -8,6 +8,7 @@ import (
 )
 
 var connection, dbError = dbh.NewMongoDBConnection("models")
+var rDB, rError = dbh.NewRedisConnection()
 var err error
 var log = logging.GetProdLog()
 
