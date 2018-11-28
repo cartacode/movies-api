@@ -160,9 +160,12 @@ func CustomerSignup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Next, insert the username, along with the hashed password into the database
-	err = connection.Collection(collection).Save(customer)
+	if err = connection.Collection(collection).Save(customer); err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
+		return
+	}
 	if vErr, ok := err.(*bongo.ValidationError); ok {
-		requests.ReturnAPIError(w, http.StatusBadRequest, vErr.Errors[0].Error())
+		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, vErr.Errors[0].Error()))
 		return
 	}
 	response := requests.JSONSuccessResponse{Message: "Success", Identifier: customer.GetId().Hex()}
