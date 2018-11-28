@@ -8,187 +8,24 @@ import (
 
 var customerRoutes = Routes{
 
-	// swagger:operation POST /customer/wishlist/scene/{ObjectId} customer customerWishSceneAdd
-	// ---
-	// summary: Post a new customer wishlist for a scene
-	// description: POST sceneId to add item to wishlist
-	// parameters:
-	// - name: ObjectId
-	//   in: path
-	//   description: MongoDB Scene Document ID
-	//   required: true
-	//   schema:
-	//     "$ref": "#/definitions/ObjectId"
-	// responses:
-	//   "200":
-	//     "$ref": "#/responses/customerResp"
-	//   "404":
-	//     "$ref": "#/responses/genericJsonError"
 	Route{
-		"CustomerWishlistAddSceneItem",
-		strings.ToUpper("Post"),
-		"/customer/wishlist/scene/{ObjectId}",
-		controllers.CustomerWishlistAddSceneItem,
+		"CustomerListAddItem",
+		strings.ToUpper("post"),
+		"/v1/customer/preferences/{list}",
+		validateTokenMiddleware(controllers.CustomerListAddItem),
 	},
 
-	// swagger:operation Delete /customer/wishlist/scene/{ObjectId} customer customerWishSceneAdd
-	// ---
-	// summary: Post a new customer wishlist for a scene
-	// description: Delete ObjectId to add item to wishlist
-	// parameters:
-	// - name: ObjectId
-	//   in: path
-	//   description: MongoDB Scene Document ID
-	//   required: true
-	//   schema:
-	//     "$ref": "#/definitions/ObjectId"
-	// responses:
-	//   "200":
-	//     "$ref": "#/responses/customerResp"
-	//   "404":
-	//     "$ref": "#/responses/genericJsonError"
 	Route{
-		"CustomerWishlistDeleteSceneItem",
-		strings.ToUpper("Post"),
-		"/customer/wishlist/scene/{ObjectId}",
-		controllers.CustomerWishlistDeleteSceneItem,
+		"CustomerWishlistDeleteItem",
+		strings.ToUpper("delete"),
+		"/v1/customer/preferences/{list}",
+		validateTokenMiddleware(controllers.CustomerWishlistDeleteItem),
 	},
 
-	// swagger:operation POST /customer/wishlist/movie/{ObjectId} customer customerWishSceneAdd
-	// ---
-	// summary: Post a new customer wishlist for a movie
-	// description: POST ObjectId to add item to wishlist
-	// parameters:
-	// - name: ObjectId
-	//   in: path
-	//   description: MongoDB Scene Document ID
-	//   required: true
-	//   schema:
-	//     "$ref": "#/definitions/ObjectId"
-	// responses:
-	//   "200":
-	//     "$ref": "#/responses/customerResp"
-	//   "404":
-	//     "$ref": "#/responses/genericJsonError"
 	Route{
-		"CustomerWishlistAddSceneItem",
-		strings.ToUpper("Post"),
-		"/customer/wishlist/movie/{ObjectId}",
-		controllers.CustomerWishlistAddSceneItem,
-	},
-
-	// swagger:operation Delete /customer/wishlist/movie/{ObjectId} customer customerWishSceneAdd
-	// ---
-	// summary: Post a new customer wishlist for a movie
-	// description: Delete ObjectId to add item to wishlist
-	// parameters:
-	// - name: ObjectId
-	//   in: path
-	//   description: MongoDB Scene Document ID
-	//   required: true
-	//   schema:
-	//     "$ref": "#/definitions/ObjectId"
-	// responses:
-	//   "200":
-	//     "$ref": "#/responses/customerResp"
-	//   "404":
-	//     "$ref": "#/responses/genericJsonError"
-	Route{
-		"CustomerWishlistDeleteSceneItem",
-		strings.ToUpper("Post"),
-		"/customer/wishlist/movie/{ObjectId}",
-		controllers.CustomerWishlistDeleteSceneItem,
-	},
-
-	// swagger:operation POST /customer/wishlist/volume/{ObjectId} customer customerWishSceneAdd
-	// ---
-	// summary: Post a new customer wishlist for a volume
-	// description: POST ObjectId to add item to wishlist
-	// parameters:
-	// - name: ObjectId
-	//   in: path
-	//   description: MongoDB Scene Document ID
-	//   required: true
-	//   schema:
-	//     "$ref": "#/definitions/ObjectId"
-	// responses:
-	//   "200":
-	//     "$ref": "#/responses/customerResp"
-	//   "404":
-	//     "$ref": "#/responses/genericJsonError"
-	Route{
-		"CustomerWishlistAddSceneItem",
-		strings.ToUpper("Post"),
-		"/customer/wishlist/volume/{ObjectId}",
-		controllers.CustomerWishlistAddSceneItem,
-	},
-
-	// swagger:operation Delete /customer/wishlist/volume/{ObjectId} customer customerWishSceneAdd
-	// ---
-	// summary: Post a new customer wishlist for a volume
-	// description: Delete ObjectId to add item to wishlist
-	// parameters:
-	// - name: ObjectId
-	//   in: path
-	//   description: MongoDB Scene Document ID
-	//   required: true
-	//   schema:
-	//     "$ref": "#/definitions/ObjectId"
-	// responses:
-	//   "200":
-	//     "$ref": "#/responses/customerResp"
-	//   "404":
-	//     "$ref": "#/responses/genericJsonError"
-	Route{
-		"CustomerWishlistDeleteSceneItem",
-		strings.ToUpper("Post"),
-		"/customer/wishlist/volume/{ObjectId}",
-		controllers.CustomerWishlistDeleteSceneItem,
-	},
-
-	// swagger:operation POST /customer/wishlist/series/{ObjectId} customer customerWishSceneAdd
-	// ---
-	// summary: Post a new customer wishlist for a series
-	// description: POST ObjectId to add item to wishlist
-	// parameters:
-	// - name: ObjectId
-	//   in: path
-	//   description: MongoDB Scene Document ID
-	//   required: true
-	//   schema:
-	//     "$ref": "#/definitions/ObjectId"
-	// responses:
-	//   "200":
-	//     "$ref": "#/responses/customerResp"
-	//   "404":
-	//     "$ref": "#/responses/genericJsonError"
-	Route{
-		"CustomerWishlistAddSceneItem",
-		strings.ToUpper("Post"),
-		"/customer/wishlist/series/{ObjectId}",
-		controllers.CustomerWishlistAddSceneItem,
-	},
-
-	// swagger:operation Delete /customer/wishlist/series/{ObjectId} customer customerWishSceneAdd
-	// ---
-	// summary: Post a new customer wishlist for a series
-	// description: Delete ObjectId to add item to wishlist
-	// parameters:
-	// - name: ObjectId
-	//   in: path
-	//   description: MongoDB Scene Document ID
-	//   required: true
-	//   schema:
-	//     "$ref": "#/definitions/ObjectId"
-	// responses:
-	//   "200":
-	//     "$ref": "#/responses/customerResp"
-	//   "404":
-	//     "$ref": "#/responses/genericJsonError"
-	Route{
-		"CustomerWishlistDeleteSceneItem",
-		strings.ToUpper("Post"),
-		"/customer/wishlist/series/{ObjectId}",
-		controllers.CustomerWishlistDeleteSceneItem,
+		"CustomerProfileGet",
+		strings.ToUpper("get"),
+		"/v1/customer/profile",
+		validateTokenMiddleware(controllers.CustomerProfileGet),
 	},
 }

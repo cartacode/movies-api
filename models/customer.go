@@ -9,13 +9,17 @@
 
 package models
 
-import "github.com/go-bongo/bongo"
+import (
+	"fmt"
+	"strconv"
+
+	"github.com/go-bongo/bongo"
+	"gopkg.in/mgo.v2/bson"
+)
 
 // Customer Document
 //
 // A customer on the site and all of their preferences and profile
-//
-// swagger:model
 type Customer struct {
 	bongo.DocumentBase `bson:",inline"`
 
@@ -24,7 +28,7 @@ type Customer struct {
 	Email string `json:"email"`
 
 	// Stored as a bcrypt hash
-	Password string
+	Password string `json:"password"`
 
 	// True/False. Is the user active
 	Active bool `json:"active"`
@@ -36,32 +40,36 @@ type Customer struct {
 	Liked struct {
 
 		// List of Mongo ObjectId for the movies wish list. Embeddable
-		Movies []string `json:"movies"`
+		Movies []*bson.ObjectId `json:"movies"`
 
 		// List of Mongo ObjectId for the scenes wish list. Embeddable
-		Scenes []string `json:"scenes"`
+		Scenes []*bson.ObjectId `json:"scenes"`
 
 		// List of Mongo ObjectId for the volumes wish list. Embeddable
-		Volumes []string `json:"volumes"`
+		Volumes []*bson.ObjectId `json:"volumes"`
 
 		// List of Mongo ObjectId for the stars wish list. Embeddable
-		Stars []string `json:"stars"`
+		Stars []*bson.ObjectId `json:"stars"`
+
+		Studios []*bson.ObjectId `json:"studios"`
 	} `json:"liked"`
 
 	// Liked Items
 	Disliked struct {
 
 		// List of Mongo ObjectId for the movies wish list. Embeddable
-		Movies []string `json:"movies"`
+		Movies []*bson.ObjectId `json:"movies"`
 
 		// List of Mongo ObjectId for the scenes wish list. Embeddable
-		Scenes []string `json:"scenes"`
+		Scenes []*bson.ObjectId `json:"scenes"`
 
 		// List of Mongo ObjectId for the volumes wish list. Embeddable
-		Volumes []string `json:"volumes"`
+		Volumes []*bson.ObjectId `json:"volumes"`
 
 		// List of Mongo ObjectId for the stars wish list. Embeddable
-		Stars []string `json:"stars"`
+		Stars []*bson.ObjectId `json:"stars"`
+
+		Studios []*bson.ObjectId `json:"studios"`
 	} `json:"disliked"`
 
 	// Credit Information
@@ -71,37 +79,106 @@ type Customer struct {
 		InfoStored bool `json:"info_stored"`
 
 		// Key for 3 leg transactions to provider bank
-		Key string `json:"key"`
+		ProfileID string `json:"profileId"`
+
+		// Key for 3 leg transactions to provider bank
+		PaymentID string `json:"paymentId"`
 	} `json:"credit"`
 
 	// Purchased Items
 	Purchased struct {
 
 		// List of Mongo ObjectId for the movies wish list. Embeddable
-		Movies []string `json:"movies"`
+		Movies []*bson.ObjectId `json:"movies"`
 
 		// List of Mongo ObjectId for the scenes wish list. Embeddable
-		Scenes []string `json:"scenes"`
+		Scenes []*bson.ObjectId `json:"scenes"`
 
 		// List of Mongo ObjectId for the volumes wish list. Embeddable
-		Volumes []string `json:"volumes"`
+		Volumes []*bson.ObjectId `json:"volumes"`
 	} `json:"purchased"`
 
 	// User wishlist
 	Wishlist struct {
 
 		// List of Mongo ObjectId for the movies wish list. Embeddable
-		Movies []string `json:"movies"`
+		Movies []*bson.ObjectId `json:"movies"`
 
 		// List of Mongo ObjectId for the scenes wish list. Embeddable
-		Scenes []string `json:"scenes"`
+		Scenes []*bson.ObjectId `json:"scenes"`
 
 		// List of Mongo ObjectId for the volumes wish list. Embeddable
-		Volumes []string `json:"volumes"`
+		Volumes []*bson.ObjectId `json:"volumes"`
 	} `json:"wishlist"`
 
 	Preferences []struct {
 		Tag    string  `json:"tag"`
 		Weight float64 `json:"weight"`
 	} `json:"preferences"`
+}
+
+// AuthBadAttempt --
+func (c *Customer) AuthBadAttempt() {
+	log.Debugw("adding bad auth attempt", "email", c.Email, "id", c.Id.Hex())
+	hash := fmt.Sprintf("auth-%s", c.Id.Hex())
+	val, err := rDB.Get(hash).Result()
+	if err != nil {
+		if sErr := rDB.Set(hash, 0, 0).Err(); sErr != nil {
+			log.Error(sErr)
+		}
+		log.Error(err)
+		return
+	}
+
+	log.Debugw("found auth val", "val", val)
+	attempts, err := strconv.Atoi(val)
+	if err != nil {
+		log.Error(err)
+	}
+	attempts++
+	if err = rDB.Set(hash, attempts, 0).Err(); err != nil {
+		log.Error(err)
+	}
+
+}
+
+// AuthReset --
+func (c *Customer) AuthReset() {
+	hash := fmt.Sprintf("auth-%s", c.Id.Hex())
+	if err = rDB.Set(hash, 0, 0).Err(); err != nil {
+		log.Error(err)
+	}
+
+}
+
+// AuthLocked --
+// We always default to true on failures.
+// Keeps us from attack issues if we have backend issues
+func (c *Customer) AuthLocked() bool {
+	hash := fmt.Sprintf("auth-%s", c.Id.Hex())
+	val, err := rDB.Get(hash).Result()
+	if err != nil {
+		if err = rDB.Set(hash, 0, 0).Err(); err != nil {
+			log.Error(err)
+			return true
+		}
+		return false
+
+	}
+
+	attempts, err := strconv.Atoi(val)
+	if err != nil {
+		log.Error(err)
+		return true
+	}
+
+	if attempts >= 5 {
+		return true
+	}
+	return false
+}
+
+// CustomerUnlockRequest --
+type CustomerUnlockRequest struct {
+	Email string `json:"email"`
 }

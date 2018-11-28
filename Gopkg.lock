@@ -2,7 +2,7 @@
 
 
 [[projects]]
-  digest = "1:d2b3a3b256bdec53999ad898a3fa16465f1a28d364d015abcade9dcb19749446"
+  digest = "1:026537d9d3f68feac7a89c2d26a0d1026953552c40b614cc3e0ae6a83240365e"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -42,6 +42,7 @@
     "service/dynamodb",
     "service/dynamodb/dynamodbattribute",
     "service/s3",
+    "service/ses",
     "service/sts",
   ]
   pruneopts = "UT"
@@ -63,17 +64,6 @@
   pruneopts = "UT"
   revision = "c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9"
   version = "v1.4.7"
-
-[[projects]]
-  branch = "master"
-  digest = "1:7fb51688eadf38272411852d7a2b3538c7caff53309abee6c0964a83c00fe69e"
-  name = "github.com/globalsign/mgo"
-  packages = [
-    "bson",
-    "internal/json",
-  ]
-  pruneopts = "UT"
-  revision = "eeefdecb41b842af6dc652aaea4026e8403e62df"
 
 [[projects]]
   digest = "1:cc2be18e88df2185c5d16c89793016b54818ba6a88cd2c41c57a5b6b845c7069"
@@ -273,7 +263,7 @@
     "blowfish",
   ]
   pruneopts = "UT"
-  revision = "3d3f9f413869b949e48070b5bc593aa22cc2b8f2"
+  revision = "9eb0be3963eaeb646c9a9b6d11f3da2b249bb2ca"
 
 [[projects]]
   branch = "master"
@@ -297,6 +287,14 @@
   pruneopts = "UT"
   revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
   version = "v0.3.0"
+
+[[projects]]
+  digest = "1:d7f1ee6bd30d9930009d6fdd41e7aebf641f725cb3f5b0595f9cdefb92958cb2"
+  name = "gopkg.in/hunterlong/authorizecim.v1"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "3301f44d45459fa5c17845a66a4da647da046593"
+  version = "v1"
 
 [[projects]]
   branch = "v2"
@@ -329,8 +327,8 @@
     "github.com/aws/aws-sdk-go/service/dynamodb",
     "github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute",
     "github.com/aws/aws-sdk-go/service/s3",
+    "github.com/aws/aws-sdk-go/service/ses",
     "github.com/dgrijalva/jwt-go",
-    "github.com/globalsign/mgo/bson",
     "github.com/go-bongo/bongo",
     "github.com/go-redis/redis",
     "github.com/gorilla/context",
@@ -340,6 +338,7 @@
     "github.com/spf13/viper",
     "go.uber.org/zap",
     "golang.org/x/crypto/bcrypt",
+    "gopkg.in/hunterlong/authorizecim.v1",
     "gopkg.in/mgo.v2/bson",
   ]
   solver-name = "gps-cdcl"

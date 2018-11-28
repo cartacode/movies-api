@@ -8,8 +8,12 @@ import (
 )
 
 var connection, dbError = dbh.NewMongoDBConnection("models")
+var rDB, rError = dbh.NewRedisConnection()
 var err error
 var log = logging.GetProdLog()
+
+// CLOUDFRONT .. Our cloudfront URL
+var CLOUDFRONT = "https://cdn.vuli.tv"
 
 func init() {
 	if dbError != nil {
@@ -40,10 +44,6 @@ func ModelByCollection(collection string) (interface{}, error) {
 
 	case "volume":
 		model := &Volume{}
-		return model, nil
-
-	case "customer":
-		model := &Customer{}
 		return model, nil
 
 	case "studio":

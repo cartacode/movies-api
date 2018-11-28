@@ -102,7 +102,7 @@ db.getCollection("volume").updateMany({"images": { "$exists": false }},{
         "landscape" : "",
         "portrait" : "",
         "banner" : "",
-        "detailpahe" : ""
+        "detailpage" : ""
     },
   }
 })
@@ -214,5 +214,34 @@ db.getCollection("scene").find({},{ "series": 1 }).forEach(doc => {
 
 if ( ops.length > 0 ) {
   db.getCollection("scene").bulkWrite(ops);
+  ops = [];
+}
+
+db.getCollection("volume").updateMany({"information.stars": { "$exists": false }}, {$set: { "information.stars":[] }})
+
+var ops = [];
+db.getCollection("volume").find({},{ "information.director": 1 }).forEach(doc => {
+  print(doc.information.director);
+  volume = new ObjectId(doc.information.director.valueOf());
+  print(volume)
+  ops.push({
+    "updateOne": {
+      "filter": { "_id": doc._id },
+      "update": {
+        "$set": { "information.director.0": volume }
+      }
+    }
+  });
+
+  print(ops.entries())
+
+  if ( ops.length >= 500 ) {
+    db.getCollection("volume").bulkWrite(ops);
+    ops = [];
+  }
+});
+
+if ( ops.length > 0 ) {
+  db.getCollection("volume").bulkWrite(ops);
   ops = [];
 }

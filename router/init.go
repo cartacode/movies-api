@@ -16,12 +16,34 @@ import (
 
 	"github.com/VuliTv/go-movie-api/dbh"
 	"github.com/VuliTv/go-movie-api/libs/requests"
-
 	"github.com/gorilla/mux"
+	auth "gopkg.in/hunterlong/authorizecim.v1"
 )
 
 var rDB, rError = dbh.NewRedisConnection()
 var mDB, mError = dbh.NewMongoDBConnection("router")
+var aSession, aError = dbh.NewAuthorizeNetSession()
+
+func init() {
+
+	if rError != nil {
+		log.Fatalw("redis connection failure. exiting", "error", rError)
+	}
+	log.Info("redis connected")
+
+	if mError != nil {
+		log.Fatalw("mongodb connection failure. exiting", "error", mError)
+	}
+	log.Info("mongodb connected")
+	if aError != nil {
+		log.Fatalw("authorize.net connection failure. exiting", "error", aError)
+	}
+	log.Info("authorize.net connected", aSession, aError)
+	if aSession == false {
+		log.Fatalw("authorize.net session failure. exiting", "error", aError)
+	}
+	log.Info("authorize.net session connected")
+}
 
 // Route --
 type Route struct {
@@ -44,6 +66,9 @@ func NewRouter() *mux.Router {
 	routes = append(routes, searchRoutes...)
 	routes = append(routes, playbackRoutes...)
 	routes = append(routes, authorizationRoutes...)
+	routes = append(routes, customerPaymentRoutes...)
+	routes = append(routes, customerRoutes...)
+	routes = append(routes, frontendDataRoutes...)
 
 	for _, route := range routes {
 		var handler http.Handler
@@ -77,6 +102,12 @@ func HealthCheck(w http.ResponseWriter, r *http.Request) {
 		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, ok.String()))
 		return
 	}
+
+	if _, err := auth.IsConnected(); err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
+		return
+	}
+
 	message := requests.JSONSuccessResponse{Message: "healthy"}
 	js, _ := json.Marshal(message)
 
