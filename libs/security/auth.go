@@ -138,48 +138,10 @@ func IsAdminRoute(req *http.Request) bool {
 // IsOpenAuthedRoute --
 func IsOpenAuthedRoute(req *http.Request) bool {
 
-	log.Info(req.URL.Path)
-	switch req.URL.Path {
-	// V1 Collection
-	case "/v1/collection/movie":
-		switch req.Method {
-		case "GET":
+	if req.Method == "GET" {
+		if strings.Contains(req.URL.Path, "/v1/collection") {
 			return true
-		}
-	case "/v1/collection/series":
-		switch req.Method {
-		case "GET":
-			return true
-		}
-	case "/v1/collection/scene":
-		switch req.Method {
-		case "GET":
-			return true
-		}
-	// V1 Data
-	case "/v1/data/movie":
-		switch req.Method {
-		case "GET":
-			return true
-		}
-	case "/v1/data/scene":
-		switch req.Method {
-		case "GET":
-			return true
-		}
-	case "/v1/data/volume":
-		switch req.Method {
-		case "GET":
-			return true
-		}
-	case "/v1/data/series":
-		switch req.Method {
-		case "GET":
-			return true
-		}
-	case "/v1/data/star":
-		switch req.Method {
-		case "GET":
+		} else if strings.Contains(req.URL.Path, "/v1/data/") {
 			return true
 		}
 	}
