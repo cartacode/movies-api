@@ -5,4 +5,4 @@ swagger.json
 scripts/venv
 .vscode/temp.sql
 .vscode/last.sql
-tools/ddl/dumps/.*dump
+tools/ddl/dumps/*dump
