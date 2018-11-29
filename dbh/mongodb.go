@@ -6,13 +6,18 @@ import (
 	"github.com/go-bongo/bongo"
 )
 
+// MongoDBHandler --
+type MongoDBHandler struct {
+	*bongo.Connection
+}
+
 var mongoConfig = &bongo.Config{
 	ConnectionString: envhelp.GetEnv("MONGO_HOST", "localhost"),
 	Database:         envhelp.GetEnv("MONGO_DATABASE", "vuliapi"),
 }
 
-// NewMongoDBConnection --
-func NewMongoDBConnection(caller string) (*bongo.Connection, error) {
+// New --
+func (m *MongoDBHandler) New(caller string) error {
 	log.Infow("new database handler created",
 		"connection_string", mongoConfig.ConnectionString,
 		"database", mongoConfig.Database,
@@ -25,12 +30,14 @@ func NewMongoDBConnection(caller string) (*bongo.Connection, error) {
 
 	_, err = connection.Session.BuildInfo()
 	if err != nil {
-		panic(err)
+		return err
 	}
 	err = connection.Session.Ping()
+
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	return connection, err
+	m.Connection = connection
+	return err
 }

@@ -8,7 +8,6 @@ import (
 	"crypto/sha256"
 	"crypto/sha512"
 	"fmt"
-	"log"
 	"os"
 	"regexp"
 	"strings"
@@ -154,7 +153,7 @@ func (p *Password) ProcessPassword() {
 	matchSpecial := regexp.MustCompile(`[\!\@\#\$\%\^\&\*\(\\\)\-_\=\+\,\.\?\/\:\;\{\}\[\]~]`)
 
 	if p.Length < 8 {
-		log.Fatalln("password isn't long enough for evaluation")
+		log.Warn("password isn't long enough for evaluation")
 	}
 
 	if matchLower.MatchString(p.Pass) {
