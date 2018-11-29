@@ -1,4 +1,4 @@
-package payments
+package operations
 
 import (
 	"github.com/VuliTv/go-movie-api/dbh"
@@ -8,11 +8,8 @@ import (
 var log = logging.GetProdLog()
 var mongoHandler dbh.MongoDBHandler
 
-var collection = "customer"
-
 func init() {
-	dbh.NewAuthorizeNetSession()
-	if err := mongoHandler.New(collection); err != nil {
+	if err := mongoHandler.New("operations"); err != nil {
 		log.Fatal(err)
 	}
 }

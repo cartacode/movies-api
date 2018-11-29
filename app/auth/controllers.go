@@ -1,4 +1,4 @@
-package controllers
+package auth
 
 import (
 	"encoding/json"
@@ -10,6 +10,7 @@ import (
 	"github.com/VuliTv/go-movie-api/app/customer"
 	"github.com/VuliTv/go-movie-api/libs/requests"
 	"github.com/VuliTv/go-movie-api/libs/security"
+	"github.com/VuliTv/go-movie-api/libs/stringops"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/go-bongo/bongo"
 	"github.com/gorilla/mux"
@@ -30,9 +31,8 @@ func validPasswordStrength(password string, email string) bool {
 // CustomerLogin --
 func CustomerLogin(w http.ResponseWriter, req *http.Request) {
 
-	collection := "customer"
 	var user customer.Model
-	if err = json.NewDecoder(req.Body).Decode(&user); err != nil {
+	if err := json.NewDecoder(req.Body).Decode(&user); err != nil {
 		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
 	}
@@ -40,7 +40,7 @@ func CustomerLogin(w http.ResponseWriter, req *http.Request) {
 	// Find a customer from this auth attempt
 	log.Debug("looking for existing customer")
 	existing := &customer.Model{}
-	if err = connection.Collection(collection).FindOne(bson.M{"email": user.Email}, existing); err != nil {
+	if err := mongoHandler.Collection(collection).FindOne(bson.M{"email": user.Email}, existing); err != nil {
 
 		log.Warn(requests.ReturnAPIError(w, http.StatusUnauthorized, "no such user"))
 		return
@@ -48,12 +48,12 @@ func CustomerLogin(w http.ResponseWriter, req *http.Request) {
 
 	// Check for Lockout
 	if existing.AuthLocked() {
-		log.Warn(requests.ReturnAPIError(w, http.StatusUnauthorized, "account locked"))
+		log.Warnw(requests.ReturnAPIError(w, http.StatusUnauthorized, "account locked"), "id", existing.GetId().Hex())
 		return
 	}
 
 	// Check password hash
-	if err = bcrypt.CompareHashAndPassword([]byte(existing.Password), []byte(user.Password)); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(existing.Password), []byte(user.Password)); err != nil {
 		// If the two passwords don't match, return a 401 status
 		log.Debugw("passwords do not match", "user", user.Email)
 		log.Warn(requests.ReturnAPIError(w, http.StatusUnauthorized, "unable to authenticate"))
@@ -64,7 +64,7 @@ func CustomerLogin(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	authUser := customer.AuthUser{Email: existing.Email, ObjectID: existing.GetId().Hex(), Admin: existing.Admin}
+	authUser := &security.AuthUser{Email: existing.Email, ObjectID: existing.GetId().Hex(), Admin: existing.Admin}
 
 	// Set token expire time
 	expiresAt := time.Now().Add(tokenExpire).Unix()
@@ -75,15 +75,15 @@ func CustomerLogin(w http.ResponseWriter, req *http.Request) {
 	}
 	token := jwt.New(jwt.SigningMethodHS256)
 
-	token.Claims = &customer.AuthTokenClaim{
+	token.Claims = &security.TokenClaim{
 		StandardClaims: &jwt.StandardClaims{
 			ExpiresAt: expiresAt,
 		},
-		AuthUser: authUser,
+		AuthUser: *authUser,
 	}
 
 	// Signing string with our secret
-	tokenString, err := token.SignedString([]byte(customer.JWTSecret))
+	tokenString, err := token.SignedString([]byte(security.JWTSecret))
 
 	if err != nil {
 		log.Debug(err)
@@ -91,12 +91,12 @@ func CustomerLogin(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	log.Debugw("setting redis token",
+	log.Debugw("setting redisHandler token",
 		"key", existing.GetId().Hex(),
 		"value", tokenString,
 		"expire", tokenExpire,
 	)
-	if err = rDB.Set(existing.GetId().Hex(), tokenString, tokenExpire).Err(); err != nil {
+	if err = redisHandler.Set(existing.GetId().Hex(), tokenString, tokenExpire).Err(); err != nil {
 		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
 	}
 
@@ -104,7 +104,7 @@ func CustomerLogin(w http.ResponseWriter, req *http.Request) {
 	existing.AuthReset()
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(customer.AuthToken{
+	json.NewEncoder(w).Encode(security.AuthToken{
 		Token:     tokenString,
 		TokenType: "Bearer",
 		ExpiresIn: expiresAt,
@@ -113,7 +113,7 @@ func CustomerLogin(w http.ResponseWriter, req *http.Request) {
 
 // CustomerSignup --
 func CustomerSignup(w http.ResponseWriter, r *http.Request) {
-	collection := "customer"
+
 	// Parse and decode the request body into a new `Customer` instance
 	user := &customer.Model{}
 	if err := json.NewDecoder(r.Body).Decode(user); err != nil {
@@ -122,7 +122,7 @@ func CustomerSignup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	existing := &customer.Model{}
-	if err = connection.Collection(collection).FindOne(bson.M{"email": user.Email}, existing); err != nil {
+	if err := mongoHandler.Collection(collection).FindOne(bson.M{"email": user.Email}, existing); err != nil {
 		log.Debug(err.Error())
 	}
 
@@ -160,7 +160,7 @@ func CustomerSignup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Next, insert the username, along with the hashed password into the database
-	if err = connection.Collection(collection).Save(user); err != nil {
+	if err = mongoHandler.Collection(collection).Save(user); err != nil {
 		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
 	}
@@ -184,26 +184,26 @@ func CustomerUnlockRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	customer := &customer.Model{}
+	user := &customer.Model{}
 	query := make(map[string]interface{})
 	query["email"] = customerUnlockReq.Email
-	if err := connection.Collection("customer").FindOne(query, &customer); err != nil {
+	if err := mongoHandler.Collection("customer").FindOne(query, &user); err != nil {
 		log.Error(err)
 	}
 
-	hash := RandStringRunes(32)
-	if err = rDB.Set(hash, customer.GetId().Hex(), time.Hour*1).Err(); err != nil {
+	hash := stringops.RandStringRunes(32)
+	if err := redisHandler.Set(hash, user.GetId().Hex(), time.Hour*1).Err(); err != nil {
 		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
 	}
 
 	body := fmt.Sprintf("<html><body><a href='https://api-stage.vuli.tv/v1/authorize/reset/%s'>Click here to unlock your account</a></body></html>", string(hash[:]))
-	if err := sesConn.GenerateAndSendEmail("dev@vuli.tv", customer.Email, "Vuli: Unlock Your Acccount", body); err != nil {
+	if err := sesHandler.GenerateAndSendEmail("dev@vuli.tv", user.Email, "Vuli: Unlock Your Acccount", body); err != nil {
 		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
 	}
-	log.Infow("account reset password sent", "email", customer.Email)
+	log.Infow("account reset password sent", "email", user.Email)
 
-	response := requests.JSONSuccessResponse{Message: "success", Identifier: customer.GetId().Hex(), Extra: customer.Email}
+	response := requests.JSONSuccessResponse{Message: "success", Identifier: user.GetId().Hex(), Extra: user.Email}
 
 	js, err := json.Marshal(response)
 	if err != nil {
@@ -217,7 +217,7 @@ func CustomerUnlockRequest(w http.ResponseWriter, r *http.Request) {
 func CustomerUnlock(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	hash := params["hash"]
-	val, err := rDB.Get(hash).Result()
+	val, err := redisHandler.Get(hash).Result()
 
 	if err != nil {
 		log.Error(err)
@@ -225,12 +225,12 @@ func CustomerUnlock(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	customer := &customer.Model{}
-	connection.Collection("customer").FindById(bson.ObjectIdHex(val), &customer)
+	user := &customer.Model{}
+	mongoHandler.Collection("customer").FindById(bson.ObjectIdHex(val), &user)
 
-	customer.AuthReset()
+	user.AuthReset()
 
-	response := requests.JSONSuccessResponse{Message: "success", Identifier: customer.GetId().Hex(), Extra: "auth reset"}
+	response := requests.JSONSuccessResponse{Message: "success", Identifier: user.GetId().Hex(), Extra: "auth reset"}
 
 	js, err := json.Marshal(response)
 	if err != nil {

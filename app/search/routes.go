@@ -1,15 +1,16 @@
-package router
+package search
 
 import (
-	"github.com/VuliTv/go-movie-api/controllers"
+	"github.com/VuliTv/go-movie-api/libs/requests"
 )
 
-var searchRoutes = Routes{
-	Route{
-		"GenericSearchGet",
-		"GET",
-		"/v1/search/{collection}/",
-		controllers.GenericSearchGet,
+// Routes --
+var Routes = requests.Routes{
+	requests.Route{
+		Name:        "GenericSearchGet",
+		Method:      "GET",
+		Pattern:     "/v1/search/{collection}/",
+		HandlerFunc: GenericSearchGet,
 	},
 
 	// swagger:operation POST /v1/collection/{collection}/ crud crudPaginate

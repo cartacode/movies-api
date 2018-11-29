@@ -1,18 +1,16 @@
-package payments
+package search
 
 import (
 	"github.com/VuliTv/go-movie-api/dbh"
 	"github.com/VuliTv/go-movie-api/libs/logging"
 )
 
-var log = logging.GetProdLog()
 var mongoHandler dbh.MongoDBHandler
 
-var collection = "customer"
+var log = logging.GetProdLog()
 
 func init() {
-	dbh.NewAuthorizeNetSession()
-	if err := mongoHandler.New(collection); err != nil {
+	if err := mongoHandler.New("search"); err != nil {
 		log.Fatal(err)
 	}
 }

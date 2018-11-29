@@ -20,7 +20,7 @@ var redisConfig = &redis.Options{
 
 // New --
 func (r *RedisHandler) New(controller string) error {
-	log.Infow("new database handler created",
+	log.Infow("new redis handler created",
 		"caller", controller,
 		"connection_string", redisConfig.Addr,
 		"database", redisConfig.DB,

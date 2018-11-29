@@ -12,7 +12,10 @@ var rDB dbh.RedisHandler
 var collection = "customer"
 
 func init() {
-	connection.New(collection)
+	if err := connection.New(collection); err != nil {
+		log.Fatal(err)
+	}
+
 	if err := rDB.New(collection); err != nil {
 		log.Fatal(err)
 	}

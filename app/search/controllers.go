@@ -1,4 +1,4 @@
-package controllers
+package search
 
 import (
 	"encoding/json"
@@ -26,7 +26,7 @@ func GenericSearchGet(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	results := connection.Collection(collection).Find(bson.M{"title": bson.RegEx{Pattern: query["title"].(string), Options: "i"}})
+	results := mongoHandler.Collection(collection).Find(bson.M{"title": bson.RegEx{Pattern: query["title"].(string), Options: "i"}})
 
 	// Get pagination information
 	perPage, page := requests.GetPaginationInfo(r)

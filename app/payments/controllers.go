@@ -6,14 +6,13 @@
  * API version: 3
  */
 
-package controllers
+package payments
 
 import (
 	"encoding/json"
 	"net/http"
 
 	"github.com/VuliTv/go-movie-api/app/customer"
-	"github.com/VuliTv/go-movie-api/app/payments"
 	"github.com/VuliTv/go-movie-api/libs/envhelp"
 	"github.com/VuliTv/go-movie-api/libs/requests"
 	AuthorizeCIM "gopkg.in/hunterlong/authorizecim.v1"
@@ -36,26 +35,26 @@ func CustomerGetPaymentProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var customerInfo *AuthorizeCIM.GetCustomerProfileResponse
+	var userInfo *AuthorizeCIM.GetCustomerProfileResponse
 
 	// Find doc
-	customer := &customer.Model{}
-	if err = connection.Collection("customer").FindById(bson.ObjectIdHex(authUser.ObjectID), &customer); err != nil {
+	user := &customer.Model{}
+	if err = mongoHandler.Collection(collection).FindById(bson.ObjectIdHex(authUser.ObjectID), &user); err != nil {
 		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
 	}
 	AuthorizeCIM.SetAPIInfo(authName, authKey, authMode)
 	authorizeCustomer := AuthorizeCIM.Customer{
-		ID: customer.Credit.ProfileID,
+		ID: user.Credit.ProfileID,
 	}
-	if customerInfo, err = authorizeCustomer.Info(); err != nil {
+	if userInfo, err = authorizeCustomer.Info(); err != nil {
 		log.Error("Customer Information fetch error: ", err.Error())
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	var retval []byte
-	if retval, err = json.Marshal(customerInfo); err != nil {
+	if retval, err = json.Marshal(userInfo); err != nil {
 		log.Error("Error: ", err.Error())
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
@@ -75,8 +74,8 @@ func CustomerCreatePaymentProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var user payments.CreateCustomerProfileRequest
-	if err = json.NewDecoder(r.Body).Decode(&user); err != nil {
+	var userCustomerCredit CreateCustomerProfileRequest
+	if err = json.NewDecoder(r.Body).Decode(&userCustomerCredit); err != nil {
 		log.Warn("Request Body parse error: ", err.Error())
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
@@ -85,18 +84,18 @@ func CustomerCreatePaymentProfile(w http.ResponseWriter, r *http.Request) {
 	var authorizeCustomer *AuthorizeCIM.CustomProfileResponse
 
 	authPaymentProfile := &AuthorizeCIM.PaymentProfiles{
-		CustomerType: payments.Individual,
+		CustomerType: Individual,
 	}
-	if len(user.CC.CardNumber) != 0 {
-		cc := &AuthorizeCIM.CreditCard{CardNumber: user.CC.CardNumber, ExpirationDate: user.CC.ExpirationDate, CardCode: user.CC.CardCode}
+	if len(userCustomerCredit.CC.CardNumber) != 0 {
+		cc := &AuthorizeCIM.CreditCard{CardNumber: userCustomerCredit.CC.CardNumber, ExpirationDate: userCustomerCredit.CC.ExpirationDate, CardCode: userCustomerCredit.CC.CardCode}
 		authPaymentProfile.Payment = AuthorizeCIM.Payment{CreditCard: *cc}
 	}
 	// API not supporting
-	// authPaymentProfile.BillTo = user.BillTo
+	// authPaymentProfile.BillTo = userCustomerCredit.BillTo
 
 	data := AuthorizeCIM.Profile{
 		MerchantCustomerID: authUser.Email,
-		Description:        user.Description,
+		Description:        userCustomerCredit.Description,
 		Email:              authUser.Email,
 		PaymentProfiles:    authPaymentProfile,
 	}
@@ -122,15 +121,15 @@ func CustomerCreatePaymentProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Find doc
-	customer := &customer.Model{}
-	if err = connection.Collection("customer").FindById(bson.ObjectIdHex(authUser.ObjectID), &customer); err != nil {
+	user := &customer.Model{}
+	if err = mongoHandler.Collection(collection).FindById(bson.ObjectIdHex(authUser.ObjectID), &user); err != nil {
 		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
 	}
-	customer.Credit.InfoStored = true
-	customer.Credit.ProfileID = authorizeCustomer.CustomerProfileID
-	customer.Credit.PaymentID = authorizeCustomer.CustomerPaymentProfileIDList[0]
-	if err = connection.Collection("customer").Save(customer); err != nil {
+	user.Credit.InfoStored = true
+	user.Credit.ProfileID = authorizeCustomer.CustomerProfileID
+	user.Credit.PaymentID = authorizeCustomer.CustomerPaymentProfileIDList[0]
+	if err = mongoHandler.Collection(collection).Save(user); err != nil {
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -138,38 +137,38 @@ func CustomerCreatePaymentProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 // CustomerPaymentAdd ..
-// adds a payment option to Authorize.Net customer profile
+// adds a payment option to Authorize.Net user profile
 func CustomerPaymentAdd(w http.ResponseWriter, r *http.Request) {
 
-	var user payments.CustomerPaymentProfileRequest
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+	var userProfileRequest CustomerPaymentProfileRequest
+	if err := json.NewDecoder(r.Body).Decode(&userProfileRequest); err != nil {
 		log.Error("JSON parse error: ", err.Error())
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	var err error
-	var customer *AuthorizeCIM.CustomerPaymentProfileResponse
+	var user *AuthorizeCIM.CustomerPaymentProfileResponse
 
 	AuthorizeCIM.SetAPIInfo(authName, authKey, authMode)
 	paymentProfile := AuthorizeCIM.CustomerPaymentProfile{
-		CustomerProfileID: user.ID,
+		CustomerProfileID: userProfileRequest.ID,
 		PaymentProfile: AuthorizeCIM.PaymentProfile{
-			BillTo: user.BillTo,
+			BillTo: userProfileRequest.BillTo,
 			Payment: &AuthorizeCIM.Payment{
-				CreditCard: user.CreditCard,
+				CreditCard: userProfileRequest.CreditCard,
 			},
 		},
 	}
 
-	if customer, err = paymentProfile.Add(); err != nil {
+	if user, err = paymentProfile.Add(); err != nil {
 		log.Error("Failed to add Payment profile: ", err.Error())
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	var retval []byte
-	if retval, err = json.Marshal(customer); err != nil {
+	if retval, err = json.Marshal(user); err != nil {
 		log.Error("Error: ", err.Error())
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
@@ -179,7 +178,7 @@ func CustomerPaymentAdd(w http.ResponseWriter, r *http.Request) {
 }
 
 // CustomerPaymentDelete -- deletes a payment option from
-// Authorize.Net customer profile
+// Authorize.Net user profile
 func CustomerPaymentDelete(w http.ResponseWriter, r *http.Request) {
 
 	// Get auth user information
@@ -191,8 +190,8 @@ func CustomerPaymentDelete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Find doc
-	customer := &customer.Model{}
-	if err = connection.Collection("customer").FindById(bson.ObjectIdHex(authUser.ObjectID), &customer); err != nil {
+	user := &customer.Model{}
+	if err = mongoHandler.Collection(collection).FindById(bson.ObjectIdHex(authUser.ObjectID), &user); err != nil {
 		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
 	}
@@ -201,8 +200,8 @@ func CustomerPaymentDelete(w http.ResponseWriter, r *http.Request) {
 
 	AuthorizeCIM.SetAPIInfo(authName, authKey, authMode)
 	authorizeCustomer := AuthorizeCIM.Customer{
-		ID:        customer.Credit.ProfileID,
-		PaymentID: customer.Credit.PaymentID,
+		ID:        user.Credit.ProfileID,
+		PaymentID: user.Credit.PaymentID,
 	}
 	if res, err = authorizeCustomer.DeletePaymentProfile(); err != nil {
 		log.Error("Customer Payment delete error: ", err.Error())
@@ -215,9 +214,9 @@ func CustomerPaymentDelete(w http.ResponseWriter, r *http.Request) {
 		requests.ReturnAPIError(w, http.StatusBadRequest, res.Messages.Message[0].Text)
 		return
 	}
-	customer.Credit.PaymentID = ""
+	user.Credit.PaymentID = ""
 
-	if err = connection.Collection("customer").Save(customer); err != nil {
+	if err = mongoHandler.Collection(collection).Save(user); err != nil {
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -233,10 +232,10 @@ func CustomerPaymentDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 // CustomerPaymentUpdate -- updates a payment option in
-// Authorize.Net customer profile
+// Authorize.Net user profile
 func CustomerPaymentUpdate(w http.ResponseWriter, r *http.Request) {
 
-	var user payments.CustomerPaymentUpdateRequest
+	var user CustomerPaymentUpdateRequest
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		log.Error("JSON parse error: ", err.Error())
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
@@ -252,7 +251,7 @@ func CustomerPaymentUpdate(w http.ResponseWriter, r *http.Request) {
 	var res *AuthorizeCIM.MessagesResponse
 
 	authPaymentProfile := &AuthorizeCIM.PaymentProfiles{
-		CustomerType: payments.Individual,
+		CustomerType: Individual,
 	}
 	if len(user.CC.CardNumber) != 0 {
 		cc := &AuthorizeCIM.CreditCard{CardNumber: user.CC.CardNumber, ExpirationDate: user.CC.ExpirationDate, CardCode: user.CC.CardCode}

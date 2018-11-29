@@ -44,7 +44,7 @@ type Model struct {
 	Trailer    media.Trailer    `json:"trailer"`
 
 	// MovieInformation --
-	Information media.MediaInformation `json:"information"`
+	Information media.Information `json:"information"`
 
 	Chapters []media.Chapter `json:"chapters"`
 

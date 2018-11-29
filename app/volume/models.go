@@ -42,7 +42,7 @@ type Model struct {
 	Scenes []bson.ObjectId `json:"scenes"`
 
 	// MovieInformation --
-	Information media.MediaInformation `json:"information"`
+	Information media.Information `json:"information"`
 
 	// Model Viewing Performance
 	Performance media.Performance `json:"performance"`

@@ -27,6 +27,10 @@ type Thumbnails struct {
 	Format string `json:"format"`
 }
 
+func (t *Thumbnails) Upload() {
+
+}
+
 // Trailer --
 type Trailer struct {
 	DynamoDBId string `json:"dynamodbid"`
@@ -46,8 +50,8 @@ func (t *Trailer) URL() string {
 	return url
 }
 
-// MediaInformation --
-type MediaInformation struct {
+// Information --
+type Information struct {
 	Director []*bson.ObjectId `json:"director"`
 
 	Studio *bson.ObjectId `json:"studio"`
@@ -65,7 +69,7 @@ type MediaInformation struct {
 }
 
 // BestQuality .. Get the best quality video available from slice
-func (m *MediaInformation) BestQuality() int {
+func (m *Information) BestQuality() int {
 
 	highest := 480
 	for i := range m.Quality {

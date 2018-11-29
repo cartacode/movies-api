@@ -7,7 +7,7 @@
 
  */
 
-package controllers
+package customer
 
 import (
 	"encoding/json"
@@ -15,22 +15,20 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/VuliTv/go-movie-api/app/customer"
-
 	"github.com/VuliTv/go-movie-api/libs/requests"
 	"github.com/VuliTv/go-movie-api/libs/stringops"
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2/bson"
 )
 
-// CustomerWishlistUpdateRequest ..
-type CustomerWishlistUpdateRequest struct {
+// WishlistUpdateRequest ..
+type WishlistUpdateRequest struct {
 	Collection string         `json:"collection"`
 	ID         *bson.ObjectId `json:"id"`
 }
 
-// CustomerWishlistResponse ..
-type CustomerWishlistResponse struct {
+// WishlistResponse ..
+type WishlistResponse struct {
 	// Liked Items
 	Liked struct {
 
@@ -73,8 +71,8 @@ type CustomerWishlistResponse struct {
 	} `json:"wishlist"`
 }
 
-// CustomerListAddItem --
-func CustomerListAddItem(w http.ResponseWriter, r *http.Request) {
+// ListAddItem --
+func ListAddItem(w http.ResponseWriter, r *http.Request) {
 	// Get auth user information
 	params := mux.Vars(r)
 	allowedLists := []string{"wishlist", "liked", "disliked"}
@@ -82,12 +80,13 @@ func CustomerListAddItem(w http.ResponseWriter, r *http.Request) {
 		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, "only allowed methods ["+strings.Join(allowedLists, ",")+"]"))
 		return
 	}
+
 	var authUser, err = requests.GetAuthUser(r)
 	if err != nil {
 		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
 	}
-	var wishlistRequest CustomerWishlistUpdateRequest
+	var wishlistRequest WishlistUpdateRequest
 	if err = json.NewDecoder(r.Body).Decode(&wishlistRequest); err != nil {
 		log.Warn("Request Body parse error: ", err.Error())
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
@@ -95,7 +94,7 @@ func CustomerListAddItem(w http.ResponseWriter, r *http.Request) {
 	}
 
 	list := fmt.Sprintf("%s.%ss", params["list"], wishlistRequest.Collection)
-	if err := connection.Collection("customer").Collection().Update(bson.M{"_id": bson.ObjectIdHex(authUser.ObjectID)}, bson.M{"$push": bson.M{list: wishlistRequest.ID}}); err != nil {
+	if err := connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(authUser.ObjectID)}, bson.M{"$push": bson.M{list: wishlistRequest.ID}}); err != nil {
 		log.Errorw("unable to add item to list",
 			"list", params["list"],
 			"collection", wishlistRequest.Collection,
@@ -120,8 +119,8 @@ func CustomerListAddItem(w http.ResponseWriter, r *http.Request) {
 	requests.ReturnAPIOK(w, js)
 }
 
-// CustomerWishlistDeleteItem --
-func CustomerWishlistDeleteItem(w http.ResponseWriter, r *http.Request) {
+// WishlistDeleteItem --
+func WishlistDeleteItem(w http.ResponseWriter, r *http.Request) {
 	// Get auth user information
 	params := mux.Vars(r)
 
@@ -135,7 +134,7 @@ func CustomerWishlistDeleteItem(w http.ResponseWriter, r *http.Request) {
 		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
 	}
-	var wishlistRequest CustomerWishlistUpdateRequest
+	var wishlistRequest WishlistUpdateRequest
 	if err = json.NewDecoder(r.Body).Decode(&wishlistRequest); err != nil {
 		log.Warn("Request Body parse error: ", err.Error())
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
@@ -143,7 +142,7 @@ func CustomerWishlistDeleteItem(w http.ResponseWriter, r *http.Request) {
 	}
 
 	list := fmt.Sprintf("%s.%ss", params["list"], wishlistRequest.Collection)
-	if err := connection.Collection("customer").Collection().UpdateId(bson.ObjectIdHex(authUser.ObjectID), bson.M{"$pull": bson.M{list: wishlistRequest.ID}}); err != nil {
+	if err := connection.Collection(collection).Collection().UpdateId(bson.ObjectIdHex(authUser.ObjectID), bson.M{"$pull": bson.M{list: wishlistRequest.ID}}); err != nil {
 		log.Errorw("unable to remove item from list",
 			"list", params["list"],
 			"collection", wishlistRequest.Collection,
@@ -168,27 +167,27 @@ func CustomerWishlistDeleteItem(w http.ResponseWriter, r *http.Request) {
 	requests.ReturnAPIOK(w, js)
 }
 
-// CustomerProfileGet --
-func CustomerProfileGet(w http.ResponseWriter, r *http.Request) {
+// ProfileGet --
+func ProfileGet(w http.ResponseWriter, r *http.Request) {
 	var authUser, err = requests.GetAuthUser(r)
 	if err != nil {
 		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
 	}
 
-	customer := customer.Model{}
-	if err := connection.Collection("customer").FindById(bson.ObjectIdHex(authUser.ObjectID), &customer); err != nil {
+	user := Model{}
+	if err := connection.Collection(collection).FindById(bson.ObjectIdHex(authUser.ObjectID), &user); err != nil {
 		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
 	}
 
-	// for _, e := range customer.Wishlist.Scenes {
+	// for _, e := range user.Wishlist.Scenes {
 	// response.Wishlist.Scenes = append(response.Wishlist.Scenes, *e)
 	// }
 
 	// Don't give real passwords
-	customer.Password = "**************************"
-	js, err := json.Marshal(customer)
+	user.Password = "**************************"
+	js, err := json.Marshal(user)
 
 	if err != nil {
 		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))

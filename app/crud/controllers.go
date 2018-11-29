@@ -7,7 +7,7 @@
 
  */
 
-package controllers
+package crud
 
 import (
 	"encoding/json"
@@ -31,7 +31,7 @@ func GenericCrudGet(w http.ResponseWriter, r *http.Request) {
 	collection := params["collection"]
 
 	// get out resuls
-	results := connection.Collection(collection).Find(query)
+	results := mongoHandler.Collection(collection).Find(query)
 
 	// Get pagination information
 	perPage, page := requests.GetPaginationInfo(r)
@@ -105,7 +105,7 @@ func GenericCrudPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = connection.Collection(collection).Save(model.(bongo.Document))
+	err = mongoHandler.Collection(collection).Save(model.(bongo.Document))
 	if err != nil {
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
@@ -145,7 +145,7 @@ func GenericCrudIDGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Find doc
-	if err = connection.Collection(collection).FindById(bson.ObjectIdHex(objectID), &model); err != nil {
+	if err = mongoHandler.Collection(collection).FindById(bson.ObjectIdHex(objectID), &model); err != nil {
 		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
 	}
@@ -177,13 +177,13 @@ func GenericCrudIDDelete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Find doc
-	err = connection.Collection(collection).FindById(bson.ObjectIdHex(objectID), model)
+	err = mongoHandler.Collection(collection).FindById(bson.ObjectIdHex(objectID), model)
 	if err != nil {
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	// Delete the document
-	err = connection.Collection(collection).DeleteDocument(model.(bongo.Document))
+	err = mongoHandler.Collection(collection).DeleteDocument(model.(bongo.Document))
 	log.Info(err)
 	if err != nil {
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
@@ -233,7 +233,7 @@ func GenericCrudIDPatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Update the document
-	if err := connection.Collection(collection).Collection().Update(
+	if err := mongoHandler.Collection(collection).Collection().Update(
 		bson.M{"_id": bson.ObjectIdHex(objectID)}, bson.M{"$set": patchBody}); err != nil {
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		return

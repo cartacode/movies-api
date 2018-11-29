@@ -1,18 +1,15 @@
-package payments
+package security
 
 import (
 	"github.com/VuliTv/go-movie-api/dbh"
 	"github.com/VuliTv/go-movie-api/libs/logging"
 )
 
+var redis dbh.RedisHandler
 var log = logging.GetProdLog()
-var mongoHandler dbh.MongoDBHandler
-
-var collection = "customer"
 
 func init() {
-	dbh.NewAuthorizeNetSession()
-	if err := mongoHandler.New(collection); err != nil {
+	if err := redis.New("security-auth"); err != nil {
 		log.Fatal(err)
 	}
 }
