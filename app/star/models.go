@@ -14,9 +14,13 @@ import (
 	"time"
 
 	"github.com/VuliTv/go-movie-api/app/media"
+	"github.com/VuliTv/go-movie-api/libs/stringops"
 	"github.com/go-bongo/bongo"
 	"gopkg.in/mgo.v2/bson"
 )
+
+// FunctionEnum --
+var FunctionEnum = []string{"performer", "director", "director-performer"}
 
 // Model Document
 //
@@ -88,13 +92,18 @@ type Model struct {
 		ModelSign string `json:"sign"`
 	} `json:"traits"`
 
-	Director bool `json:"director"`
+	Function string `json:"function"`
 }
 
 // Validate --
 func (s *Model) Validate(*bongo.Collection) []error {
 
 	retval := make([]error, 0)
+
+	// Enum function check
+	if !stringops.StringInSlice(s.Function, FunctionEnum) {
+		retval = append(retval, fmt.Errorf("function must be in %s", FunctionEnum))
+	}
 	// star := &Model{}
 
 	// Find by slug when posting new star
