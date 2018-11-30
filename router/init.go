@@ -18,6 +18,7 @@ import (
 	"github.com/VuliTv/go-movie-api/app/auth"
 	"github.com/VuliTv/go-movie-api/app/crud"
 	"github.com/VuliTv/go-movie-api/app/customer"
+	"github.com/VuliTv/go-movie-api/app/denormalized"
 	"github.com/VuliTv/go-movie-api/app/operations"
 	"github.com/VuliTv/go-movie-api/app/payments"
 	"github.com/VuliTv/go-movie-api/app/search"
@@ -64,6 +65,7 @@ func NewRouter() *mux.Router {
 	routes = append(routes, payments.Routes...)
 	routes = append(routes, customer.Routes...)
 	routes = append(routes, webdata.Routes...)
+	routes = append(routes, denormalized.Routes...)
 
 	for _, route := range routes {
 		var handler http.Handler

@@ -30,7 +30,7 @@ func GenericCrudGet(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	collection := params["collection"]
 
-	// get out resuls
+	// get out results
 	results := mongoHandler.Collection(collection).Find(query)
 
 	// Get pagination information
