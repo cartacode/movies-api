@@ -126,10 +126,7 @@ func IsAdminRoute(req *http.Request) bool {
 
 	switch req.RequestURI {
 	case "/v1/collection/studio":
-		switch req.Method {
-		case "POST":
-			return true
-		}
+		return true
 	}
 
 	return false
@@ -139,9 +136,7 @@ func IsAdminRoute(req *http.Request) bool {
 func IsOpenAuthedRoute(req *http.Request) bool {
 
 	if req.Method == "GET" {
-		if strings.Contains(req.URL.Path, "/v1/collection") {
-			return true
-		} else if strings.Contains(req.URL.Path, "/v1/data/") {
+		if strings.Contains(req.URL.Path, "/v1/data/") {
 			return true
 		}
 	}
