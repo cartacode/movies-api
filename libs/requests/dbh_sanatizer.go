@@ -5,6 +5,8 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+
+	"gopkg.in/mgo.v2/bson"
 )
 
 // QuerySanatizer --
@@ -20,6 +22,14 @@ func QuerySanatizer(params map[string][]string) map[string]interface{} {
 
 		// fmt.Println(reflect.TypeOf(params[rawParam][0]))
 		switch rawParam {
+		case "_id":
+			if bson.IsObjectIdHex(params[rawParam][0]) {
+				value = bson.ObjectIdHex(params[rawParam][0])
+
+			} else {
+				continue
+			}
+
 		case "reviewed":
 			value, err = strconv.ParseBool(params[rawParam][0])
 		case "page":
