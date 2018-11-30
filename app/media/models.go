@@ -17,7 +17,9 @@ type Images struct {
 // Extras --
 type Extras struct {
 	URL       string `json:"url"`
+	Title     bool   `json:"title"`
 	Published bool   `json:"published"`
+	ImageURL  bool   `json:"imageUrl"`
 }
 
 // Thumbnails --
