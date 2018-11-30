@@ -13,4 +13,11 @@ var Routes = requests.Routes{
 		Pattern:     "/v1/denormalized/scenes",
 		HandlerFunc: Scenes,
 	},
+
+	requests.Route{
+		Name:        "DenormalizedMoviess",
+		Method:      "GET",
+		Pattern:     "/v1/denormalized/movies",
+		HandlerFunc: Movies,
+	},
 }
