@@ -7,11 +7,15 @@ import (
 
 var log = logging.GetProdLog()
 var mongoHandler dbh.MongoDBHandler
+var redisHandler dbh.RedisHandler
 
 const controller string = "denormalized"
 
 func init() {
 	if err := mongoHandler.New(controller); err != nil {
+		log.Fatal(err)
+	}
+	if err := redisHandler.New(controller); err != nil {
 		log.Fatal(err)
 	}
 }

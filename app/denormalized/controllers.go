@@ -1,8 +1,11 @@
 package denormalized
 
 import (
+	"crypto/md5"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/VuliTv/go-movie-api/app/scene"
 	"github.com/VuliTv/go-movie-api/libs/requests"
@@ -12,6 +15,14 @@ import (
 func Scenes(w http.ResponseWriter, r *http.Request) {
 
 	var retval []interface{}
+	hash := fmt.Sprintf("%x", md5.Sum([]byte(r.URL.String())))
+	data := redisHandler.Get(hash)
+	if data.Err() == nil {
+		resp := data.Val()
+		log.Info("Loaded response from cache")
+		requests.ReturnAPIOK(w, []byte(resp))
+		return
+	}
 	results := mongoHandler.Collection("scene").Find(nil)
 	// Get pagination information
 	perPage, page := requests.GetPaginationInfo(r)
@@ -113,6 +124,11 @@ func Scenes(w http.ResponseWriter, r *http.Request) {
 		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
 		log.Error(err)
 		return
+	}
+	log.Info("Loaded response from db")
+	hash = fmt.Sprintf("%x", md5.Sum([]byte(r.URL.String())))
+	if ok := redisHandler.Set(hash, rs, time.Second*10); ok != nil {
+		log.Info("set response to cache")
 	}
 
 	requests.ReturnAPIOK(w, rs)
