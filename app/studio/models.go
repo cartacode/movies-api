@@ -10,6 +10,7 @@
 package studio
 
 import (
+	"github.com/VuliTv/go-movie-api/app/media"
 	"github.com/go-bongo/bongo"
 )
 
@@ -28,6 +29,8 @@ type Model struct {
 	Slug string `json:"slug"`
 
 	Thumbnail string `json:"thumbnail"`
+
+	Images media.Images `json:"images"`
 }
 
 // Validate --
