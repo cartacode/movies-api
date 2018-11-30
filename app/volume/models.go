@@ -39,7 +39,7 @@ type Model struct {
 	Series *bson.ObjectId `json:"series"`
 
 	// Series this volume is in
-	Scenes []bson.ObjectId `json:"scenes"`
+	Scenes []*bson.ObjectId `json:"scenes"`
 
 	// MovieInformation --
 	Information media.Information `json:"information"`

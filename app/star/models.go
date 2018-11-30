@@ -53,6 +53,8 @@ type Model struct {
 
 	Movies []*bson.ObjectId `json:"movies"`
 
+	Volumes []*bson.ObjectId `json:"volumes"`
+
 	// List of Tags
 	Tags []string `json:"tags"`
 

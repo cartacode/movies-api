@@ -9,13 +9,20 @@ import (
 
 	"github.com/VuliTv/go-movie-api/app/movie"
 	"github.com/VuliTv/go-movie-api/app/scene"
+	"github.com/VuliTv/go-movie-api/app/star"
+	"github.com/VuliTv/go-movie-api/app/volume"
 	"github.com/VuliTv/go-movie-api/libs/requests"
+	"gopkg.in/mgo.v2/bson"
 )
 
 // Scenes --
 func Scenes(w http.ResponseWriter, r *http.Request) {
 
 	var retval []interface{}
+
+	query := requests.QuerySanatizer(r.URL.Query())
+	log.Debugw("query running", "Q", query)
+
 	hash := fmt.Sprintf("%x", md5.Sum([]byte(r.URL.String())))
 	data := redisHandler.Get(hash)
 	if data.Err() == nil {
@@ -24,7 +31,7 @@ func Scenes(w http.ResponseWriter, r *http.Request) {
 		requests.ReturnAPIOK(w, []byte(resp))
 		return
 	}
-	results := mongoHandler.Collection("scene").Find(nil)
+	results := mongoHandler.Collection("scene").Find(query)
 	// Get pagination information
 	perPage, page := requests.GetPaginationInfo(r)
 	pagination, err := results.Paginate(perPage, page)
@@ -46,70 +53,89 @@ func Scenes(w http.ResponseWriter, r *http.Request) {
 		dScene := &Scene{Model: *scene}
 
 		// Volume
-		if scene.Volume != nil {
-			vol := &ModelStub{}
-			if err := mongoHandler.Collection("volume").FindById(*scene.Volume, &vol); err != nil {
-				dScene.Volume = nil
-				log.Warn(err)
-
-			}
-			dScene.Volume = vol
-		}
-
-		//Series
-		if scene.Volume != nil {
-			series := &ModelStub{}
-			if err := mongoHandler.Collection("series").FindById(*scene.Volume, &series); err != nil {
-				log.Warn(err)
-				dScene.Series = nil
-			} else {
-
-				dScene.Series = series
-			}
-		}
-
-		// Studio
-		if scene.Information.Studio != nil {
-			studio := &ModelStub{}
-			if err := mongoHandler.Collection("studio").FindById(*scene.Information.Studio, &studio); err != nil {
-				log.Warn(err)
-				dScene.Information.Studio = nil
-			} else {
-
-				dScene.Information.Studio = studio
-			}
-		}
+		dScene.Volume = addDenormalizedData("volume", scene.Volume)
+		dScene.Series = addDenormalizedData("volume", scene.Series)
+		dScene.Information.Studio = addDenormalizedData("volume", scene.Information.Studio)
 
 		// Stars
-		if scene.Information.Stars != nil {
-			for _, star := range scene.Information.Stars {
-				starStub := &ModelStub{}
-				if err := mongoHandler.Collection("star").FindById(*star, &starStub); err != nil {
-					log.Warn(err)
-				} else {
-					dScene.Information.Stars = append(dScene.Information.Stars, starStub)
-				}
-			}
+		dScene.Information.Stars = addDenormalizedDataFromSlice("star", scene.Information.Stars)
+		dScene.Information.Director = addDenormalizedDataFromSlice("star", scene.Information.Director)
 
-		}
-
-		if scene.Information.Director != nil {
-			for _, director := range scene.Information.Director {
-				directorStub := &ModelStub{}
-				if err := mongoHandler.Collection("star").FindById(*director, &directorStub); err != nil {
-					log.Warn(err)
-				} else {
-					dScene.Information.Director = append(dScene.Information.Director, directorStub)
-				}
-			}
-
-		}
 		dScene.Information.Length = scene.Information.Length
 		dScene.Information.Quality = scene.Information.Quality
 		dScene.Information.Year = scene.Information.Year
 
 		// Append all
 		retval = append(retval, dScene)
+	}
+	response := requests.JSONPaginationResponse{
+		Results:       retval,
+		TotalResults:  pagination.TotalRecords,
+		RecordsOnPage: pagination.RecordsOnPage,
+		Page:          pagination.Current,
+		TotalPages:    pagination.TotalPages,
+	}
+
+	// Turn it into a json and serve it up
+	rs, err := json.Marshal(response)
+	if err != nil {
+		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
+		log.Error(err)
+		return
+	}
+	log.Info("Loaded response from db")
+	hash = fmt.Sprintf("%x", md5.Sum([]byte(r.URL.String())))
+	if ok := redisHandler.Set(hash, rs, time.Second*10); ok != nil {
+		log.Info("set response to cache")
+	}
+
+	requests.ReturnAPIOK(w, rs)
+}
+
+// Stars --
+func Stars(w http.ResponseWriter, r *http.Request) {
+
+	var retval []interface{}
+
+	query := requests.QuerySanatizer(r.URL.Query())
+	log.Debugw("query running", "Q", query)
+
+	hash := fmt.Sprintf("%x", md5.Sum([]byte(r.URL.String())))
+	data := redisHandler.Get(hash)
+	if data.Err() == nil {
+		resp := data.Val()
+		log.Info("Loaded response from cache")
+		requests.ReturnAPIOK(w, []byte(resp))
+		return
+	}
+	results := mongoHandler.Collection("star").Find(query)
+	// Get pagination information
+	perPage, page := requests.GetPaginationInfo(r)
+	pagination, err := results.Paginate(perPage, page)
+
+	if err != nil {
+		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
+		log.Error(err)
+		return
+	}
+
+	// Get which page we are on to skip
+	// results.Query.Skip(page * perpage)
+
+	star := &star.Model{}
+
+	// Add the found results
+	for results.Next(&star) {
+
+		dStar := &Star{Model: *star}
+
+		dStar.Studios = addDenormalizedDataFromSlice("studio", star.Studios)
+		dStar.Scenes = addDenormalizedDataFromSlice("scene", star.Scenes)
+		dStar.Movies = addDenormalizedDataFromSlice("movie", star.Movies)
+		dStar.Volumes = addDenormalizedDataFromSlice("volume", star.Volumes)
+
+		// Append all
+		retval = append(retval, dStar)
 	}
 	response := requests.JSONPaginationResponse{
 		Results:       retval,
@@ -233,4 +259,112 @@ func Movies(w http.ResponseWriter, r *http.Request) {
 	}
 
 	requests.ReturnAPIOK(w, rs)
+}
+
+func Volumes(w http.ResponseWriter, r *http.Request) {
+
+	var retval []interface{}
+
+	query := requests.QuerySanatizer(r.URL.Query())
+	log.Debugw("query running", "Q", query)
+
+	hash := fmt.Sprintf("%x", md5.Sum([]byte(r.URL.String())))
+	data := redisHandler.Get(hash)
+	if data.Err() == nil {
+		resp := data.Val()
+		log.Info("Loaded response from cache")
+		requests.ReturnAPIOK(w, []byte(resp))
+		return
+	}
+	results := mongoHandler.Collection("volume").Find(query)
+	// Get pagination information
+	perPage, page := requests.GetPaginationInfo(r)
+	pagination, err := results.Paginate(perPage, page)
+
+	if err != nil {
+		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
+		log.Error(err)
+		return
+	}
+
+	// Get which page we are on to skip
+	// results.Query.Skip(page * perpage)
+
+	volume := &volume.Model{}
+
+	// Add the found results
+	for results.Next(&volume) {
+
+		dVolume := &Volume{Model: *volume}
+
+		// Volume
+		dVolume.Scenes = addDenormalizedDataFromSlice("scene", volume.Scenes)
+		dVolume.Series = addDenormalizedData("volume", volume.Series)
+		dVolume.Information.Studio = addDenormalizedData("volume", volume.Information.Studio)
+
+		// Stars
+		dVolume.Information.Stars = addDenormalizedDataFromSlice("star", volume.Information.Stars)
+		dVolume.Information.Director = addDenormalizedDataFromSlice("star", volume.Information.Director)
+
+		dVolume.Information.Length = volume.Information.Length
+		dVolume.Information.Quality = volume.Information.Quality
+		dVolume.Information.Year = volume.Information.Year
+
+		// Append all
+		retval = append(retval, dVolume)
+	}
+	response := requests.JSONPaginationResponse{
+		Results:       retval,
+		TotalResults:  pagination.TotalRecords,
+		RecordsOnPage: pagination.RecordsOnPage,
+		Page:          pagination.Current,
+		TotalPages:    pagination.TotalPages,
+	}
+
+	// Turn it into a json and serve it up
+	rs, err := json.Marshal(response)
+	if err != nil {
+		requests.ReturnAPIError(w, http.StatusBadRequest, err.Error())
+		log.Error(err)
+		return
+	}
+	log.Info("Loaded response from db")
+	hash = fmt.Sprintf("%x", md5.Sum([]byte(r.URL.String())))
+	if ok := redisHandler.Set(hash, rs, time.Second*10); ok != nil {
+		log.Info("set response to cache")
+	}
+
+	requests.ReturnAPIOK(w, rs)
+}
+func addDenormalizedDataFromSlice(collection string, objectIDS []*bson.ObjectId) []*ModelStub {
+
+	if objectIDS == nil {
+		return nil
+	}
+	retval := []*ModelStub{}
+	for _, object := range objectIDS {
+		objectStub := &ModelStub{}
+		if err := mongoHandler.Collection(collection).FindById(*object, &objectStub); err != nil {
+			log.Warn(err)
+		} else {
+			objectStub.Id = object
+			retval = append(retval, objectStub)
+		}
+	}
+
+	return retval
+}
+
+func addDenormalizedData(collection string, objectId *bson.ObjectId) *ModelStub {
+
+	if objectId == nil {
+		return nil
+	}
+	retval := &ModelStub{}
+	if err := mongoHandler.Collection(collection).FindById(*objectId, &retval); err != nil {
+		log.Warn(err)
+
+	}
+
+	return retval
 }

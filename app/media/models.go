@@ -59,7 +59,7 @@ type Information struct {
 	Studio *bson.ObjectId `json:"studio"`
 
 	// List of Mongo ObjectId for the Stars in this movie. Embeddable
-	Stars []*bson.ObjectId `json:"Stars"`
+	Stars []*bson.ObjectId `json:"stars"`
 
 	// Total movie length in seconds
 	Length int32 `json:"length"`
