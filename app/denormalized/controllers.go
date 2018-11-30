@@ -20,7 +20,11 @@ func Scenes(w http.ResponseWriter, r *http.Request) {
 
 	var retval []interface{}
 
-	query := requests.QuerySanatizer(r.URL.Query())
+	query, err := requests.QuerySanatizer(r.URL.Query())
+	if err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
+		return
+	}
 	log.Debugw("query running", "Q", query)
 
 	hash := fmt.Sprintf("%x", md5.Sum([]byte(r.URL.String())))
@@ -97,7 +101,11 @@ func Stars(w http.ResponseWriter, r *http.Request) {
 
 	var retval []interface{}
 
-	query := requests.QuerySanatizer(r.URL.Query())
+	query, err := requests.QuerySanatizer(r.URL.Query())
+	if err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
+		return
+	}
 	log.Debugw("query running", "Q", query)
 
 	hash := fmt.Sprintf("%x", md5.Sum([]byte(r.URL.String())))
@@ -265,7 +273,11 @@ func Volumes(w http.ResponseWriter, r *http.Request) {
 
 	var retval []interface{}
 
-	query := requests.QuerySanatizer(r.URL.Query())
+	query, err := requests.QuerySanatizer(r.URL.Query())
+	if err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
+		return
+	}
 	log.Debugw("query running", "Q", query)
 
 	hash := fmt.Sprintf("%x", md5.Sum([]byte(r.URL.String())))

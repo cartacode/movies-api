@@ -12,6 +12,7 @@ import (
 	"github.com/VuliTv/go-movie-api/libs/envhelp"
 	"github.com/VuliTv/go-movie-api/libs/models"
 	"github.com/VuliTv/go-movie-api/libs/requests"
+	"github.com/VuliTv/go-movie-api/libs/stringops"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
@@ -129,16 +130,28 @@ func UploadImage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	params := mux.Vars(r)
-	query := requests.QuerySanatizer(r.URL.Query())
-	field := query["key"].(string)
-	objectID := query["id"].(string)
-	collection := params["collection"]
-
-	// Check for a hexId
-	if !bson.IsObjectIdHex(objectID) {
-		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, "Not a valid bson Id"))
+	query, err := requests.QuerySanatizer(r.URL.Query())
+	if err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
 		return
 	}
+	// Check for params
+	keys := make([]string, len(query))
+	for key := range query {
+		keys = append(keys, key)
+	}
+	if !stringops.StringInSlice("key", keys) {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, "requires key and _id params"))
+		return
+	}
+	if !stringops.StringInSlice("id", keys) {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, "requires key and _id params"))
+		return
+	}
+	field := query["key"].(string)
+	objectID := query["id"].(bson.ObjectId)
+	collection := params["collection"]
+
 	// Read the image
 	content, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -162,7 +175,7 @@ func UploadImage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Upload to our bucket
-	path, err = requests.AddFileToS3(s, bucket, "media/"+objectID+"/images/"+field, content)
+	path, err = requests.AddFileToS3(s, bucket, "media/"+objectID.Hex()+"/images/"+field, content)
 	if err != nil {
 		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
@@ -170,7 +183,7 @@ func UploadImage(w http.ResponseWriter, r *http.Request) {
 	// Patch the collection document with the new image path
 	patch := make(map[string]string)
 	patch["images."+field] = path
-	if err = mongoHandler.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(objectID)}, bson.M{"$set": patch}); err != nil {
+	if err = mongoHandler.Collection(collection).Collection().Update(bson.M{"_id": objectID}, bson.M{"$set": patch}); err != nil {
 		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
 	}
@@ -196,7 +209,11 @@ func UploadTrailer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	params := mux.Vars(r)
-	query := requests.QuerySanatizer(r.URL.Query())
+	query, err := requests.QuerySanatizer(r.URL.Query())
+	if err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
+		return
+	}
 	field := query["key"].(string)
 	objectID := query["id"].(string)
 	collection := params["collection"]

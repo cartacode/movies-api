@@ -14,7 +14,12 @@ import (
 func GenericSearchGet(w http.ResponseWriter, r *http.Request) {
 
 	var retval []interface{}
-	query := requests.QuerySanatizer(r.URL.Query())
+	query, err := requests.QuerySanatizer(r.URL.Query())
+	if err != nil {
+		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
+		return
+	}
+
 	log.Debugw("query running", "Q", query)
 	params := mux.Vars(r)
 	collection := params["collection"]
