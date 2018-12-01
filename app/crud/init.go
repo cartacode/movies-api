@@ -1,0 +1,16 @@
+package crud
+
+import (
+	"github.com/VuliTv/go-movie-api/dbh"
+	"github.com/VuliTv/go-movie-api/libs/logging"
+)
+
+var mongoHandler dbh.MongoDBHandler
+
+var log = logging.GetProdLog()
+
+func init() {
+	if err := mongoHandler.New("crud"); err != nil {
+		log.Fatal(err)
+	}
+}

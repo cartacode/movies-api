@@ -1,19 +1,27 @@
 package dbh
 
 import (
+	"fmt"
+
 	"github.com/VuliTv/go-movie-api/libs/envhelp"
 	"github.com/go-redis/redis"
 )
 
+// RedisHandler --
+type RedisHandler struct {
+	*redis.Client
+}
+
 var redisConfig = &redis.Options{
-	Addr:     envhelp.GetEnv("REDIS_ADDRESS", "localhost:6379"),
+	Addr:     fmt.Sprintf("%s:%s", envhelp.GetEnv("REDIS_ADDRESS", "localhost"), envhelp.GetEnv("REDIS_PORT", "6379")),
 	Password: envhelp.GetEnv("REDIS_PASSWORD", ""),
 	DB:       envhelp.GetEnvInt("REDIS_DB", 0),
 }
 
-// NewRedisConnection --
-func NewRedisConnection() (*redis.Client, error) {
-	log.Infow("new database handler created",
+// New --
+func (r *RedisHandler) New(controller string) error {
+	log.Infow("new redis handler created",
+		"caller", controller,
 		"connection_string", redisConfig.Addr,
 		"database", redisConfig.DB,
 	)
@@ -27,5 +35,7 @@ func NewRedisConnection() (*redis.Client, error) {
 	}
 
 	log.Debugw("redis connected", "results", res)
-	return client, err
+
+	r.Client = client
+	return err
 }

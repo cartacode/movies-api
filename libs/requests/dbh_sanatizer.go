@@ -5,10 +5,12 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+
+	"gopkg.in/mgo.v2/bson"
 )
 
 // QuerySanatizer --
-func QuerySanatizer(params map[string][]string) map[string]interface{} {
+func QuerySanatizer(params map[string][]string) (map[string]interface{}, error) {
 
 	query := make(map[string]interface{})
 
@@ -16,12 +18,28 @@ func QuerySanatizer(params map[string][]string) map[string]interface{} {
 
 		// default value for switch
 		var value interface{}
-		var err interface{}
-
+		var err error
 		// fmt.Println(reflect.TypeOf(params[rawParam][0]))
 		switch rawParam {
+		case "star__contains":
+			value, err = strconv.ParseBool(params[rawParam][0])
+			if err != nil {
+				return nil, fmt.Errorf("reviewed is true/false")
+			}
+			rawParam = "star"
+		case "_id":
+			if bson.IsObjectIdHex(params[rawParam][0]) {
+				value = bson.ObjectIdHex(params[rawParam][0])
+
+			} else {
+				return nil, fmt.Errorf("_id must be a valid bson id")
+			}
+
 		case "reviewed":
 			value, err = strconv.ParseBool(params[rawParam][0])
+			if err != nil {
+				return nil, fmt.Errorf("reviewed is true/false")
+			}
 		case "page":
 			continue
 		case "perpage":
@@ -30,20 +48,24 @@ func QuerySanatizer(params map[string][]string) map[string]interface{} {
 			continue
 		default:
 
-			fmt.Println(params[rawParam])
 			varType := reflect.TypeOf(params[rawParam][0]).Kind()
 
 			// See if it's a string
 			if len(params[rawParam]) == 1 && varType == reflect.String {
-				switch strings.ToLower(params[rawParam][0]) {
-				case "true":
-					value = true
-					log.Debugw("converted bool type", rawParam, value)
-				case "false":
-					value = false
-					log.Debugw("converted bool type", rawParam, value)
-				default:
-					value = params[rawParam][0]
+				if bson.IsObjectIdHex(params[rawParam][0]) {
+					value = bson.ObjectIdHex(params[rawParam][0])
+
+				} else {
+					switch strings.ToLower(params[rawParam][0]) {
+					case "true":
+						value = true
+						log.Debugw("converted bool type", rawParam, value)
+					case "false":
+						value = false
+						log.Debugw("converted bool type", rawParam, value)
+					default:
+						value = params[rawParam][0]
+					}
 				}
 
 			} else {
@@ -52,13 +74,9 @@ func QuerySanatizer(params map[string][]string) map[string]interface{} {
 			}
 		}
 
-		if err != nil {
-			log.Error(err)
-			return nil
-		}
 		query[rawParam] = value
 	}
 
 	log.Debugw("full query", "string", query)
-	return query
+	return query, nil
 }

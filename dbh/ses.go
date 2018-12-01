@@ -21,17 +21,21 @@ type SeSHandler struct {
 }
 
 // New --
-func (s *SeSHandler) New() error {
+func (s *SeSHandler) New(controller string) error {
+
 	sess, err := session.NewSession(&aws.Config{Region: aws.String(s3Region)})
 	if err != nil {
-		log.Error(err)
 		return err
 	}
 	// Quick verification step
 	if _, err = sess.Config.Credentials.Get(); err != nil {
-		log.Error(err)
 		return err
 	}
+
+	log.Infow("new aws ses session handler created",
+		"caller", controller,
+		"region", s3Region,
+	)
 	s.SES = ses.New(sess)
 
 	return nil
