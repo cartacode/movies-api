@@ -8,10 +8,11 @@ import (
 
 // Images --
 type Images struct {
-	Landscape  string `json:"landscape"`
-	Portrait   string `json:"portrait"`
-	Banner     string `json:"banner"`
-	DetailPage string `json:"detailpage"`
+	Landscape       string `json:"landscape"`
+	Portrait        string `json:"portrait"`
+	Banner          string `json:"banner"`
+	DetailPage      string `json:"detailpage"`
+	MobileThumbnail string `json:"mobilethumbnail"`
 }
 
 // Extras --
@@ -68,6 +69,8 @@ type Information struct {
 	Quality []int `json:"quality"`
 
 	Year string `json:"year"`
+
+	Original bool `jsone:"vuliOriginal"`
 }
 
 // BestQuality .. Get the best quality video available from slice

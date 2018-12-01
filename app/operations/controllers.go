@@ -144,12 +144,12 @@ func UploadImage(w http.ResponseWriter, r *http.Request) {
 		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, "requires key and _id params"))
 		return
 	}
-	if !stringops.StringInSlice("id", keys) {
+	if !stringops.StringInSlice("_id", keys) {
 		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, "requires key and _id params"))
 		return
 	}
 	field := query["key"].(string)
-	objectID := query["id"].(bson.ObjectId)
+	objectID := query["_id"].(bson.ObjectId)
 	collection := params["collection"]
 
 	// Read the image

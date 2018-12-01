@@ -11,8 +11,11 @@ var mongoHandler dbh.MongoDBHandler
 var collection = "customer"
 
 func init() {
-	dbh.NewAuthorizeNetSession()
-	if err := mongoHandler.New(collection); err != nil {
-		log.Fatal(err)
+	if ok, err := dbh.ConnectAuthorizeNet(); !ok {
+		log.Fatalw("unable to connect to authorize.net", "error", err)
 	}
+	if err := mongoHandler.New(collection); err != nil {
+		log.Fatalw("unable to connect to mongoDB", "error", err)
+	}
+
 }

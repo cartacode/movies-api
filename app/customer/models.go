@@ -13,6 +13,8 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/VuliTv/go-movie-api/app/media"
+
 	"github.com/go-bongo/bongo"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -121,9 +123,9 @@ type Model struct {
 func (c *Model) AuthBadAttempt() {
 	log.Debugw("adding bad auth attempt", "email", c.Email, "id", c.Id.Hex())
 	hash := fmt.Sprintf("auth-%s", c.Id.Hex())
-	val, err := rDB.Get(hash).Result()
+	val, err := redisHandler.Get(hash).Result()
 	if err != nil {
-		if sErr := rDB.Set(hash, 0, 0).Err(); sErr != nil {
+		if sErr := redisHandler.Set(hash, 0, 0).Err(); sErr != nil {
 			log.Error(sErr)
 		}
 		log.Error(err)
@@ -136,7 +138,7 @@ func (c *Model) AuthBadAttempt() {
 		log.Error(err)
 	}
 	attempts++
-	if err = rDB.Set(hash, attempts, 0).Err(); err != nil {
+	if err = redisHandler.Set(hash, attempts, 0).Err(); err != nil {
 		log.Error(err)
 	}
 
@@ -145,7 +147,7 @@ func (c *Model) AuthBadAttempt() {
 // AuthReset --
 func (c *Model) AuthReset() {
 	hash := fmt.Sprintf("auth-%s", c.Id.Hex())
-	if err := rDB.Set(hash, 0, 0).Err(); err != nil {
+	if err := redisHandler.Set(hash, 0, 0).Err(); err != nil {
 		log.Error(err)
 	}
 
@@ -156,9 +158,9 @@ func (c *Model) AuthReset() {
 // Keeps us from attack issues if we have backend issues
 func (c *Model) AuthLocked() bool {
 	hash := fmt.Sprintf("auth-%s", c.Id.Hex())
-	val, err := rDB.Get(hash).Result()
+	val, err := redisHandler.Get(hash).Result()
 	if err != nil {
-		if err = rDB.Set(hash, 0, 0).Err(); err != nil {
+		if err = redisHandler.Set(hash, 0, 0).Err(); err != nil {
 			log.Error(err)
 			return true
 		}
@@ -181,4 +183,80 @@ func (c *Model) AuthLocked() bool {
 // ModelUnlockRequest --
 type ModelUnlockRequest struct {
 	Email string `json:"email"`
+}
+
+// ModelStub ==
+type ModelStub struct {
+	ID         *bson.ObjectId `json:"_id"`
+	Title      string         `json:"title"`
+	Slug       string         `json:"slug"`
+	Images     media.Images   `json:"images"`
+	Completion int32          `json:"completion"`
+	Original   bool           `json:"vuliOriginal"`
+}
+
+// ProfileInformationResponse --
+type ProfileInformationResponse struct {
+	Model `json:",inline"`
+	// Purchased Items
+	Purchased struct {
+
+		// List of Mongo ObjectId for the movies wish list. Embeddable
+		Movies []*ModelStub `json:"movies"`
+
+		// List of Mongo ObjectId for the scenes wish list. Embeddable
+		Scenes []*ModelStub `json:"scenes"`
+
+		// List of Mongo ObjectId for the volumes wish list. Embeddable
+		Volumes []*ModelStub `json:"volumes"`
+	} `json:"purchased"`
+
+	// User wishlist
+	Wishlist struct {
+
+		// List of Mongo ObjectId for the movies wish list. Embeddable
+		Movies []*ModelStub `json:"movies"`
+
+		// List of Mongo ObjectId for the scenes wish list. Embeddable
+		Scenes []*ModelStub `json:"scenes"`
+
+		// List of Mongo ObjectId for the volumes wish list. Embeddable
+		Volumes []*ModelStub `json:"volumes"`
+	} `json:"wishlist"`
+
+	// Liked Items
+	Liked struct {
+
+		// List of Mongo ObjectId for the movies wish list. Embeddable
+		Movies []*ModelStub `json:"movies"`
+
+		// List of Mongo ObjectId for the scenes wish list. Embeddable
+		Scenes []*ModelStub `json:"scenes"`
+
+		// List of Mongo ObjectId for the volumes wish list. Embeddable
+		Volumes []*ModelStub `json:"volumes"`
+
+		// List of Mongo ObjectId for the stars wish list. Embeddable
+		Stars []*ModelStub `json:"stars"`
+
+		Studios []*ModelStub `json:"studios"`
+	} `json:"liked"`
+
+	// Liked Items
+	Disliked struct {
+
+		// List of Mongo ObjectId for the movies wish list. Embeddable
+		Movies []*ModelStub `json:"movies"`
+
+		// List of Mongo ObjectId for the scenes wish list. Embeddable
+		Scenes []*ModelStub `json:"scenes"`
+
+		// List of Mongo ObjectId for the volumes wish list. Embeddable
+		Volumes []*ModelStub `json:"volumes"`
+
+		// List of Mongo ObjectId for the stars wish list. Embeddable
+		Stars []*ModelStub `json:"stars"`
+
+		Studios []*ModelStub `json:"studios"`
+	} `json:"disliked"`
 }

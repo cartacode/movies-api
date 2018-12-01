@@ -32,7 +32,6 @@ import (
 
 var rDB dbh.RedisHandler
 var mDB dbh.MongoDBHandler
-var aSession, aError = dbh.NewAuthorizeNetSession()
 var log = logging.GetProdLog()
 
 func init() {
@@ -44,14 +43,6 @@ func init() {
 		log.Fatalw("mongodb connection failure. exiting", "error", err)
 	}
 
-	if aError != nil {
-		log.Fatalw("authorize.net connection failure. exiting", "error", aError)
-	}
-	log.Info("authorize.net connected", aSession, aError)
-	if aSession == false {
-		log.Fatalw("authorize.net session failure. exiting", "error", aError)
-	}
-	log.Info("authorize.net session connected")
 }
 
 // NewRouter --

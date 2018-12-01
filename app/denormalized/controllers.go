@@ -348,8 +348,8 @@ func Volumes(w http.ResponseWriter, r *http.Request) {
 
 	requests.ReturnAPIOK(w, rs)
 }
-func addDenormalizedDataFromSlice(collection string, objectIDS []*bson.ObjectId) []*ModelStub {
 
+func addDenormalizedDataFromSlice(collection string, objectIDS []*bson.ObjectId) []*ModelStub {
 	if objectIDS == nil {
 		return nil
 	}
@@ -366,6 +366,7 @@ func addDenormalizedDataFromSlice(collection string, objectIDS []*bson.ObjectId)
 
 	return retval
 }
+
 
 func addDenormalizedData(collection string, objectId *bson.ObjectId) *ModelStub {
 

@@ -6,17 +6,16 @@ import (
 )
 
 var log = logging.GetProdLog()
-var connection dbh.MongoDBHandler
-var rDB dbh.RedisHandler
+var mongoHandler dbh.MongoDBHandler
+var redisHandler dbh.RedisHandler
 
-var collection = "customer"
+const collection string = "customer"
 
 func init() {
-	if err := connection.New(collection); err != nil {
+	if err := mongoHandler.New(collection); err != nil {
 		log.Fatal(err)
 	}
-
-	if err := rDB.New(collection); err != nil {
+	if err := redisHandler.New(collection); err != nil {
 		log.Fatal(err)
 	}
 }

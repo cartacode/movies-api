@@ -94,7 +94,7 @@ func ListAddItem(w http.ResponseWriter, r *http.Request) {
 	}
 
 	list := fmt.Sprintf("%s.%ss", params["list"], wishlistRequest.Collection)
-	if err := connection.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(authUser.ObjectID)}, bson.M{"$push": bson.M{list: wishlistRequest.ID}}); err != nil {
+	if err := mongoHandler.Collection(collection).Collection().Update(bson.M{"_id": bson.ObjectIdHex(authUser.ObjectID)}, bson.M{"$push": bson.M{list: wishlistRequest.ID}}); err != nil {
 		log.Errorw("unable to add item to list",
 			"list", params["list"],
 			"collection", wishlistRequest.Collection,
@@ -142,7 +142,7 @@ func WishlistDeleteItem(w http.ResponseWriter, r *http.Request) {
 	}
 
 	list := fmt.Sprintf("%s.%ss", params["list"], wishlistRequest.Collection)
-	if err := connection.Collection(collection).Collection().UpdateId(bson.ObjectIdHex(authUser.ObjectID), bson.M{"$pull": bson.M{list: wishlistRequest.ID}}); err != nil {
+	if err := mongoHandler.Collection(collection).Collection().UpdateId(bson.ObjectIdHex(authUser.ObjectID), bson.M{"$pull": bson.M{list: wishlistRequest.ID}}); err != nil {
 		log.Errorw("unable to remove item from list",
 			"list", params["list"],
 			"collection", wishlistRequest.Collection,
@@ -175,19 +175,32 @@ func ProfileGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := Model{}
-	if err := connection.Collection(collection).FindById(bson.ObjectIdHex(authUser.ObjectID), &user); err != nil {
+	user := &Model{}
+	if err := mongoHandler.Collection(collection).FindById(bson.ObjectIdHex(authUser.ObjectID), &user); err != nil {
 		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
 		return
 	}
 
-	// for _, e := range user.Wishlist.Scenes {
-	// response.Wishlist.Scenes = append(response.Wishlist.Scenes, *e)
-	// }
+	profile := &ProfileInformationResponse{Model: *user}
 
-	// Don't give real passwords
-	user.Password = "**************************"
-	js, err := json.Marshal(user)
+	profile.Password = "**************************"
+	profile.Wishlist.Movies = addDenormalizedDataFromSlice("movie", user.Wishlist.Movies)
+	profile.Wishlist.Scenes = addDenormalizedDataFromSlice("scene", user.Wishlist.Scenes)
+	profile.Wishlist.Volumes = addDenormalizedDataFromSlice("volume", user.Wishlist.Volumes)
+
+	profile.Purchased.Movies = addDenormalizedDataFromSlice("movie", user.Purchased.Movies)
+	profile.Purchased.Scenes = addDenormalizedDataFromSlice("scene", user.Purchased.Scenes)
+	profile.Purchased.Volumes = addDenormalizedDataFromSlice("volume", user.Purchased.Volumes)
+
+	profile.Disliked.Movies = addDenormalizedDataFromSlice("movie", user.Disliked.Movies)
+	profile.Disliked.Scenes = addDenormalizedDataFromSlice("scene", user.Disliked.Scenes)
+	profile.Disliked.Volumes = addDenormalizedDataFromSlice("volume", user.Disliked.Volumes)
+
+	profile.Liked.Movies = addDenormalizedDataFromSlice("movie", user.Liked.Movies)
+	profile.Liked.Scenes = addDenormalizedDataFromSlice("scene", user.Liked.Scenes)
+	profile.Liked.Volumes = addDenormalizedDataFromSlice("volume", user.Liked.Volumes)
+
+	js, err := json.Marshal(profile)
 
 	if err != nil {
 		log.Error(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
@@ -195,4 +208,36 @@ func ProfileGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	requests.ReturnAPIOK(w, js)
+}
+
+func addDenormalizedDataFromSlice(collection string, objectIDS []*bson.ObjectId) []*ModelStub {
+	if objectIDS == nil {
+		return nil
+	}
+	retval := []*ModelStub{}
+	for _, object := range objectIDS {
+		objectStub := &ModelStub{}
+		if err := mongoHandler.Collection(collection).FindById(*object, &objectStub); err != nil {
+			log.Warnw("can't find embedded doc", "collection", collection, "objectId", object.Hex(), "error", err)
+		} else {
+			objectStub.ID = object
+			retval = append(retval, objectStub)
+		}
+	}
+
+	return retval
+}
+
+func addDenormalizedData(collection string, objectId *bson.ObjectId) *ModelStub {
+
+	if objectId == nil {
+		return nil
+	}
+	retval := &ModelStub{}
+	if err := mongoHandler.Collection(collection).FindById(*objectId, &retval); err != nil {
+		log.Warn(err)
+
+	}
+
+	return retval
 }

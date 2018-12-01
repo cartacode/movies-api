@@ -12,6 +12,7 @@ package payments
 
 import (
 	AuthorizeCIM "gopkg.in/hunterlong/authorizecim.v1"
+	"gopkg.in/mgo.v2/bson"
 )
 
 // Individual ..
@@ -48,7 +49,17 @@ type CustomerPaymentDeleteRequest struct {
 
 // CustomerPaymentUpdateRequest ..
 type CustomerPaymentUpdateRequest struct {
-	ID        string                   `json:"id"`
-	PaymentID string                   `json:"paymentId"`
-	CC        *AuthorizeCIM.CreditCard `json:"creditCard,omitempty"`
+	CC *AuthorizeCIM.CreditCard `json:"creditCard,omitempty"`
+}
+
+// CustomerPurchaseRequest --
+type CustomerPurchaseRequest struct {
+	ID         bson.ObjectId `json:"_id"`
+	Collection string        `json:"collection"`
+}
+
+// MediaPurchase --
+type MediaPurchase struct {
+	Id    bson.ObjectId `bson:"_id,omitempty" json:"_id"`
+	Price float64       `json:"price"`
 }

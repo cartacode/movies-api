@@ -11,23 +11,24 @@ var Routes = requests.Routes{
 	requests.Route{
 		Name:        "CustomerGetProfile",
 		Method:      "GET",
-		Pattern:     "/v1/customer/payment",
+		Pattern:     "/v1/customer/payment/profile",
 		HandlerFunc: security.ValidateTokenMiddleware(CustomerGetPaymentProfile),
 	},
 
 	requests.Route{
 		Name:        "CustomerCreateProfile",
 		Method:      "POST",
-		Pattern:     "/v1/customer/payment/create",
+		Pattern:     "/v1/customer/payment/profile",
 		HandlerFunc: security.ValidateTokenMiddleware(CustomerCreatePaymentProfile),
 	},
 
-	requests.Route{
-		Name:        "CustomerPaymentAdd",
-		Method:      "POST",
-		Pattern:     "/v1/customer/payment",
-		HandlerFunc: security.ValidateTokenMiddleware(CustomerPaymentAdd),
-	},
+	// We do not handle multiple payments yet
+	// requests.Route{
+	// 	Name:        "CustomerPaymentAdd",
+	// 	Method:      "POST",
+	// 	Pattern:     "/v1/customer/payment",
+	// 	HandlerFunc: security.ValidateTokenMiddleware(CustomerPaymentAdd),
+	// },
 
 	requests.Route{
 		Name:        "CustomerPaymentDelete",
@@ -41,5 +42,12 @@ var Routes = requests.Routes{
 		Method:      "PATCH",
 		Pattern:     "/v1/customer/payment",
 		HandlerFunc: security.ValidateTokenMiddleware(CustomerPaymentUpdate),
+	},
+
+	requests.Route{
+		Name:        "CustomerPurchaseItem",
+		Method:      "POST",
+		Pattern:     "/v1/customer/purchase",
+		HandlerFunc: security.ValidateTokenMiddleware(CustomerPurchaseItem),
 	},
 }
