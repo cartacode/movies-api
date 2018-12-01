@@ -60,17 +60,19 @@ func SignedS3Playback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var DynamoID string
+	var ID bson.ObjectId
 
 	switch collection {
 	case "scene":
 		log.Infow("found scene model")
 		scene := *model.(*scene.Model)
 		DynamoID = scene.DynamoDBId
+		ID = scene.Id
 	case "movie":
 		log.Infow("found movie model")
 		movie := *model.(*movie.Model)
 		DynamoID = movie.DynamoDBId
-
+		ID = movie.Id
 	default:
 		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, "No such model"))
 		return
@@ -94,7 +96,13 @@ func SignedS3Playback(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
-		log.Error(requests.ReturnAPIError(w, http.StatusInternalServerError, err.Error()))
+		errorMessage := "error finding playback document"
+		log.Errorw(errorMessage,
+			"collection", collection,
+			"objectId", ID.Hex(),
+			"error", err.Error(),
+		)
+		requests.ReturnAPIError(w, http.StatusInternalServerError, errorMessage)
 		return
 	}
 

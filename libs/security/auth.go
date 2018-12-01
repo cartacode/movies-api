@@ -126,6 +126,8 @@ func IsAdminRoute(req *http.Request) bool {
 
 	if strings.Contains(req.URL.Path, "/v1/collection/") {
 		return true
+	} else if strings.Contains(req.URL.Path, "/v1/operations/upload/") {
+		return true
 	}
 
 	return false

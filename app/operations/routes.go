@@ -2,6 +2,7 @@ package operations
 
 import (
 	"github.com/VuliTv/go-movie-api/libs/requests"
+	"github.com/VuliTv/go-movie-api/libs/security"
 )
 
 // Routes --
@@ -11,14 +12,14 @@ var Routes = requests.Routes{
 		Name:        "UploadImage",
 		Method:      "POST",
 		Pattern:     "/v1/operations/upload/image/{collection}",
-		HandlerFunc: UploadImage,
+		HandlerFunc: security.ValidateTokenMiddleware(UploadImage),
 	},
 
 	requests.Route{
 		Name:        "Trailer",
 		Method:      "POST",
 		Pattern:     "/v1/operations/upload/trailer/{collection}",
-		HandlerFunc: UploadTrailer,
+		HandlerFunc: security.ValidateTokenMiddleware(UploadTrailer),
 	},
 
 	requests.Route{

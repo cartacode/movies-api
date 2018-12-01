@@ -19,7 +19,7 @@ var Routes = requests.Routes{
 		Name:        "WishlistDeleteItem",
 		Method:      "DELETE",
 		Pattern:     "/v1/customer/preferences/{list}",
-		HandlerFunc: security.ValidateTokenMiddleware(WishlistDeleteItem),
+		HandlerFunc: security.ValidateTokenMiddleware(DeleteItem),
 	},
 
 	requests.Route{
@@ -27,5 +27,19 @@ var Routes = requests.Routes{
 		Method:      "GET",
 		Pattern:     "/v1/customer/profile",
 		HandlerFunc: security.ValidateTokenMiddleware(ProfileGet),
+	},
+
+	requests.Route{
+		Name:        "GetRecentlyWatched",
+		Method:      "GET",
+		Pattern:     "/v1/customer/recent",
+		HandlerFunc: security.ValidateTokenMiddleware(GetRecentlyWatched),
+	},
+
+	requests.Route{
+		Name:        "SetRecentlyWatched",
+		Method:      "POST",
+		Pattern:     "/v1/customer/recent",
+		HandlerFunc: security.ValidateTokenMiddleware(SetRecentlyWatched),
 	},
 }

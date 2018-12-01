@@ -119,8 +119,8 @@ func ListAddItem(w http.ResponseWriter, r *http.Request) {
 	requests.ReturnAPIOK(w, js)
 }
 
-// WishlistDeleteItem --
-func WishlistDeleteItem(w http.ResponseWriter, r *http.Request) {
+// DeleteItem --
+func DeleteItem(w http.ResponseWriter, r *http.Request) {
 	// Get auth user information
 	params := mux.Vars(r)
 
@@ -208,6 +208,25 @@ func ProfileGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	requests.ReturnAPIOK(w, js)
+}
+
+// GetRecentlyWatched --
+func GetRecentlyWatched(w http.ResponseWriter, r *http.Request) {
+	var authUser, err = requests.GetAuthUser(r)
+	if err != nil {
+		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
+		return
+	}
+
+	user := &Model{}
+	if err := mongoHandler.Collection(collection).FindById(bson.ObjectIdHex(authUser.ObjectID), &user); err != nil {
+		log.Warn(requests.ReturnAPIError(w, http.StatusBadRequest, err.Error()))
+		return
+	}
+}
+
+// SetRecentlyWatched --
+func SetRecentlyWatched(w http.ResponseWriter, r *http.Request) {
 }
 
 func addDenormalizedDataFromSlice(collection string, objectIDS []*bson.ObjectId) []*ModelStub {
