@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 
+	"github.com/VuliTv/go-movie-api/app/customer"
 	"github.com/VuliTv/go-movie-api/app/movie"
 	"github.com/VuliTv/go-movie-api/app/scene"
 	"github.com/VuliTv/go-movie-api/app/series"
@@ -43,6 +44,10 @@ func ModelByCollection(collection string) (interface{}, error) {
 
 	case "studio":
 		model := &studio.Model{}
+		return model, nil
+
+	case "customer":
+		model := &customer.Model{}
 		return model, nil
 
 	}

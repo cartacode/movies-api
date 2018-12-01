@@ -124,8 +124,7 @@ func ValidateTokenMiddleware(next http.HandlerFunc) http.HandlerFunc {
 //IsAdminRoute --
 func IsAdminRoute(req *http.Request) bool {
 
-	switch req.RequestURI {
-	case "/v1/collection/studio":
+	if strings.Contains(req.URL.Path, "/v1/collection/") {
 		return true
 	}
 
